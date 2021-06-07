@@ -48,3 +48,11 @@ class ClaimCode(Form):
 
 class CreateCode(Form):
     code = StringField('Enter New Loyalty code', [validators.optional(), validators.Length(min=6, max=20)])
+
+class Memforgotpassword(Form):
+    email = StringField('Email', [email(), validators.DataRequired()],
+                        render_kw={"placeholder": "Email"})
+
+class Memforgotaccount(Form):
+    full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
+                            render_kw={"placeholder": "Full Name"})

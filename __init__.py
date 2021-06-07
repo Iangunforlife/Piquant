@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from forms import ReservationForm, stafflogin, CreateUserForm, UpdatememberForm, LoginForm, ClaimCode, CreateCode
+from forms import ReservationForm, stafflogin, CreateUserForm, UpdatememberForm, LoginForm, ClaimCode, CreateCode, Memforgotpassword, Memforgotaccount
 import User, shelve, addorder, tablenumgenerate, referalcode
 
 app = Flask(__name__)
@@ -261,14 +261,17 @@ def update_member(email):
     if request.method == 'POST' and update_user_form.validate():
         db = shelve.open('storage.db', 'w')
         users_dict = db['Member']
-
         temp = users_dict.get(email)
-        users_dict.pop(email)
+        if temp.get_password() == update_user_form.oldpassword.data:
+            users_dict.pop(email)
 
-        replace = User.Member(update_user_form.full_name.data, update_user_form.email.data, update_user_form.password.data, temp.get_sign_up_date(), temp.get_level(), temp.get_completion())
-        users_dict[replace.get_email()] = replace
-        db['Member'] = users_dict
-        db.close()
+            replace = User.Member(update_user_form.full_name.data, update_user_form.email.data, update_user_form.newpassword.data, temp.get_sign_up_date(), temp.get_level(), temp.get_completion())
+            users_dict[replace.get_email()] = replace
+            db['Member'] = users_dict
+            db.close()
+            print("sucess")
+        else:
+            print("Unsuccess")
 
         return redirect(url_for('member_updatesucess', email=email))
     else:
@@ -280,9 +283,57 @@ def update_member(email):
         user = users_dict.get(email)
         update_user_form.full_name.data = user.get_full_name()
         update_user_form.email.data = user.get_email()
-        update_user_form.password.data = user.get_password()
+        update_user_form.oldpassword.data = user.get_password()
 
         return render_template('Member_updateself.html', form=update_user_form, email=email)
+
+# Forgot Password
+@app.route('/Memberforgotpass/<email>/<state>', methods=['GET', 'POST'])
+def member_forgotpass(email, state):
+    check_user_form = Memforgotpassword(request.form)
+    if request.method == 'POST' and check_user_form.validate():
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['Member']
+        db.close()
+
+        for a in users_dict:
+            member = users_dict.get(a)
+            if check_user_form.email.data == member.get_email():
+                state = "T"
+        if state == "T":
+            print("Account Found")
+            return redirect(url_for('referral', email=email, state=" "))
+        else:
+            state = "F"
+            print("Account Not Found")
+            return redirect(url_for('member_login', email=email, state=state))
+
+    return render_template('Member_ForgotPassword.html', form=check_user_form, email=email, state=state)
+
+# Forgot Account
+@app.route('/Memberforgotacct/<email>/<state>', methods=['GET', 'POST'])
+def member_forgotacct(email, state):
+    check_user_form = Memforgotaccount(request.form)
+    if request.method == 'POST' and check_user_form.validate():
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['Member']
+        db.close()
+
+        for a in users_dict:
+            member = users_dict.get(a)
+            if check_user_form.full_name.data == member.get_full_name():
+                state = "T"
+        if state == "T":
+            print("Account Found")
+            return redirect(url_for('referral', email=email, state=" "))
+        else:
+            state = "F"
+            print("Account Not Found")
+            return redirect(url_for('member_login', email=email, state=state))
+
+    return render_template('Member_ForgotAccount.html', form=check_user_form, email=email, state=state)
 
 
 #Staff Pages
