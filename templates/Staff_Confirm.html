@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Create Staff{% endblock %}
+
+{% block content %}
+<h1 class="display-4 reservecofhead">Confirmation</h1>
+
+<div class="reservecofcontent">
+  <div class="reservecofvl"></div>
+  <p>User ID:{{newuser}} </p>
+
+  <a href="{{ url_for('staffpage', staffid=staffid) }}"><button class="btn btn-success">Confirm</button></a>
+
+</div>
+{% endblock %}

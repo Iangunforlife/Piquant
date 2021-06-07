@@ -1,0 +1,33 @@
+<html>
+<body>
+<nav class="navbar navbar-expand-sm bg-light navbar-light" >
+<!-- Links -->
+  <p class="navbar-brand"> Hello {{ staffid }} </p>
+  <ul class="navbar-nav wholenavbar">
+
+    <li class="nav-item">
+      <a class="nav-link" href="{{url_for('retrieve', staffid=staffid)}}"> Retrive Reserve User</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staffid=staffid)}}"> Retrive Orders</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staffid=staffid)}}"> Retrive Members</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('referal_codes', staffid=staffid)}}"> Loyalty Codes </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('create_staff', staffid=staffid)}}" >Create New Staff User</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('staffretrieve', staffid=staffid)}}">Retrive Staff User</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href=/ > Logout</a>
+    </li>
+
+  </ul>
+</nav>
+</body>
+</html>

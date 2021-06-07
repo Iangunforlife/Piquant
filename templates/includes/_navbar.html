@@ -1,0 +1,86 @@
+<html>
+
+<body>
+<nav class="navbar navbar-expand-sm bg-light navbar-light">
+  <!-- Brand -->
+  <a class="navbar-brand" href="/"><img src="{{url_for('static',filename = 'img/logo.png')}}" alt=""></a>
+  {% if email == " "%}
+  <!-- Links -->
+  <ul class="navbar-nav wholenavbar">
+    <li class="nav-item">
+      <a class="nav-link navbarfirst" href="/">Home</a>
+    </li>
+    <!-- Dropdown -->
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle navbaritem" href="#" id="navbardrop" data-toggle="dropdown">
+        Membership
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="{{url_for('member_login', email=' ', state=' ')}}">Rewards</a>
+        <a class="dropdown-item" href="{{url_for('create_Member', email=' ')}}">Sign Up</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('about', email=' ')}}">About</a>
+    </li>
+     <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('orderpage1', email=' ')}}">Menu</a>
+     </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('create_user', email=' ')}}">Book a Reservation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('checkstaff', state=' ', email=' ')}}"> Staff Page </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('member_login', email=' ', state=' ')}}"> Login </a>
+    </li>
+  </ul>
+
+
+  <!-- If user is Logged In, Replace login Button with user name -->
+  {% else %}
+    <!-- Links -->
+  <ul class="navbar-nav wholenavbar">
+    <li class="nav-item">
+      <a class="nav-link navbarfirst" href="{{url_for('home2', email=email)}}">Home</a>
+    </li>
+
+
+    <!-- Dropdown -->
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
+        Membership
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="{{url_for('referral', email=email, state=' ')}}">Rewards</a>
+        <a class="dropdown-item" href="{{url_for('create_Member', email=email)}}">Sign Up</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('about', email=email)}}">About</a>
+    </li>
+     <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('orderpage1', email=email)}}">Menu</a>
+     </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('create_user', email=email)}}" >Book a Reservation</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('checkstaff', state=' ', email=email)}}"> Staff Page </a>
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
+        Hello {{email}}
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="/referral/{{email}}/' '">Rewards</a>
+        <a class="dropdown-item" href="{{url_for('update_member', email=email)}}">Change Info</a>
+        <a class="dropdown-item" href="{{url_for('member_login', email=' ', state = ' ')}}">Logout</a>
+      </div>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+</body>
+</html>

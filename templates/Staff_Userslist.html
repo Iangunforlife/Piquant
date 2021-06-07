@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Staff Accounts{% endblock %}
+
+{% block content %}
+<br>
+{% block staffnavbar %}
+  {% include 'includes/Staff_navbar.html' %}
+{% endblock %}
+<h1 class="display-4">Staff User List</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no users.</p>
+  {% elif count == 1 %}
+  <p>There is 1 user.</p>
+  {% else %}
+  <p>There are {{ count }} users.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in users_list %}
+      <tr>
+        <td>{{ user.get_staff_id()}}</td>
+        <td><a href="/updateStaff/{{user.get_staff_id()}}/{{staffid}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_staff', delstaffid=user.get_staff_id(), staffid=staffid)}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user.get_staff_id()}}?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <a href="{{url_for('staffpage', staffid=staffid)}}"> <button class="btn btn-danger"> Back </button></a>
+</div>
+{% endblock %}
+
