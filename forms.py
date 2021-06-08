@@ -34,8 +34,7 @@ class UpdatememberForm(Form):
                             render_kw={"placeholder": "Full Name"})
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "123@email.com"})
-    oldpassword = PasswordField('Old Password', [validators.DataRequired()], render_kw={"placeholder": "New Password"})
-    newpassword = PasswordField('New Password', [validators.DataRequired()], render_kw={"placeholder": "New Password"})
+    password = PasswordField('New Password', [validators.DataRequired()], render_kw={"placeholder": "New Password"})
 
 class LoginForm(Form):
     email = StringField('Email', [email(), validators.DataRequired()],
