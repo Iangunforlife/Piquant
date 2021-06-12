@@ -56,3 +56,7 @@ class Memforgotpassword(Form):
 class Memforgotaccount(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
                             render_kw={"placeholder": "Full Name"})
+
+class EnterOTP(Form):
+    OTP = StringField('OTP', [validators.Length(min=6, max=6), validators.DataRequired()],
+                      render_kw={"placeholder": "OTP"})

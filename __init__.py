@@ -1,9 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for
-from forms import ReservationForm, stafflogin, CreateUserForm, UpdatememberForm, LoginForm, ClaimCode, CreateCode, Memforgotpassword, Memforgotaccount
-import User, shelve, addorder, tablenumgenerate, referalcode
+from forms import ReservationForm, stafflogin, CreateUserForm, UpdatememberForm, LoginForm, ClaimCode, CreateCode, Memforgotpassword, Memforgotaccount, EnterOTP
+import User, shelve, addorder, tablenumgenerate, referalcode, random
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'piquant.nyp@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Piquantnyp@01'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
+counter = 0
+otp = 0
 #Email To Be Passed into codes to check wether users are login or not
 @app.route('/')
 def home():
@@ -301,15 +311,27 @@ def member_forgotpass(email, state):
             member = users_dict.get(a)
             if check_user_form.email.data == member.get_email():
                 state = "T"
+                email = member.get_email()
         if state == "T":
-            print("Account Found")
-            return redirect(url_for('referral', email=email, state=" "))
+            # Storing To Shelve Temp
+            otp_dict = {}
+            db = shelve.open('storage.db', 'c')
+            try:
+                otp_dict = db['OTP']
+            except:
+                print("Error")
+
+            otp_dict[email] = generate_otp(email)
+            db['OTP'] = otp_dict
+
+            return redirect(url_for('mementer_otp', email=email, state=" "))
         else:
             state = "F"
             print("Account Not Found")
-            return redirect(url_for('member_login', email=email, state=state))
+            return redirect(url_for('member_forgotpass', email=email, state=state))
 
     return render_template('Member_ForgotPassword.html', form=check_user_form, email=email, state=state)
+
 
 # Forgot Account
 @app.route('/Memberforgotacct/<email>/<state>', methods=['GET', 'POST'])
@@ -335,6 +357,29 @@ def member_forgotacct(email, state):
 
     return render_template('Member_ForgotAccount.html', form=check_user_form, email=email, state=state)
 
+
+# Enter Email OTP:
+@app.route('/Memberforgotpassotp/<email>/<state>', methods=['GET', 'POST'])
+def mementer_otp(email, state):
+    # Temp Store OTP In Shelve
+    otp_dict = {}
+    db = shelve.open('storage.db', 'r')
+    otp_dict = db['OTP']
+    db.close()
+
+    otp = otp_dict.get(email)
+    print(otp)
+    check_user_form = EnterOTP(request.form)
+    if request.method == 'POST' and check_user_form.validate():
+        print("Entered data", check_user_form.OTP.data)
+        print("OTP Given", otp)
+        if int(check_user_form.OTP.data) == int(otp):
+            print("Correct")
+            return redirect(url_for('referral', email=email, state=" "))
+        else:
+            state = 'F'
+            return redirect(url_for('mementer_otp', email=email, state=state))
+    return render_template('Member_ForgotPassOTP.html', form=check_user_form, email=email, state=state)
 
 #Staff Pages
 @app.route('/Stafflogin/<state>/<email>', methods=['GET','POST'])
@@ -707,6 +752,12 @@ def delete_staff(delstaffid, staffid):
 
     return redirect(url_for('staffretrieve', staffid=staffid))
 
+def generate_otp(email):
+    otp = random.randint(100000, 999999)
+    msg = Message('OTP Forgot Password', sender='piquant.nyp@gmail.com', recipients=[email])
+    msg.body = str('This Is Your OTP {}' .format(otp))
+    mail.send(msg)
+    return otp
 
 if __name__ == '__main__':
     app.run()
