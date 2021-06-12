@@ -13,7 +13,7 @@
   <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
 <br>
-<a href="{{ url_for('member_forgotpass', email=email, state=' ')}}"> Resend OTP </a>
+<a href="{{ url_for('memresent_otp', email=email)}}"> Resend OTP </a>
 <br>
 {%if state == "F"%}
   <p> Incorrect OTP </p>

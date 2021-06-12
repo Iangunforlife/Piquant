@@ -1,5 +1,6 @@
 from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField
 from wtforms.validators import email
+from flask_wtf import RecaptchaField
 
 class ReservationForm(Form):
     first_name = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
@@ -52,10 +53,12 @@ class CreateCode(Form):
 class Memforgotpassword(Form):
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "Email"})
+    recaptcha = RecaptchaField()
 
 class Memforgotaccount(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
                             render_kw={"placeholder": "Full Name"})
+    recaptcha = RecaptchaField()
 
 class EnterOTP(Form):
     OTP = StringField('OTP', [validators.Length(min=6, max=6), validators.DataRequired()],

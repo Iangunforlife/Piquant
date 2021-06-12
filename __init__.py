@@ -4,6 +4,11 @@ import User, shelve, addorder, tablenumgenerate, referalcode, random
 from flask_mail import Mail, Message
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'Thisisasecret!'
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6Ld8DSsbAAAAAKwzOf-7wqEtMrn4s-wzWGId70tk'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6Ld8DSsbAAAAAGaCbG6u8jdfT1BIHCm3HHN_X2vV'
+app.config['TESTING'] = False
+
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'piquant.nyp@gmail.com'
@@ -11,6 +16,7 @@ app.config['MAIL_PASSWORD'] = 'Piquantnyp@01'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
 
 counter = 0
 otp = 0
@@ -330,6 +336,7 @@ def member_forgotpass(email, state):
             print("Account Not Found")
             return redirect(url_for('member_forgotpass', email=email, state=state))
 
+
     return render_template('Member_ForgotPassword.html', form=check_user_form, email=email, state=state)
 
 
@@ -365,21 +372,28 @@ def mementer_otp(email, state):
     otp_dict = {}
     db = shelve.open('storage.db', 'r')
     otp_dict = db['OTP']
-    db.close()
-
     otp = otp_dict.get(email)
-    print(otp)
+    db.close()
     check_user_form = EnterOTP(request.form)
     if request.method == 'POST' and check_user_form.validate():
-        print("Entered data", check_user_form.OTP.data)
-        print("OTP Given", otp)
         if int(check_user_form.OTP.data) == int(otp):
-            print("Correct")
             return redirect(url_for('referral', email=email, state=" "))
         else:
             state = 'F'
             return redirect(url_for('mementer_otp', email=email, state=state))
+
     return render_template('Member_ForgotPassOTP.html', form=check_user_form, email=email, state=state)
+
+@app.route('/Memberresentotp/<email>', methods=['GET', 'POST'])
+def memresent_otp(email):
+    db = shelve.open('storage.db', 'w')
+    otp_dict = db['OTP']
+    otp_dict.pop(email)
+    newotp = generate_otp(email)
+    otp_dict[email] = newotp
+    db['OTP'] = otp_dict
+    db.close()
+    return redirect(url_for('mementer_otp', email=email, state =" "))
 
 #Staff Pages
 @app.route('/Stafflogin/<state>/<email>', methods=['GET','POST'])
