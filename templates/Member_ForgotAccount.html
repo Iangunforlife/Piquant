@@ -10,6 +10,11 @@
   <div class="form-group">
     {{ render_field(form.full_name, class="form-control") }}
   </div>
+  {{form.recaptcha}}
+  <br>
+  {% for error in form.recaptcha.errors %}
+      <p style="color:red;"> Please Fill Up The Captcha </p>
+  {% endfor %}
   <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
 <br>

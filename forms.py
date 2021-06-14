@@ -63,3 +63,13 @@ class Memforgotaccount(Form):
 class EnterOTP(Form):
     OTP = StringField('OTP', [validators.Length(min=6, max=6), validators.DataRequired()],
                       render_kw={"placeholder": "OTP"})
+
+class SecQn(Form):
+    SecAns1 = StringField('', [validators.Length(min=1, max=50), validators.DataRequired()],
+                      render_kw={"placeholder": "Answer"})
+    SecAns2 = StringField('', [validators.Length(min=1, max=50), validators.DataRequired()],
+                      render_kw={"placeholder": "Answer"})
+
+class ChangeMemberPassword(Form):
+    newpassword = PasswordField('Password', [validators.DataRequired(), validators.EqualTo('cfmpassword', message='Passwords must match')],  render_kw={"placeholder": "New Password"})
+    cfmpassword = PasswordField('Reenter Password', [validators.DataRequired()], render_kw={"placeholder": "Reenter Password"})

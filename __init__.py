@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from forms import ReservationForm, stafflogin, CreateUserForm, UpdatememberForm, LoginForm, ClaimCode, CreateCode, Memforgotpassword, Memforgotaccount, EnterOTP
+from forms import ReservationForm, stafflogin, CreateUserForm, UpdatememberForm, LoginForm, ClaimCode, CreateCode, Memforgotpassword, Memforgotaccount, EnterOTP, SecQn,ChangeMemberPassword
 import User, shelve, addorder, tablenumgenerate, referalcode, random
 from flask_mail import Mail, Message
 
@@ -270,6 +270,7 @@ def referral(email, state):
 def member_updatesucess(email):
     return render_template('Member_Selfupdatesuccess.html', email=email)
 
+
 #Update Member (For Customers)
 @app.route('/updateMember/<email>/', methods=['GET', 'POST'])
 def update_member(email):
@@ -356,11 +357,11 @@ def member_forgotacct(email, state):
                 state = "T"
         if state == "T":
             print("Account Found")
-            return redirect(url_for('referral', email=email, state=" "))
+            return redirect(url_for('memsecqn', email=email, state=" "))
         else:
             state = "F"
             print("Account Not Found")
-            return redirect(url_for('member_login', email=email, state=state))
+            return redirect(url_for('member_forgotacct', email=email, state=state))
 
     return render_template('Member_ForgotAccount.html', form=check_user_form, email=email, state=state)
 
@@ -377,12 +378,13 @@ def mementer_otp(email, state):
     check_user_form = EnterOTP(request.form)
     if request.method == 'POST' and check_user_form.validate():
         if int(check_user_form.OTP.data) == int(otp):
-            return redirect(url_for('referral', email=email, state=" "))
+            return redirect(url_for('Change_Mem_Password', email=email))
         else:
             state = 'F'
             return redirect(url_for('mementer_otp', email=email, state=state))
 
     return render_template('Member_ForgotPassOTP.html', form=check_user_form, email=email, state=state)
+
 
 @app.route('/Memberresentotp/<email>', methods=['GET', 'POST'])
 def memresent_otp(email):
@@ -394,6 +396,48 @@ def memresent_otp(email):
     db['OTP'] = otp_dict
     db.close()
     return redirect(url_for('mementer_otp', email=email, state =" "))
+
+
+# Change Password:
+#Update Member (For Customers)
+@app.route('/ChangeMemberPassword/<email>/', methods=['GET', 'POST'])
+def Change_Mem_Password(email):
+    update_user_form = ChangeMemberPassword(request.form)
+    if request.method == 'POST' and update_user_form.validate():
+        db = shelve.open('storage.db', 'w')
+        users_dict = db['Member']
+        temp = users_dict.get(email)
+        temp.set_password(update_user_form.newpassword.data)
+        db['Member'] = users_dict
+        db.close()
+        return redirect(url_for('member_updatesucess', email=email))
+    return render_template('Member_ChangePassword.html', form=update_user_form, email=" ")
+
+
+# Not Completed
+@app.route('/Memberforgotacctsecqn/<email>/<state>', methods=['GET', 'POST'])
+def memsecqn(email, state):
+    # Temp Store OTP In Shelve
+    '''
+    otp_dict = {}
+    db = shelve.open('storage.db', 'r')
+    otp_dict = db['OTP']
+    otp = otp_dict.get(email)
+    db.close()
+    '''
+    secqnlist = ['Hello', 'Test']
+    check_user_form = SecQn(request.form)
+    if request.method == 'POST' and check_user_form.validate():
+        if check_user_form.SecAns1.data == otp:
+            if check_user_form.SecAns2.data == otp:
+                return redirect(url_for('referral', email=" ", state=" "))
+        else:
+            state = 'F'
+            return redirect(url_for('memsecqn', email=email, state=state))
+
+    return render_template('Member_ForgotAcctsecqn.html', form=check_user_form, email=email, state=state, secqn_list=secqnlist)
+
+
 
 #Staff Pages
 @app.route('/Stafflogin/<state>/<email>', methods=['GET','POST'])
