@@ -6,14 +6,11 @@
 
 <div class="reservecofcontent">
   <div class="reservecofvl"></div>
-  <p>User ID: {{get_user.get_user_id()}} </p>
-  <p>First Name: {{get_user.get_first_name()}} </p>
-  <p>Last Name: {{get_user.get_last_name()}} </p>
-  <p>Salutation: {{get_user.get_salutation()}} </p>
-  <p>Email: {{get_user.get_email()}} </p>
-  <p>Additional note: {{get_user.get_additional_note()}} </p>
-
+  <p>Reservation Number: {{get_user['reservation_id']}} </p>
+  <p>Email: {{get_user['email']}} </p>
+  <p>Date: {{get_user['reservation_date']}} </p>
+  <p>Time: {{get_user['reservation_time']}} </p>
+  <p>Additional note: {{get_user['additional_note']}} </p>
   <a href="{{ url_for('number', email=email)}} "><button class="btn btn-success">Confirm</button></a>
-
 </div>
 {% endblock %}

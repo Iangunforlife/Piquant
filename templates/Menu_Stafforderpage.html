@@ -33,7 +33,7 @@
                 <td> {{ b }} </td>
                 <td> {{ a.getnamefromcode(b) }} </td>
                 <td> {{ a.get_order().get(b)}} </td>  <!-- Quanity -->
-                <td> <a href="{{url_for('staffdeleteitem', deleteitem=b, tablenum=a.get_tablenum(), staffid=staffid)}}"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
+                <td> <a href="{{url_for('staffdeleteitem', deleteitem=b, tablenum=a.get_tablenum(), staff_name=staff_name)}}"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
             </tr>
             {% endif %}
             {% endfor %}
@@ -41,5 +41,5 @@
     </table>
   </div>
 {% endfor %}
-<a href="{{url_for('staffpage', staffid=staffid)}}"> <button class="btn btn-danger"> Back </button></a>
+<a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}

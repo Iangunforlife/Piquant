@@ -2,30 +2,36 @@
 <body>
 <nav class="navbar navbar-expand-sm bg-light navbar-light" >
 <!-- Links -->
-  <p class="navbar-brand"> Hello {{ staffid }} </p>
+  <p class="navbar-brand"> Hello {{ staff_name }} </p>
   <ul class="navbar-nav wholenavbar">
 
     <li class="nav-item">
-      <a class="nav-link" href="{{url_for('retrieve', staffid=staffid)}}"> Retrive Reserve User</a>
+      <a class="nav-link" href="{{url_for('retrieve', staff_name=staff_name)}}"> Retrive Reserve User</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staffid=staffid)}}"> Retrive Orders</a>
+      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staff_name=staff_name)}}"> Retrive Orders</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staffid=staffid)}}"> Retrive Members</a>
+      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staff_name=staff_name)}}"> Retrive Members</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('referal_codes', staffid=staffid)}}"> Loyalty Codes </a>
+      <a class="nav-link navbaritem" href="{{url_for('referal_codes', staff_name=staff_name)}}"> Loyalty Codes </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('create_staff', staffid=staffid)}}" >Create New Staff User</a>
+      <a class="nav-link navbaritem" href="{{url_for('create_staff', staff_name=staff_name)}}" >Create New Staff User</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('staffretrieve', staffid=staffid)}}">Retrive Staff User</a>
+      <a class="nav-link navbaritem" href="{{url_for('staffretrieve', staff_name=staff_name)}}">Retrive Staff User</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link navbaritem" href=/ > Logout</a>
-    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
+        Account Setting
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="{{url_for('update_staff', toupdate=staff_name, staff_name=staff_name)}}">Change Info</a>
+        <a class="dropdown-item" href="{{url_for('Changepass_staff', staff_name=staff_name)}}">Change Password</a>
+        <a class="dropdown-item" href="/">Logout</a>
+      </div>
 
   </ul>
 </nav>

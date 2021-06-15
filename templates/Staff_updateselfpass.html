@@ -4,17 +4,20 @@
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <br>
-<h1 class="display-4">Update Details</h1>
+{% block staffnavbar %}
+  {% include 'includes/Staff_navbar.html' %}
+{% endblock %}
+<h1 class="display-4">Update Password</h1>
 
 <form method="POST" action="">
   <div class="form-group">
-    {{ render_field(form.full_name, class="form-control") }}
+    {{ render_field(form.oldpassword, class="form-control") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.email, class="form-control") }}
+    {{ render_field(form.newpassword, class="form-control") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.phone_number, class="form-control") }}
+    {{ render_field(form.cfmnewpassword, class="form-control") }}
   </div>
 <br>
   {{msg}}
