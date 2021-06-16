@@ -16,7 +16,7 @@
         Membership
       </a>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="{{url_for('member_login', email=' ', state=' ')}}">Rewards</a>
+        <a class="dropdown-item" href="{{url_for('member_login', email=' ')}}">Rewards</a>
         <a class="dropdown-item" href="{{url_for('create_Member', email=' ')}}">Sign Up</a>
       </div>
     </li>
@@ -76,6 +76,7 @@
       <div class="dropdown-menu">
         <a class="dropdown-item" href="/referral/{{email}}/' '">Rewards</a>
         <a class="dropdown-item" href="{{url_for('update_member', email=email)}}">Change Info</a>
+        <a class="dropdown-item" href="{{url_for('update_memberpass', email=email)}}">Change Password</a>
         <a class="dropdown-item" href="{{url_for('member_login', email=' ', state = ' ')}}">Logout</a>
       </div>
     </li>

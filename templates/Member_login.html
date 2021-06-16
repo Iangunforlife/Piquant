@@ -25,10 +25,6 @@
 <div class="border-top pt-3">
   <small class="text-muted">
     <a class="ml-2" href="{{ url_for('create_Member', email=email) }}">Need an account?</a>
-    <br>
-    <a class="ml-2" href="{{ url_for('member_forgotpass', email=email, state=' ')}}">Forgot Password?</a>
-    <br>
-    <a class="ml-2" href="{{ url_for('member_forgotacct', email=email, state=' ') }}">Forgot Account?</a>
   </small>
 </div>
 {% endblock %}

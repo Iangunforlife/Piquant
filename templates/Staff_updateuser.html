@@ -11,14 +11,29 @@
 
 <form method="post" action="">
   <div class="form-group">
+    {{ render_field(form.full_name, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.email, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.phone_number, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.hire_date, class="form-control") }}
+  </div>
+  <div class="form-group">
     {{ render_field(form.staff_id, class="form-control") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.password, class="form-control") }}
+    {{ render_field(form.job_title, class="form-control") }}
   </div>
+<br>
+  {{msg}}
+<br>
   <br>
   <input type="submit" value="Submit" class="btn btn-primary"/>
 </form>
 <br>
-<a href="{{url_for('staffpage', staffid=staffid)}}"> <button class="btn btn-danger"> Back </button></a>
+<a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}
