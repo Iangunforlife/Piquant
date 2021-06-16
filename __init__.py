@@ -414,9 +414,10 @@ def staffedititem(itemcode, staff_name):
             edit_item_form.itemcode.data = edit_item_form.itemcode.data.upper()
             cursor.execute('SELECT * FROM menu WHERE item_code = %s', (edit_item_form.itemcode.data,))
             checkitem = cursor.fetchone()
-            if checkitem['item_code'] != itemcode:
-                msg = 'This Item Code Exist In The Database'
-            else:
+            try:
+                if checkitem['item_code'] != itemcode:
+                    msg = 'This Item Code Exist In The Database'
+            except:
                 if edit_item_form.itemcode.data[0] not in ['S', 'M','D', 'E', 'W']:
                     msg = 'Invalid Item Code'
                 else:
