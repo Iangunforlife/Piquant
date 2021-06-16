@@ -23,11 +23,11 @@
   <div class="form-group">
     {{ render_field(form.signup_date, class="form-control") }}
   </div>
-
+  <br>
+    {{msg}}
+  <br>
   <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
-<br>
-{{msg}}
 <br>
 <a href="{{url_for('retrieve_Members', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}

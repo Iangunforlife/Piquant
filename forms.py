@@ -1,6 +1,5 @@
 from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField, DateField
-from wtforms.validators import email, ValidationError
-
+from wtforms.validators import email
 
 class ReservationForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()])
@@ -21,7 +20,7 @@ class CreateUserForm(Form):
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "123@email.com"})
     password = PasswordField('New Password', [validators.DataRequired()], render_kw={"placeholder": "New Password"})
-    phone_number = StringField('Phone_Number', [validators.Length(min=1, max=8), validators.DataRequired()],
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
 
 class UpdatememberdetailForm(Form):
@@ -29,7 +28,7 @@ class UpdatememberdetailForm(Form):
                             render_kw={"placeholder": "Full Name"})
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "123@email.com"})
-    phone_number = StringField('Phone_Number', [validators.Length(min=1, max=8), validators.DataRequired()],
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
 
 class UpdatememberdetailstaffForm(Form):
@@ -37,7 +36,7 @@ class UpdatememberdetailstaffForm(Form):
                             render_kw={"placeholder": "Full Name"})
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "123@email.com"})
-    phone_number = StringField('Phone_Number', [validators.Length(min=1, max=8), validators.DataRequired()],
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
     signup_date = DateField('Sign Up Date(YYYY-MM-DD)', [validators.DataRequired()])
 
@@ -47,30 +46,25 @@ class ChangePasswordForm(Form):
     cfmnewpassword = PasswordField('Confirm New Password', [validators.DataRequired()], render_kw={"placeholder": "Confirm New Password"})
 
 class LoginForm(Form):
-    email = StringField('Email', [email(), validators.DataRequired(),
-                                  validators.Regexp('^[a-zA-Z0-9]+@[a-zA-Z0-9.-]+.com$', message="Invalid Characters")],
+    email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "Email"})
-    password = PasswordField('Password', [validators.DataRequired(),
-                                          validators.Regexp('[^\s?/*=+~`><-][a-zA-Z0-9]{2,25}', message="Invalid Characters")],
-                             render_kw={"placeholder": "Password"},)
+    password = PasswordField('Password', [validators.DataRequired()], render_kw={"placeholder": "Password"})
 
-    #def validate(password):
-     #   if len(password.data) < 8:
-      #      raise ValidationError('Password must be more than 8 characters')
-
+# Referal Code
 class ClaimCode(Form):
     claim_code = StringField('Claim a code', [validators.optional(), validators.Length(min=6, max=20)], render_kw={"placeholder": "eg. 12345A"})
 
 class CreateCode(Form):
     code = StringField('Enter New Loyalty code', [validators.optional(), validators.Length(min=6, max=20)])
 
+# Staff
 class CreateStaff(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
                             render_kw={"placeholder": "Full Name"})
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "123@email.com"})
     password = PasswordField('New Password', [validators.DataRequired()], render_kw={"placeholder": "New Password"})
-    phone_number = StringField('Phone_Number', [validators.Length(min=1, max=8), validators.DataRequired()],
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
     staff_id = StringField('Staff ID', [validators.Length(min=1, max=7), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
@@ -82,9 +76,17 @@ class UpdateStaff(Form):
                             render_kw={"placeholder": "Full Name"})
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "123@email.com"})
-    phone_number = StringField('Phone_Number', [validators.Length(min=1, max=8), validators.DataRequired()],
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
     staff_id = StringField('Staff ID', [validators.Length(min=1, max=7), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
+    hire_date = DateField('Hire Date(YYYY-MM-DD)', [validators.DataRequired()])
     job_title = StringField('Job Title', [validators.Length(min=1, max=60), validators.DataRequired()],
                                render_kw={"placeholder": "Job Title"})
+
+# Adding New Menu Items
+class addmenu(Form):
+    itemcode = StringField('Item Code', [validators.Length(min=4, max=4), validators.DataRequired()])
+    itemname = StringField('Item Name', [validators.Length(min=0, max=50), validators.DataRequired()])
+    itemdesc = StringField('Item Description', [validators.Length(min=0, max=300), validators.DataRequired()])
+    itemprice = StringField('Item Price (x.xx)', [validators.Length(min=3, max=5), validators.DataRequired()])
