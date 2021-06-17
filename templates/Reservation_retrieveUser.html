@@ -20,11 +20,12 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>User ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Salutation</th>
+        <th>Reservation ID</th>
+        <th>Full Name</th>
         <th>Email</th>
+        <th>Phone Number</th>
+        <th>Reservation Date</th>
+        <th>Reservation Time</th>
         <th>Additional note</th>
         <th></th>
         <th></th>
@@ -33,23 +34,24 @@
     <tbody>
     {% for user in users_list %}
       <tr>
-        <td>{{ user.get_user_id()}}</td>
-        <td>{{ user.get_first_name() }}</td>
-        <td>{{ user.get_last_name() }}</td>
-        <td>{{ user.get_salutation() }}</td>
-        <td>{{ user.get_email() }}</td>
-        <td>{{ user.get_additional_note() }}</td>
-        <td><a href="/updateUser/{{user.get_user_id()}}/{{staffid}}" class="btn btn-warning">Update</a></td>
+        <td>{{ user['reservation_id']}}</td>
+        <td>{{ user['full_name'] }}</td>
+        <td>{{ user['email'] }}</td>
+        <td>{{ user['phone_num'] }}</td>
+        <td>{{ user['reservation_date'] }}</td>
+        <td>{{ user['reservation_time'] }}</td>
+        <td>{{ user['additional_note'] }}</td>
+        <td><a href="/updateUser/{{user['reservation_id']}}/{{staff_name}}" class="btn btn-warning">Update</a></td>
         <td>
-          <form action="{{url_for('delete_user', id=user.get_user_id(), staffid=staffid)}}" method="POST">
-            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user.get_first_name()}} {{user.get_last_name()}}?');">
+          <form action="{{url_for('delete_user', id=user['reservation_id'], staff_name=staff_name)}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user['reservation_id']}}?');">
           </form>
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  <a href="{{url_for('staffpage', staffid=staffid)}}"> <button class="btn btn-danger"> Back </button></a>
+  <a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
 </div>
 {% endblock %}
 

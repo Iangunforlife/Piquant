@@ -18,14 +18,16 @@
     {{ render_field(form.email, class="form-control") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.password, class="form-control") }}
+    {{ render_field(form.phone_number, class="form-control") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.sign_up_date, class="form-control") }}
+    {{ render_field(form.signup_date, class="form-control") }}
   </div>
-
+  <br>
+    {{msg}}
+  <br>
   <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
 <br>
-<a href="{{url_for('retrieve_Members', staffid=staffid)}}"> <button class="btn btn-danger"> Back </button></a>
+<a href="{{url_for('retrieve_Members', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}
