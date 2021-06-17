@@ -13,7 +13,7 @@ class ReservationForm(Form):
     cvv =StringField('CVV', [validators.Length(min=1, max=3), validators.DataRequired()])
     Additional_note = TextAreaField('Additional note', [validators.Optional()])
 
-# Akif
+#Akif
 class CreateUserForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
                             render_kw={"placeholder": "Full Name"})

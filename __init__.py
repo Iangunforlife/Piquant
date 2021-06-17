@@ -1,3 +1,4 @@
+import rsa
 from flask import Flask, render_template, request, redirect, url_for, session
 from forms import *
 import Member_Completion, GenerateOrderNum
@@ -9,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'Secret'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''   # Enter Your Own SQL Information
+app.config['MYSQL_PASSWORD'] = 'J03lch0n(250603)'   # Enter Your Own SQL Information
 app.config['MYSQL_DB'] = 'piquant'  # Load Up piquant schema
 mysql = MySQL(app)
 
@@ -35,7 +36,26 @@ def create_user(email):
     cursor.execute('SELECT * FROM account WHERE email = %s', [email])       # Look For Account Information
     account = cursor.fetchone()
     if request.method == 'POST' and create_user_form.validate():
-        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, create_user_form.email.data, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data,create_user_form.cn.data,str(create_user_form.expire.data + '-01'),create_user_form.cvv.data,create_user_form.Additional_note.data))
+        publicKey, privateKey = rsa.newkeys(512)
+
+        cns = str(create_user_form.cn.data)
+        cvvs = str(create_user_form.cvv.data)
+
+        em1 = rsa.encrypt(cns.encode(), publicKey)
+        em2 = rsa.encrypt(cvvs.encode(), publicKey)
+
+        print("Credit card number:", cns)
+        print("Credit card CVV:", cvvs)
+
+        print("encrypted credit card number: ", em1)
+        print("encrypted CVV: ", em2)
+
+        dm1 = rsa.decrypt(em1, privateKey).decode()
+        dm2 = rsa.decrypt(em2, privateKey).decode()
+
+        print("decrypted credit card name: ", dm1)
+        print("decrypted CVV: ", dm2)
+        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, create_user_form.email.data, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data,em1,str(create_user_form.expire.data + '-01'),em2,create_user_form.Additional_note.data))
         mysql.connection.commit()   #Update SQL Database
         return redirect(url_for('retrieve_users', email=email))
     if account != None:     # Pre Fill Form if user is logged in
