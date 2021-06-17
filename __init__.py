@@ -1,23 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from forms import *
-import Member_Completion, GenerateOrderNum
+import Member_Completion, GenerateOrderNum, random
 from datetime import date, datetime
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
+# For Session
 app.secret_key = 'Secret'
+
+# For SQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''   # Enter Your Own SQL Information
 app.config['MYSQL_DB'] = 'piquant'  # Load Up piquant schema
 mysql = MySQL(app)
 
+# For Captcha
 app.config['SECRET_KEY'] = 'Thisisasecret!'
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6Ld8DSsbAAAAAKwzOf-7wqEtMrn4s-wzWGId70tk'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6Ld8DSsbAAAAAGaCbG6u8jdfT1BIHCm3HHN_X2vV'
 app.config['TESTING'] = False
 
+# To Send Email
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'piquant.nyp@gmail.com'
@@ -27,8 +33,6 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 
-counter = 0
-otp = 0
 #Email To Be Passed into codes to check wether users are login or not
 @app.route('/')
 def home():
@@ -264,97 +268,60 @@ def update_memberpass(email):
 
 # New Features
 # Forgot Password
-@app.route('/Memberforgotpass/<email>/<state>', methods=['GET', 'POST'])
-def member_forgotpass(email, state):
+@app.route('/Memberforgotpass/<email>/', methods=['GET', 'POST'])
+def member_forgotpass(email):
     check_user_form = Memforgotpassword(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if request.method == 'POST' and check_user_form.validate():
-        users_dict = {}
-        db = shelve.open('storage.db', 'r')
-        users_dict = db['Member']
-        db.close()
-
-        for a in users_dict:
-            member = users_dict.get(a)
-            if check_user_form.email.data == member.get_email():
-                state = "T"
-                email = member.get_email()
-        if state == "T":
-            # Storing To Shelve Temp
-            otp_dict = {}
-            db = shelve.open('storage.db', 'c')
-            try:
-                otp_dict = db['OTP']
-            except:
-                print("Error")
-
-            otp_dict[email] = generate_otp(email)
-            db['OTP'] = otp_dict
-
-            return redirect(url_for('mementer_otp', email=email, state=" "))
+        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data ,))
+        account = cursor.fetchone()
+        if account:
+            session['OTP'] = generate_otp(account['email'])
+            session['EmailOTP'] = account['email']
+            return redirect(url_for('mementer_otp', email=email))
         else:
-            state = "F"
             print("Account Not Found")
-            return redirect(url_for('member_forgotpass', email=email, state=state))
-
-
-    return render_template('Member_ForgotPassword.html', form=check_user_form, email=email, state=state)
+            return redirect(url_for('member_forgotpass', email=email))
+    return render_template('Member_ForgotPassword.html', form=check_user_form, email=email)
 
 
 # Forgot Account
-@app.route('/Memberforgotacct/<email>/<state>', methods=['GET', 'POST'])
-def member_forgotacct(email, state):
+@app.route('/Memberforgotacct/<email>/', methods=['GET', 'POST'])
+def member_forgotacct(email):
     check_user_form = Memforgotaccount(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if request.method == 'POST' and check_user_form.validate():
-        users_dict = {}
-        db = shelve.open('storage.db', 'r')
-        users_dict = db['Member']
-        db.close()
-
-        for a in users_dict:
-            member = users_dict.get(a)
-            if check_user_form.full_name.data == member.get_full_name():
-                state = "T"
-        if state == "T":
-            print("Account Found")
-            return redirect(url_for('memsecqn', email=email, state=" "))
+        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data ,))
+        account = cursor.fetchone()
+        if account:
+            return redirect(url_for('memsecqn', email=email))
         else:
-            state = "F"
             print("Account Not Found")
-            return redirect(url_for('member_forgotacct', email=email, state=state))
+            return redirect(url_for('member_forgotacct', email=email))
 
-    return render_template('Member_ForgotAccount.html', form=check_user_form, email=email, state=state)
+    return render_template('Member_ForgotAccount.html', form=check_user_form, email=email)
 
 
 # Enter Email OTP:
-@app.route('/Memberforgotpassotp/<email>/<state>', methods=['GET', 'POST'])
-def mementer_otp(email, state):
-    # Temp Store OTP In Shelve
-    otp_dict = {}
-    db = shelve.open('storage.db', 'r')
-    otp_dict = db['OTP']
-    otp = otp_dict.get(email)
-    db.close()
+@app.route('/Memberforgotpassotp/<email>', methods=['GET', 'POST'])
+def mementer_otp(email):
     check_user_form = EnterOTP(request.form)
+    msg = ''
     if request.method == 'POST' and check_user_form.validate():
-        if int(check_user_form.OTP.data) == int(otp):
+        if int(check_user_form.OTP.data) == int(session['OTP']):
+            session.pop('OTP', None)
+            session.pop('EmailOTP', None)
             return redirect(url_for('Change_Mem_Password', email=email))
         else:
-            state = 'F'
-            return redirect(url_for('mementer_otp', email=email, state=state))
-
-    return render_template('Member_ForgotPassOTP.html', form=check_user_form, email=email, state=state)
+            msg = "Incorrect OTP"
+    return render_template('Member_ForgotPassOTP.html', form=check_user_form, email=email, msg=msg)
 
 
 @app.route('/Memberresentotp/<email>', methods=['GET', 'POST'])
 def memresent_otp(email):
-    db = shelve.open('storage.db', 'w')
-    otp_dict = db['OTP']
-    otp_dict.pop(email)
-    newotp = generate_otp(email)
-    otp_dict[email] = newotp
-    db['OTP'] = otp_dict
-    db.close()
-    return redirect(url_for('mementer_otp', email=email, state =" "))
+    session.pop('OTP', None)
+    session['OTP'] = generate_otp(session['EmailOTP'])
+    return redirect(url_for('mementer_otp', email=email))
 
 
 # Change Password:
@@ -362,39 +329,27 @@ def memresent_otp(email):
 @app.route('/ChangeMemberPassword/<email>/', methods=['GET', 'POST'])
 def Change_Mem_Password(email):
     update_user_form = ChangeMemberPassword(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if request.method == 'POST' and update_user_form.validate():
-        db = shelve.open('storage.db', 'w')
-        users_dict = db['Member']
-        temp = users_dict.get(email)
-        temp.set_password(update_user_form.newpassword.data)
-        db['Member'] = users_dict
-        db.close()
-        return redirect(url_for('member_updatesucess', email=email))
+        cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, email,))   # Update SQL To New Password That User Entered
+        mysql.connection.commit()
+        return redirect(url_for('member_updatesuccess', email=email))
     return render_template('Member_ChangePassword.html', form=update_user_form, email=" ")
 
 
 # Not Completed
-@app.route('/Memberforgotacctsecqn/<email>/<state>', methods=['GET', 'POST'])
-def memsecqn(email, state):
-    # Temp Store OTP In Shelve
-    '''
-    otp_dict = {}
-    db = shelve.open('storage.db', 'r')
-    otp_dict = db['OTP']
-    otp = otp_dict.get(email)
-    db.close()
-    '''
+@app.route('/Memberforgotacctsecqn/<email>', methods=['GET', 'POST'])
+def memsecqn(email):
     secqnlist = ['Hello', 'Test']
     check_user_form = SecQn(request.form)
+    msg = ''
     if request.method == 'POST' and check_user_form.validate():
-        if check_user_form.SecAns1.data == otp:
-            if check_user_form.SecAns2.data == otp:
-                return redirect(url_for('referral', email=" ", state=" "))
+        if check_user_form.SecAns1.data == "hi":    # Change This
+            if check_user_form.SecAns2.data == "Welcome":   # Change This
+                return redirect(url_for('referral', email=" "))     # Think Of This
         else:
-            state = 'F'
-            return redirect(url_for('memsecqn', email=email, state=state))
-
-    return render_template('Member_ForgotAcctsecqn.html', form=check_user_form, email=email, state=state, secqn_list=secqnlist)
+            msg = 'Incorrect Answer'
+    return render_template('Member_ForgotAcctsecqn.html', form=check_user_form, email=email, msg=msg, secqn_list=secqnlist)
 
 
 
@@ -519,7 +474,6 @@ def staffadditem(staff_name):
         add_item_form.itemcode.data = add_item_form.itemcode.data.upper()
         cursor.execute('SELECT * FROM menu WHERE item_code = %s', [add_item_form.itemcode.data])
         item = cursor.fetchone()
-        print(add_item_form.itemcode.data)
         if add_item_form.itemcode.data[0] not in ['S', 'M', 'D', 'E', 'W']:
             msg = 'Invalid Item Code'
         elif item:
@@ -541,9 +495,10 @@ def staffedititem(itemcode, staff_name):
             edit_item_form.itemcode.data = edit_item_form.itemcode.data.upper()
             cursor.execute('SELECT * FROM menu WHERE item_code = %s', (edit_item_form.itemcode.data,))
             checkitem = cursor.fetchone()
-            if checkitem['item_code'] != itemcode:
-                msg = 'This Item Code Exist In The Database'
-            else:
+            try:
+                if checkitem['item_code'] != itemcode:
+                    msg = 'This Item Code Exist In The Database'
+            except:
                 if edit_item_form.itemcode.data[0] not in ['S', 'M','D', 'E', 'W']:
                     msg = 'Invalid Item Code'
                 else:

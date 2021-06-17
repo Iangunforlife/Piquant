@@ -18,13 +18,15 @@
 <br>
 <a href="/"> <button class="btn btn-danger"> Back </button> </a>
 <br>
-{%if state == "F"%}
-  <p> Invalid Username/Password </p>
-{% endif %}
+{{msg}}
 <br>
 <div class="border-top pt-3">
   <small class="text-muted">
     <a class="ml-2" href="{{ url_for('create_Member', email=email) }}">Need an account?</a>
+    <br>
+    <a class="ml-2" href="{{ url_for('member_forgotpass', email=email)}}">Forgot Password?</a>
+    <br>
+    <a class="ml-2" href="{{ url_for('member_forgotacct', email=email) }}">Forgot Account?</a>
   </small>
 </div>
 {% endblock %}

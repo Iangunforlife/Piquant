@@ -15,7 +15,6 @@
 <br>
 <a href="{{ url_for('memresent_otp', email=email)}}"> Resend OTP </a>
 <br>
-{%if state == "F"%}
-  <p> Incorrect OTP </p>
-{% endif %}
+<p> {{msg}} </p>
+<br>
 {% endblock %}

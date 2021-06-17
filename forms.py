@@ -1,5 +1,6 @@
 from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField, DateField
 from wtforms.validators import email
+from flask_wtf import RecaptchaField
 
 class ReservationForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()])
@@ -90,3 +91,27 @@ class addmenu(Form):
     itemname = StringField('Item Name', [validators.Length(min=0, max=50), validators.DataRequired()])
     itemdesc = StringField('Item Description', [validators.Length(min=0, max=300), validators.DataRequired()])
     itemprice = StringField('Item Price (x.xx)', [validators.Length(min=3, max=5), validators.DataRequired()])
+
+class Memforgotpassword(Form):
+    email = StringField('Email', [email(), validators.DataRequired()],
+                        render_kw={"placeholder": "Email"})
+    recaptcha = RecaptchaField()
+
+class Memforgotaccount(Form):
+    full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
+                            render_kw={"placeholder": "Full Name"})
+    recaptcha = RecaptchaField()
+
+class EnterOTP(Form):
+    OTP = StringField('OTP', [validators.Length(min=6, max=6), validators.DataRequired()],
+                      render_kw={"placeholder": "OTP"})
+
+class SecQn(Form):
+    SecAns1 = StringField('', [validators.Length(min=1, max=50), validators.DataRequired()],
+                      render_kw={"placeholder": "Answer"})
+    SecAns2 = StringField('', [validators.Length(min=1, max=50), validators.DataRequired()],
+                      render_kw={"placeholder": "Answer"})
+
+class ChangeMemberPassword(Form):
+    newpassword = PasswordField('Password', [validators.DataRequired(), validators.EqualTo('cfmpassword', message='Passwords must match')],  render_kw={"placeholder": "New Password"})
+    cfmpassword = PasswordField('Reenter Password', [validators.DataRequired()], render_kw={"placeholder": "Reenter Password"})
