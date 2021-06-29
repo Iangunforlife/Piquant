@@ -15,16 +15,17 @@
   </div>
   <input type="submit" value="Login" class="btn btn-success"/>
 </form>
+
 <br>
 <a href="/"> <button class="btn btn-danger"> Back </button> </a>
 <br>
-{%if state == "F"%}
-  <p> Invalid Username/Password </p>
-{% endif %}
+
+<p> {{msg}} </p>
+
 <br>
 <div class="border-top pt-3">
   <small class="text-muted">
-    <a class="ml-2" href="{{ url_for('create_Member', email=email) }}">Need an account?</a>
+    <a class="ml-2" href="{{ url_for('create_Member') }}">Need an account?</a>
   </small>
 </div>
 {% endblock %}

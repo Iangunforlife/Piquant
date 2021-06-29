@@ -1,5 +1,6 @@
 from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField, DateField
-from wtforms.validators import email
+from wtforms.validators import email, ValidationError
+
 
 class ReservationForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()])
@@ -46,10 +47,16 @@ class ChangePasswordForm(Form):
     cfmnewpassword = PasswordField('Confirm New Password', [validators.DataRequired()], render_kw={"placeholder": "Confirm New Password"})
 
 class LoginForm(Form):
-    email = StringField('Email', [email(), validators.DataRequired()],
+    email = StringField('Email', [email(), validators.DataRequired(),
+                                  validators.Regexp('^[a-zA-Z0-9]+@[a-zA-Z0-9.-]+.com$', message="Invalid Characters")],
                         render_kw={"placeholder": "Email"})
-    password = PasswordField('Password', [validators.DataRequired()], render_kw={"placeholder": "Password"})
+    password = PasswordField('Password', [validators.DataRequired(),
+                                          validators.Regexp('[^\s?/*=+~`><-][a-zA-Z0-9]{2,25}', message="Invalid Characters")],
+                             render_kw={"placeholder": "Password"},)
 
+    #def validate(password):
+     #   if len(password.data) < 8:
+      #      raise ValidationError('Password must be more than 8 characters')
 
 class ClaimCode(Form):
     claim_code = StringField('Claim a code', [validators.optional(), validators.Length(min=6, max=20)], render_kw={"placeholder": "eg. 12345A"})
