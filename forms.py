@@ -98,8 +98,8 @@ class Memforgotpassword(Form):
     recaptcha = RecaptchaField()
 
 class Memforgotaccount(Form):
-    full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
-                            render_kw={"placeholder": "Full Name"})
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
+                               render_kw={"placeholder": "Phone Number"})
     recaptcha = RecaptchaField()
 
 class EnterOTP(Form):

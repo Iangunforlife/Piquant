@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from forms import *
 import Member_Completion, GenerateOrderNum, random
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 from flask_mail import Mail, Message
+import os
+from twilio.rest import Client
 
 app = Flask(__name__)
 # For Session
@@ -27,10 +29,17 @@ app.config['TESTING'] = False
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'piquant.nyp@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Piquantnyp@01'
+app.config['MAIL_PASSWORD'] = ''
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
+# To Send SMS
+# Find your Account SID and Auth Token at twilio.com/console
+# and set the environment variables. See http://twil.io/secure
+account_sid = ''
+auth_token = ''
+client = Client(account_sid, auth_token)
 
 
 #Email To Be Passed into codes to check wether users are login or not
@@ -175,14 +184,36 @@ def create_Member(email):
 @app.route('/Memberlogin/<email>', methods=['GET', 'POST'])
 def member_login(email):
     msg = ''
+    try:
+        if session['loginattempt'] == 3:
+            try:
+                session['blktime']
+            except:
+                curtime = datetime.now()
+                blktill = curtime + timedelta(minutes=1)    #Block For 5 Minutes
+                session['blktime'] = blktill       # Block Attempts Till This Time
+            timeremain = str(session['blktime'] - datetime.now())
+            timeremain = timeremain[2:7]
+            if timeremain == ' day,':
+                session['loginattempt'] = 0
+                session.pop('blktime', None)
+                msg = ''
+            else:
+                msg = 'You Have Been Blocked, Please Wait For ' + timeremain
+    except:
+        session['loginattempt'] = 0
     check_user_form = LoginForm(request.form)
-    if request.method == 'POST' and check_user_form.validate():
+    if request.method == 'POST' and check_user_form.validate() and session['loginattempt'] < 3:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM account WHERE email = %s AND password = %s', (check_user_form.email.data,check_user_form.password.data,))
         account = cursor.fetchone()
         if account:     # If Account Exist In DataBase
+            session.pop('trylogin', None)
+            session.pop('loginattempt', None)
             return redirect(url_for('referral', email=account['email'], state=" "))
         else:
+            session['loginattempt'] = session['loginattempt'] + 1
+            print(session['loginattempt'])
             msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
     return render_template('Member_login.html', form=check_user_form, email=email, msg=msg)
 
@@ -291,7 +322,7 @@ def member_forgotacct(email):
     check_user_form = Memforgotaccount(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if request.method == 'POST' and check_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data ,))
+        cursor.execute('SELECT * FROM account WHERE phone_num = %s', (check_user_form.phone_number.data,))
         account = cursor.fetchone()
         if account:
             return redirect(url_for('memsecqn', email=email))
@@ -703,6 +734,14 @@ def generate_otp(email):
     msg = Message('OTP Forgot Password', sender='piquant.nyp@gmail.com', recipients=[email])
     msg.body = str('This Is Your OTP {}' .format(otp))
     mail.send(msg)
+    """
+    message = client.messages \
+    .create(
+         body= str('This Is Your OTP {}' .format(otp)),
+         from_='+13126983345',
+         to='+6588582648'
+     )
+    """
     return otp
 
 if __name__ == '__main__':
