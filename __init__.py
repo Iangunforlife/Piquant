@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session
 from forms import *
 import Member_Completion, GenerateOrderNum, random
 from datetime import date, datetime, timedelta
@@ -47,7 +47,7 @@ client = Client(account_sid, auth_token)
 app.config['UPLOAD_FOLDER'] = 'static/accountsecpic'
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # 4MB max-limit.
 
-#Email To Be Passed into codes to check wether users are login or not
+# Email To Be Passed into codes to check wether users are login or not
 @app.route('/')
 def home():
     return render_template('home.html', email=" ")
@@ -189,37 +189,61 @@ def create_Member(email):
 @app.route('/Memberlogin/<email>', methods=['GET', 'POST'])
 def member_login(email):
     msg = ''
-    try:
-        if session['loginattempt'] == 3:
+    try:    # Check If There's A Login Attempt Session In Place
+        # At 5 Attempt
+        if session['loginattempt'] == 5:
             try:
                 session['blktime']
             except:
                 curtime = datetime.now()
-                blktill = curtime + timedelta(minutes=1)    #Block For 5 Minutes
+                blktill = curtime + timedelta(minutes=5)    # Block For 5 Minutes
                 session['blktime'] = blktill       # Block Attempts Till This Time
-            timeremain = str(session['blktime'] - datetime.now())
-            timeremain = timeremain[2:7]
-            if timeremain == ' day,':
-                session['loginattempt'] = 0
+            timeremain = str(session['blktime'] - datetime.now())       # Calculate Time Remaining
+            timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+            if timeremain == ' day,':       # If Block Time Is Up
                 session.pop('blktime', None)
                 msg = ''
+                session['loginattempt'] = session['loginattempt'] + 1   # To Unblock User
             else:
                 msg = 'You Have Been Blocked, Please Wait For ' + timeremain
-    except:
+        # At 10 Attempt ( Have To Put 11 As Session Will +1 To Unblock User Earlier On)
+        elif session['loginattempt'] == 11:
+            try:
+                session['blktime']
+            except:
+                curtime = datetime.now()
+                blktill = curtime + timedelta(minutes=10)    # Block For 10 Minutes
+                session['blktime'] = blktill       # Block Attempts Till This Time
+            timeremain = str(session['blktime'] - datetime.now())   # Calculate Time Remaining
+            timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+            if timeremain == ' day,':       # If Block Time Is Up
+                session.pop('blktime', None)
+                msg = ''
+                session['loginattempt'] = session['loginattempt'] + 1   # To Unblock User
+            else:
+                msg = 'You Have Been Blocked, Please Wait For ' + timeremain
+    except:     # Create A New Session called loginattempt
         session['loginattempt'] = 0
+
     check_user_form = LoginForm(request.form)
-    if request.method == 'POST' and check_user_form.validate() and session['loginattempt'] < 3:
+    if request.method == 'POST' and check_user_form.validate() and session['loginattempt'] != 5 and session['loginattempt'] != 11:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s AND password = %s', (check_user_form.email.data,check_user_form.password.data,))
+        cursor.execute('SELECT * FROM account WHERE email = %s ', (check_user_form.email.data,))
         account = cursor.fetchone()
         if account:     # If Account Exist In DataBase
-            session.pop('trylogin', None)
-            session.pop('loginattempt', None)
-            return redirect(url_for('referral', email=account['email'], state=" "))
+            if account['account_status'] == "Blocked":
+                msg = 'This Account Has Been Locked, Please Reset Your Password To Unlock Your Account'
+            elif check_user_form.password.data == account['password']:      # Check If Password Entered By User Is The Same As The One In The Database
+                session.pop('loginattempt', None)
+                return redirect(url_for('referral', email=account['email'], state=" "))
+            else:
+                msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
         else:
-            session['loginattempt'] = session['loginattempt'] + 1
-            print(session['loginattempt'])
             msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
+        session['loginattempt'] = session['loginattempt'] + 1   # Increase Login Attempt By One
+        if session['loginattempt'] == 11:    # If Login Attempt Reached 10, Account Will Be Locked [Needs to be equal to 11 as the system will add 1 attempt to allow user to try after the initial 3 failed attempt]
+            cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Blocked", check_user_form.email.data,))     # Set Account Status To Blocked In SQL
+            mysql.connection.commit()
     return render_template('Member_login.html', form=check_user_form, email=email, msg=msg)
 
 
@@ -257,8 +281,8 @@ def referral(email, state):
             return redirect(url_for('referral', email=email, state="unclaimed"))
     return render_template('Member_referral.html', email=email, form=claim_form, user=account, state=state)
 
-@app.route('/membersuccess/<email>')
-def member_updatesuccess(email):
+@app.route('/acctsuccess/<email>')
+def acct_updatesuccess(email):
     return render_template('Member_Selfupdatesuccess.html', email=email)
 
 
@@ -276,7 +300,7 @@ def update_member(email):
         else:
             cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, email,))
             mysql.connection.commit()
-            return redirect(url_for('member_updatesuccess', email=email))
+            return redirect(url_for('acct_updatesuccess', email=email))
     else:   # Pre Fill Information in the form
         cursor.execute('SELECT * FROM account WHERE email = %s', (email,))
         account = cursor.fetchone()
@@ -297,131 +321,74 @@ def update_memberpass(email):
          if update_user_form.oldpassword.data == account['password']:   # Check If Old Password Entered Is The Same One Entered By The User
              cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, email,))   # Update SQL To New Password That User Entered
              mysql.connection.commit()
-             return redirect(url_for('member_updatesuccess', email=email))
+             return redirect(url_for('acct_updatesuccess', email=email))
          else:
              msg = 'Incorrect Password'
      return render_template('Member_updateselfpass.html', form=update_user_form, email=email, msg=msg)
 
 
-# New Features
-# Forgot Password
-@app.route('/Memberforgotpass/<email>/', methods=['GET', 'POST'])
-def member_forgotpass(email):
-    check_user_form = Memforgotpassword(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if request.method == 'POST' and check_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data ,))
-        account = cursor.fetchone()
-        if account:
-            session['OTP'] = generate_otp(account['email'])
-            session['EmailOTP'] = account['email']
-            return redirect(url_for('mementer_otp', email=email))
-        else:
-            print("Account Not Found")
-            return redirect(url_for('member_forgotpass', email=email))
-    return render_template('Member_ForgotPassword.html', form=check_user_form, email=email)
-
-
-# Forgot Account
-@app.route('/Memberforgotacct/<email>/', methods=['GET', 'POST'])
-def member_forgotacct(email):
-    check_user_form = Memforgotaccount(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if request.method == 'POST' and check_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE phone_num = %s', (check_user_form.phone_number.data,))
-        account = cursor.fetchone()
-        if account:
-            session['acctrecover'] = account['email']       # Put Email In A Session For Use Later
-            return redirect(url_for('memsecqn', email=email))
-        else:
-            print("Account Not Found")
-            return redirect(url_for('member_forgotacct', email=email))
-
-    return render_template('Member_ForgotAccount.html', form=check_user_form, email=email)
-
-
-# Enter Email OTP:
-@app.route('/Memberforgotpassotp/<email>', methods=['GET', 'POST'])
-def mementer_otp(email):
-    check_user_form = EnterOTP(request.form)
-    msg = ''
-    if request.method == 'POST' and check_user_form.validate():
-        if int(check_user_form.OTP.data) == int(session['OTP']):
-            session.pop('OTP', None)
-            session.pop('EmailOTP', None)
-            return redirect(url_for('Change_Mem_Password', email=email))
-        else:
-            msg = "Incorrect OTP"
-    return render_template('Member_ForgotPassOTP.html', form=check_user_form, email=email, msg=msg)
-
-
-@app.route('/Memberresentotp/<email>', methods=['GET', 'POST'])
-def memresent_otp(email):
-    session.pop('OTP', None)
-    session['OTP'] = generate_otp(session['EmailOTP'])
-    return redirect(url_for('mementer_otp', email=email))
-
-
-# Change Password:
-#Update Member (For Customers)
-@app.route('/ChangeMemberPassword/<email>/', methods=['GET', 'POST'])
-def Change_Mem_Password(email):
-    update_user_form = ChangeMemberPassword(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, email,))   # Update SQL To New Password That User Entered
-        mysql.connection.commit()
-        return redirect(url_for('member_updatesuccess', email=email))
-    return render_template('Member_ChangePassword.html', form=update_user_form, email=" ")
-
-
-# Not Completed
-@app.route('/Memberforgotacctsecqn/<email>', methods=['GET', 'POST'])
-def memsecqn(email):
-    mememail = session['acctrecover']      # Get User's Email From The Phone Number They Entered
-    memselectedpic = mememail.replace('@', '') + "_memsecpic"   # Get Picture File Name
-    a = 0
-    photolist = [memselectedpic]            # Add Picture That User Has Choosen When Setting Up Account Recovery
-    while a < 3:
-        randnum = random.randint(2,5)       # Generate A Random Int That Corresponds With A Picture Number
-        pictoadd = 'pic' + str(randnum)     # Find This Pic File Name
-        photolist.append(pictoadd)          # Append To The List
-        a += 1
-    random.shuffle(photolist)       # Shuffle Order Of Pictures To Be Shown
-    check_user_form = secpic(request.form)
-    check_user_form.secpic.choices = [(p, p) for p in photolist]    # Show Pictures In Radio Button Format
-    if request.method == 'POST' and check_user_form.validate():
-        if check_user_form.secpic.data == memselectedpic:       # If Option That User Has Choosen Matches The One In The Account Recovery
-             session.pop('acctrecover', None)       # Remove User's Email From The Session acctrecover
-             return redirect(url_for('referral', email=" ", state = " "))
-    return render_template('Member_ForgotAcctsecqn.html', form=check_user_form, email=email)
-
-
-@app.route('/Membersecfavpic/<email>', methods=['GET', 'POST'])
-def memsecfavpic(email):
-    upload_form = uploadfavpic(request.form)
-    msg = ""
-    if request.method == 'POST':
-        fileuploaded = request.files[upload_form.favpic.name].read()    # Get Image In Pure Data Format
-        filename = str(email).replace('@', '') + "_memsecpic.jpg"   # Prep File Name
-        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename)), 'wb').write(fileuploaded)    # Save The Picture That Is Uploaded By The User
-        return redirect(url_for('referral', email=" ", state = " "))
-    return render_template('Member_UploadFavPic.html', form=upload_form, email=email, msg=msg)
-
-
 #Staff Pages
 @app.route('/Stafflogin/<email>', methods=['GET','POST'])
 def checkstaff(email):
-    check_user_form = LoginForm(request.form)
     msg = ' '
-    if request.method == 'POST' and check_user_form.validate():
+    try:    # Check If There's A Login Attempt Session In Place
+        # At 5 Attempt
+        if session['loginattempt'] == 5:
+            try:
+                session['blktime']
+            except:
+                curtime = datetime.now()
+                blktill = curtime + timedelta(minutes=5)    # Block For 5 Minutes
+                session['blktime'] = blktill       # Block Attempts Till This Time
+            timeremain = str(session['blktime'] - datetime.now())       # Calculate Time Remaining
+            timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+            if timeremain == ' day,':       # If Block Time Is Up
+                session.pop('blktime', None)
+                msg = ''
+                session['loginattempt'] = session['loginattempt'] + 1   # To Unblock User
+            else:
+                msg = 'You Have Been Blocked, Please Wait For ' + timeremain
+        # At 10 Attempt ( Have To Put 11 As Session Will +1 To Unblock User Earlier On)
+        elif session['loginattempt'] == 11:
+            try:
+                session['blktime']
+            except:
+                curtime = datetime.now()
+                blktill = curtime + timedelta(minutes=10)    # Block For 10 Minutes
+                session['blktime'] = blktill       # Block Attempts Till This Time
+            timeremain = str(session['blktime'] - datetime.now())   # Calculate Time Remaining
+            timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+            if timeremain == ' day,':       # If Block Time Is Up
+                session.pop('blktime', None)
+                msg = ''
+                session['loginattempt'] = session['loginattempt'] + 1   # To Unblock User
+            else:
+                msg = 'You Have Been Blocked, Please Wait For ' + timeremain
+    except:     # Create A New Session called loginattempt
+        session['loginattempt'] = 0
+
+    check_user_form = LoginForm(request.form)
+    if request.method == 'POST' and check_user_form.validate() and session['loginattempt'] != 5 and session['loginattempt'] != 11:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s AND password = %s', (check_user_form.email.data,check_user_form.password.data,))
+        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data,))
         account = cursor.fetchone()
         if account:
-            if account['staff_id'] != None:     # Only allow access if staff_id field in the account has information in it (If An Account is a member, The Staff_id field would not be filled up)
-                return redirect(url_for('staffpage', staff_name=account['full_name']))
-        msg = "Incorrect Username/Password"
+            if account['account_status'] == "Blocked":
+                msg = 'This Account Has Been Locked, Please Reset Your Password To Unlock Your Account'
+            elif account['password'] == check_user_form.password.data:
+                if account['staff_id'] != None:     # Only allow access if staff_id field in the account has information in it (If An Account is a member, The Staff_id field would not be filled up)
+                    session.pop('loginattempt', None)
+                    return redirect(url_for('staffpage', staff_name=account['full_name']))
+                else:
+                    msg = "Incorrect Username/Password"
+            else:
+                msg = "Incorrect Username/Password"
+        else:
+            msg = "Incorrect Username/Password"
+        session['loginattempt'] = session['loginattempt'] + 1   # Increase Login Attempt By One
+        if session['loginattempt'] == 11:    # If Login Attempt Reached 10, Account Will Be Locked [Needs to be equal to 11 as the system will add 1 attempt to allow user to try after the initial 3 failed attempt]
+            cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Blocked", check_user_form.email.data,))     # Set Account Status To Blocked In SQL
+            mysql.connection.commit()
 
     return render_template('Staff_login.html', form=check_user_form, msg=msg, email=email)
 
@@ -737,22 +704,129 @@ def delete_staff(delstaffemail, staff_name):
 
 @app.route('/updatestaffpass/<staff_name>/', methods=['GET', 'POST'])
 def Changepass_staff(staff_name):
-     update_user_form = ChangePasswordForm(request.form)
+    update_user_form = ChangePasswordForm(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (staff_name,))
+    staff = cursor.fetchone()
+    msg = ''
+    if request.method == 'POST' and update_user_form.validate():
      cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-     cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (staff_name,))
-     staff = cursor.fetchone()
-     msg = ''
-     if request.method == 'POST' and update_user_form.validate():
-         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-         cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))
-         account = cursor.fetchone()
-         if update_user_form.oldpassword.data == account['password']:   # Ensure Old Password Matches The Password That The User Entered
-             cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, staff['email'],))
-             mysql.connection.commit()
-             return redirect(url_for('member_updatesuccess', email=' '))
-         else:
-             msg = 'Incorrect Password'
-     return render_template('Staff_updateselfpass.html', form=update_user_form, staff_name=staff_name, msg=msg)
+     cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))
+     account = cursor.fetchone()
+     if update_user_form.oldpassword.data == account['password']:   # Ensure Old Password Matches The Password That The User Entered
+         cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, staff['email'],))
+         mysql.connection.commit()
+         return redirect(url_for('acct_updatesuccess', email=' '))
+     else:
+        msg = 'Incorrect Password'
+    return render_template('Staff_updateselfpass.html', form=update_user_form, staff_name=staff_name, msg=msg)
+
+
+# New Features (Account Manage)
+# Forgot Password
+@app.route('/Acctforgotpass/<email>/', methods=['GET', 'POST'])
+def acct_forgotpass(email):
+    check_user_form = Memforgotpassword(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if request.method == 'POST' and check_user_form.validate():
+        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data ,))
+        account = cursor.fetchone()
+        if account:
+            session['OTP'] = generate_otp(account['email'])
+            session['acctrecoveremail'] = account['email']
+            return redirect(url_for('acctenter_otp', email=email))
+        else:
+            print("Account Not Found")
+            return redirect(url_for('acct_forgotpass', email=email))
+    return render_template('Account_ForgotPassword.html', form=check_user_form, email=email)
+
+
+# Forgot Account
+@app.route('/acctforgotacct/<email>/', methods=['GET', 'POST'])
+def acct_forgotacct(email):
+    check_user_form = Memforgotaccount(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if request.method == 'POST' and check_user_form.validate():
+        cursor.execute('SELECT * FROM account WHERE phone_num = %s', (check_user_form.phone_number.data,))
+        account = cursor.fetchone()
+        if account:
+            session['acctrecoveremail'] = account['email']       # Put Email In A Session For Use Later
+            return redirect(url_for('acctsecqn', email=email))
+        else:
+            print("Account Not Found")
+            return redirect(url_for('acct_forgotacct', email=email))
+
+    return render_template('Account_ForgotAccount.html', form=check_user_form, email=email)
+
+
+# Enter Email OTP:
+@app.route('/acctforgotpassotp/<email>', methods=['GET', 'POST'])
+def acctenter_otp(email):
+    check_user_form = EnterOTP(request.form)
+    msg = ''
+    if request.method == 'POST' and check_user_form.validate():
+        if int(check_user_form.OTP.data) == int(session['OTP']):
+            session.pop('OTP', None)
+            return redirect(url_for('Change_Acct_Password', email=email))
+        else:
+            msg = "Incorrect OTP"
+    return render_template('Account_ForgotPassOTP.html', form=check_user_form, email=email, msg=msg)
+
+
+@app.route('/acctresentotp/<email>', methods=['GET', 'POST'])
+def acctresent_otp(email):
+    session.pop('OTP', None)
+    session['OTP'] = generate_otp(session['EmailOTP'])
+    return redirect(url_for('mementer_otp', email=email))
+
+
+# Mandatory Change Password:
+# Update Password
+@app.route('/ChangeAcctPassword/<email>/', methods=['GET', 'POST'])
+def Change_Acct_Password(email):
+    update_user_form = ChangeMemberPassword(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if request.method == 'POST' and update_user_form.validate():
+        cursor.execute('UPDATE account SET password = %s, account_status = NULL WHERE email = %s', (update_user_form.newpassword.data, session['acctrecoveremail'],))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
+        mysql.connection.commit()
+        session.pop('acctrecoveremail', None)
+        return redirect(url_for('acct_updatesuccess', email=email))
+    return render_template('Account_ChangePassword.html', form=update_user_form, email=" ")
+
+
+# Not Completed
+@app.route('/Acctforgotacctsecqn/<email>', methods=['GET', 'POST'])
+def acctsecqn(email):
+    mememail = session['acctrecoveremail']      # Get User's Email From The Phone Number They Entered
+    memselectedpic = mememail.replace('@', '') + "_memsecpic"   # Get Picture File Name
+    a = 0
+    photolist = [memselectedpic]            # Add Picture That User Has Choosen When Setting Up Account Recovery
+    while a < 3:
+        randnum = random.randint(2,5)       # Generate A Random Int That Corresponds With A Picture Number
+        pictoadd = 'pic' + str(randnum)     # Find This Pic File Name
+        photolist.append(pictoadd)          # Append To The List
+        a += 1
+    random.shuffle(photolist)       # Shuffle Order Of Pictures To Be Shown
+    check_user_form = secpic(request.form)
+    check_user_form.secpic.choices = [(p, p) for p in photolist]    # Show Pictures In Radio Button Format
+    if request.method == 'POST' and check_user_form.validate():
+        if check_user_form.secpic.data == memselectedpic:       # If Option That User Has Choosen Matches The One In The Account Recovery
+             session.pop('acctrecover', None)       # Remove User's Email From The Session acctrecover
+             return redirect(url_for('referral', email=" ", state = " "))
+    return render_template('Account_ForgotAcctsecqn.html', form=check_user_form, email=email)
+
+# Upload Their Fav Pic
+@app.route('/Acctsecfavpic/<email>', methods=['GET', 'POST'])
+def acctsecfavpic(email):
+    upload_form = uploadfavpic(request.form)
+    msg = ""
+    if request.method == 'POST':
+        fileuploaded = request.files[upload_form.favpic.name].read()    # Get Image In Pure Data Format
+        filename = str(email).replace('@', '') + "_memsecpic.jpg"   # Prep File Name
+        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename)), 'wb').write(fileuploaded)    # Save The Picture That Is Uploaded By The User
+        return redirect(url_for('referral', email=" ", state = " "))
+    return render_template('Member_UploadFavPic.html', form=upload_form, email=email, msg=msg)
+
 
 def generate_otp(email):
     otp = random.randint(100000, 999999)
