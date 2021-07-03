@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Pic Upload{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<br>
+<h1 class="display-4">Pic Upload</h1>
+
+<h4> Upload Your Favourite Pic Here: (Only Jpg Files Are Allowed, Max 4 MB) </h4>
+
+<form method="POST" action="" enctype="multipart/form-data" >
+    <div class="form-group">
+    {{ render_field(form.favpic, class="form-control-file") }}
+  </div>
+  <input type="submit" value="Submit" class="btn btn-success"/>
+</form>
+<br>
+{{msg}}
+<br>
+{% endblock %}

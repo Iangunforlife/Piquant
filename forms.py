@@ -1,6 +1,9 @@
-from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField, DateField
+from flask_wtf.file import FileRequired, FileAllowed
+from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField, DateField, \
+    RadioField, FileField
 from wtforms.validators import email
 from flask_wtf import RecaptchaField
+
 
 class ReservationForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()])
@@ -115,3 +118,10 @@ class SecQn(Form):
 class ChangeMemberPassword(Form):
     newpassword = PasswordField('Password', [validators.DataRequired(), validators.EqualTo('cfmpassword', message='Passwords must match')],  render_kw={"placeholder": "New Password"})
     cfmpassword = PasswordField('Reenter Password', [validators.DataRequired()], render_kw={"placeholder": "Reenter Password"})
+
+class secpic(Form):
+    secpic = RadioField('pic')
+
+class uploadfavpic(Form):
+    favpic = FileField('File', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+

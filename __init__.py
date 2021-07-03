@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from forms import *
 import Member_Completion, GenerateOrderNum, random
 from datetime import date, datetime, timedelta
@@ -26,7 +26,7 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = '6Ld8DSsbAAAAAGaCbG6u8jdfT1BIHCm3HHN_X2vV'
 app.config['TESTING'] = False
 
 # To Send Email
-app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'piquant.nyp@gmail.com'
 app.config['MAIL_PASSWORD'] = ''
@@ -41,6 +41,11 @@ account_sid = ''
 auth_token = ''
 client = Client(account_sid, auth_token)
 
+
+# To Upload Files
+# app.config['UPLOAD_EXTENSIONS'] = ['.jpg']
+app.config['UPLOAD_FOLDER'] = 'static/accountsecpic'
+app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # 4MB max-limit.
 
 #Email To Be Passed into codes to check wether users are login or not
 @app.route('/')
@@ -297,6 +302,7 @@ def update_memberpass(email):
              msg = 'Incorrect Password'
      return render_template('Member_updateselfpass.html', form=update_user_form, email=email, msg=msg)
 
+
 # New Features
 # Forgot Password
 @app.route('/Memberforgotpass/<email>/', methods=['GET', 'POST'])
@@ -325,6 +331,7 @@ def member_forgotacct(email):
         cursor.execute('SELECT * FROM account WHERE phone_num = %s', (check_user_form.phone_number.data,))
         account = cursor.fetchone()
         if account:
+            session['acctrecover'] = account['email']       # Put Email In A Session For Use Later
             return redirect(url_for('memsecqn', email=email))
         else:
             print("Account Not Found")
@@ -371,17 +378,35 @@ def Change_Mem_Password(email):
 # Not Completed
 @app.route('/Memberforgotacctsecqn/<email>', methods=['GET', 'POST'])
 def memsecqn(email):
-    secqnlist = ['Hello', 'Test']
-    check_user_form = SecQn(request.form)
-    msg = ''
+    mememail = session['acctrecover']      # Get User's Email From The Phone Number They Entered
+    memselectedpic = mememail.replace('@', '') + "_memsecpic"   # Get Picture File Name
+    a = 0
+    photolist = [memselectedpic]            # Add Picture That User Has Choosen When Setting Up Account Recovery
+    while a < 3:
+        randnum = random.randint(2,5)       # Generate A Random Int That Corresponds With A Picture Number
+        pictoadd = 'pic' + str(randnum)     # Find This Pic File Name
+        photolist.append(pictoadd)          # Append To The List
+        a += 1
+    random.shuffle(photolist)       # Shuffle Order Of Pictures To Be Shown
+    check_user_form = secpic(request.form)
+    check_user_form.secpic.choices = [(p, p) for p in photolist]    # Show Pictures In Radio Button Format
     if request.method == 'POST' and check_user_form.validate():
-        if check_user_form.SecAns1.data == "hi":    # Change This
-            if check_user_form.SecAns2.data == "Welcome":   # Change This
-                return redirect(url_for('referral', email=" "))     # Think Of This
-        else:
-            msg = 'Incorrect Answer'
-    return render_template('Member_ForgotAcctsecqn.html', form=check_user_form, email=email, msg=msg, secqn_list=secqnlist)
+        if check_user_form.secpic.data == memselectedpic:       # If Option That User Has Choosen Matches The One In The Account Recovery
+             session.pop('acctrecover', None)       # Remove User's Email From The Session acctrecover
+             return redirect(url_for('referral', email=" ", state = " "))
+    return render_template('Member_ForgotAcctsecqn.html', form=check_user_form, email=email)
 
+
+@app.route('/Membersecfavpic/<email>', methods=['GET', 'POST'])
+def memsecfavpic(email):
+    upload_form = uploadfavpic(request.form)
+    msg = ""
+    if request.method == 'POST':
+        fileuploaded = request.files[upload_form.favpic.name].read()    # Get Image In Pure Data Format
+        filename = str(email).replace('@', '') + "_memsecpic.jpg"   # Prep File Name
+        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename)), 'wb').write(fileuploaded)    # Save The Picture That Is Uploaded By The User
+        return redirect(url_for('referral', email=" ", state = " "))
+    return render_template('Member_UploadFavPic.html', form=upload_form, email=email, msg=msg)
 
 
 #Staff Pages
@@ -741,8 +766,8 @@ def generate_otp(email):
          from_='+13126983345',
          to='+6588582648'
      )
-    """
+     """
     return otp
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

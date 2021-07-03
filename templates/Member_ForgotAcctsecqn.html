@@ -6,23 +6,22 @@
 <br>
 <h1 class="display-4">Security Question</h1>
 
+<h4> Select Your Favourite Picture: </h4>
+
 <form method="POST" action="">
-  {% for i in range(secqn_list|length) %}
-    {% if i == 0 %}
-    <p> Question 1: {{ secqn_list[i] }} </p>
-      <div class="form-group">
-        {{ render_field(form.SecAns1, class="form-control") }}
-      </div>
-    {% elif i == 1 %}
-    <p> Question 2: {{ secqn_list[i]}} </p>
-      <div class="form-group">
-        {{ render_field(form.SecAns2, class="form-control") }}
-      </div>
-    {% endif %}
+  {% for subfield in form %}
+  {{ subfield(style="list-style:none") }}
+
   {% endfor %}
+
   <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
-<br>
-{{ msg }}
-<br>
+{% for count in range(4) %}
+ <script>
+        {% for subfield in form %}
+        var label = document.querySelector('label[for="secpic-{{count}}"]');
+        label.innerHTML = ' <img src="{{url_for('static', filename='accountsecpic/' + subfield.choices[count][1] + '.jpg')}}" style="width:20%;"> ';
+        {% endfor %}
+ </script>
+{% endfor %}
 {% endblock %}
