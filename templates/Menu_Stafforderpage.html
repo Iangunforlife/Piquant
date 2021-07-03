@@ -43,9 +43,9 @@
                 {% endif %}
                 {% endfor %}
                 <td> {{b['status']}}</td>
-                <td> <a href="/stateorderpage_staff/{{b['order_num']}}/{{staff_name}}"> <button class="btn btn-success"> Served </button> </a></td>
+                <td> <a href="/stateorderpage_staff/{{b['order_num']}}"> <button class="btn btn-success"> Served </button> </a></td>
                  <!-- Delete -->
-                <td> <a href="/delorderpage_staff/{{b['order_num']}}/{{staff_name}}"> <button class="btn btn-danger"> Delete </button> </a> </td>
+                <td> <a href="/delorderpage_staff/{{b['order_num']}}"> <button class="btn btn-danger"> Delete </button> </a> </td>
                 {% endif %}
             </tr>
             {% endfor %}
@@ -54,5 +54,5 @@
   </div>
 {% endfor %}
 {% endif %}
-<a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+<a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}

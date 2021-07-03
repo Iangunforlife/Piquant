@@ -23,7 +23,7 @@
                 <td> {{ b['item_name'] }} </td>
                 <td> {{ a['quantity'] }} </td>  <!-- Quanity -->
                 <td> $ {{ b['item_price'] * a['quantity'] }} </td>  <!-- Price -->
-                <td> <a href="/deleteitem/{{a['order_num']}}/email=email"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
+                <td> <a href="/deleteitem/{{a['order_num']}}"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
             </tr>
             {% endif %}
             {% endfor %}
@@ -32,9 +32,9 @@
     </table>
     <br>
     <div class="button">
-        <a href = "{{url_for('orderpage1', email=email)}}"> <button class="btn btn-danger"> Back </button> </a>
+        <a href = "{{url_for('orderpage1')}}"> <button class="btn btn-danger"> Back </button> </a>
         &nbsp;
-        <a href = "{{url_for('submit', email=email)}}"> <button class="btn btn-success"> Confirm </button> </a>
+        <a href = "{{url_for('submit')}}"> <button class="btn btn-success"> Confirm </button> </a>
     </div>
     <br>
     <h1 class="display-4 textcenter"> Past Order </h1>

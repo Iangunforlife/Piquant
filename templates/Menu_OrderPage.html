@@ -24,7 +24,7 @@
             <p> Table Number: <br> {{ session['tablenum'] }}</p>
         </li>
         <li class="nav-item">
-            <a href = "{{url_for('cart', tablenum=tablenum, email=email )}}" class="nav-link"> <i class="fa fa-shopping-cart" style="font-size:30px; color:#FCC201"></i> </a>
+            <a href = "{{url_for('cart')}}" class="nav-link"> <i class="fa fa-shopping-cart" style="font-size:30px; color:#FCC201"></i> </a>
         </li>
     </ul>
 </div>
@@ -40,7 +40,7 @@
             <h3 class="textcenter"> {{a['item_name']}} </h3>
             <p class="ordermenudesc"> {{a['item_desc']}} </p>
             <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+            <a href = "{{url_for('addingorder', orderitem=a['item_code'])}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
           </div>
       {% endif %}
       {% endfor %}
@@ -54,7 +54,7 @@
             <h3 class="textcenter"> {{a['item_name']}} </h3>
             <p class="ordermenudesc"> {{a['item_desc']}} </p>
             <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+            <a href = "{{url_for('addingorder', orderitem=a['item_code'])}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
           </div>
       {% endif %}
       {% endfor %}
@@ -68,7 +68,7 @@
             <h3 class="textcenter"> {{a['item_name']}} </h3>
             <p class="ordermenudesc"> {{a['item_desc']}} </p>
             <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+            <a href = "{{url_for('addingorder', orderitem=a['item_code'])}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
           </div>
       {% endif %}
       {% endfor %}
@@ -83,7 +83,7 @@
             <h3 class="textcenter"> {{a['item_name']}} </h3>
             <p class="ordermenudesc"> {{a['item_desc']}} </p>
             <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+            <a href = "{{url_for('addingorder', orderitem=a['item_code'])}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
           </div>
       {% endif %}
       {% endfor %}
@@ -97,7 +97,7 @@
             <h3 class="textcenter"> {{a['item_name']}} </h3>
             <p class="ordermenudesc"> {{a['item_desc']}} </p>
             <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+            <a href = "{{url_for('addingorder', orderitem=a['item_code'])}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
           </div>
       {% endif %}
       {% endfor %}

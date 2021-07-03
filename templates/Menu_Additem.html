@@ -24,9 +24,9 @@
         <td> {{a['item_code']}}</td>
         <td> {{a['item_name']}}</td>
         <td> $ {{a['item_price']}}</td>
-        <td> <a href="/staffedititem/{{a['item_code']}}/{{staff_name}}" class="btn btn-warning">Update</a> </td>
+        <td> <a href="/staffedititem/{{a['item_code']}}" class="btn btn-warning">Update</a> </td>
         <td>
-        <form action="{{url_for('staffdelitem', itemcode=a['item_code'], staff_name=staff_name)}}" method="POST">
+        <form action="{{url_for('staffdelitem', itemcode=a['item_code'])}}" method="POST">
             <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{a['item_code']}}?');">
         </form>
         </td>
@@ -85,5 +85,5 @@
   </tr>
   </tbody>
 </table>
-<a href="{{url_for('retrieve_Members', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+<a href="{{url_for('retrieve_Members')}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}

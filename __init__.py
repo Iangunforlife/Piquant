@@ -67,30 +67,30 @@ def number():
 @app.route('/onlineorder')
 def orderpage1():
     try:
-        session['tablealloc']
+        session['tablealloc']   # Check If Table Allocation Exist
     except:
-         session['tablenum'] = 1
+         session['tablealloc'] = True   # Turn On Table Allocation
+         session['tablenum'] = 1    # If Session Does Not Exist, Put as Default Table
     try:
-        session['onlineorder']
+        session['onlineorder']  # Check If There's Ordering Session For The Table
     except:
-        session['onlineorder'] = True
-        session['tablealloc'] = True
+        session['onlineorder'] = True   # Turn On Online Order
         now = datetime.now()
         curtime = now.strftime("%H_%M_%S")
-        session['ordersess'] = str(session['tablenum']) + '_' + curtime
+        session['ordersess'] = str(session['tablenum']) + '_' + curtime     # Create An Order Session Using tablenum and Current Time
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM menu')
     allitem = cursor.fetchall()
     return render_template('Menu_OrderPage.html', allitem=allitem)
 
 
-@app.route('/addingorder/<orderitem>/<email>')
-def addingorder(orderitem, email):
+@app.route('/addingorder/<orderitem>/')
+def addingorder(orderitem):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     newordernum = session['ordersess'] + '_' + str(GenerateOrderNum.generateordernum()) # Generate A Random Order Number To Store
-    cursor.execute('INSERT INTO cart VALUES (%s, %s, %s, %s, %s)', [newordernum, str(session['tablenum']), email, orderitem, 'Pending'])
+    cursor.execute('INSERT INTO cart VALUES (%s, %s, %s, %s, %s)', [newordernum, str(session['tablenum']), session['email'], orderitem, 'Pending'])
     mysql.connection.commit()
-    return redirect(url_for('orderpage1', email=email))
+    return redirect(url_for('orderpage1'))
 
 
 @app.route('/cart')
@@ -118,17 +118,17 @@ def cart():
 
 
 @app.route('/deleteitem/<ordernum>')
-def deleteitem(ordernum, email):
+def deleteitem(ordernum):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('DELETE FROM cart WHERE order_num = %s', [ordernum])
     mysql.connection.commit()
     return redirect(url_for('cart'))
 
 @app.route('/submit')
-def submit(email):
+def submit():
     session.pop('onlineorder', None)
     session.pop('ordersess', None)
-    return render_template('Menu_Submit.html', email=email)
+    return render_template('Menu_Submit.html')
 
 
 #Akif
@@ -215,6 +215,10 @@ def referral(state):
 def logout():
     session.pop('login', None)
     session.pop('email', None)
+    try:
+        session.pop('stafflogged', None)
+    except:
+        pass
     return redirect(url_for('member_login'))
 
 @app.route('/membersucess')
@@ -231,7 +235,7 @@ def update_member():
     if request.method == 'POST' and update_user_form.validate():
         cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
         account = cursor.fetchone()     # Fetch Only 1 SQL Record (Since Email Is A Primary Key, There Should Be Only 1 Record)
-        if email != account['email']:   # Check Wether Database has this email or not
+        if session['email'] != account['email']:   # Check Wether Database has this email or not
             msg = "This Email Has Been Used"
         else:
             cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, session['email'],))
@@ -277,12 +281,14 @@ def checkstaff():
         if account:
             if account['staff_id'] != None:     # Only allow access if staff_id field in the account has information in it (If An Account is a member, The Staff_id field would not be filled up)
                 try:
-                    session['login'] == True
+                    session['login']
                     session.pop('login', None)
                     session.pop('email', None)
                 except:
-                    session['login'] = True
-                    session['email'] = account['email']
+                    pass
+                session['login'] = True
+                session['email'] = account['email']    # Allow Staff To Access Normal Webapge
+                session['stafflogged'] = account['full_name']   # To Use Staff Page Items
                 return redirect(url_for('staffpage'))
         msg = "Incorrect Username/Password"
 
@@ -342,7 +348,7 @@ def changetable(state):
     elif state == "F":  # Decrease Table Number By 1
         if session['tablenum'] > 1:
             session['tablenum'] = session['tablenum'] - 1
-    return redirect(url_for('orderpage1', email=' '))
+    return redirect(url_for('orderpage1'))
 
 
 @app.route('/orderpage_staff')
@@ -361,28 +367,28 @@ def orderpagestaff():
     return render_template('Menu_Stafforderpage.html', allorders=allorders, counttable=counttable, iteminfo=iteminfo)
 
 # Change State To Served
-@app.route('/stateorderpage_staff/<ordernum>/<staff_name>')
-def stateorderpagestaff(ordernum, staff_name):
+@app.route('/stateorderpage_staff/<ordernum>')
+def stateorderpagestaff(ordernum):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     # Retrieve Carts From All Table
     cursor.execute('UPDATE cart SET status= %s WHERE order_num= %s', ['Served', ordernum])
     mysql.connection.commit()
-    return redirect(url_for('orderpagestaff', staff_name=staff_name))
+    return redirect(url_for('orderpagestaff'))
 
 
 # Delete Order Items
-@app.route('/delorderpage_staff/<ordernum>/<staff_name>')
-def delorderpagestaff(ordernum, staff_name):
+@app.route('/delorderpage_staff/<ordernum>')
+def delorderpagestaff(ordernum):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     # Retrieve Carts From All Table
     cursor.execute('DELETE FROM cart WHERE order_num = %s', [ordernum])
     mysql.connection.commit()
-    return redirect(url_for('orderpagestaff', staff_name=staff_name))
+    return redirect(url_for('orderpagestaff'))
 
 
 # Add Item To Menu:
-@app.route('/staffadditem/<staff_name>', methods=['GET', 'POST'])
-def staffadditem(staff_name):
+@app.route('/staffadditem', methods=['GET', 'POST'])
+def staffadditem():
     msg = ''
     add_item_form = addmenu(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -400,30 +406,28 @@ def staffadditem(staff_name):
         else:
             cursor.execute('INSERT INTO menu VALUES (%s, %s, %s, %s)', (add_item_form.itemcode.data, add_item_form.itemname.data, add_item_form.itemdesc.data, add_item_form.itemprice.data ))
             mysql.connection.commit()
-            return redirect(url_for('staffadditem', staff_name=staff_name))
-    return render_template('Menu_Additem.html', form=add_item_form, staff_name=staff_name, msg=msg, allmenu=allmenu)
+            return redirect(url_for('staffadditem'))
+    return render_template('Menu_Additem.html', form=add_item_form, msg=msg, allmenu=allmenu)
 
 
 # Edit Item On Menu:
-@app.route('/staffedititem/<itemcode>/<staff_name>', methods=['GET', 'POST'])
-def staffedititem(itemcode, staff_name):
+@app.route('/staffedititem/<itemcode>', methods=['GET', 'POST'])
+def staffedititem(itemcode):
     edit_item_form = addmenu(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     msg = ''
     if request.method == 'POST' and edit_item_form.validate():
-            edit_item_form.itemcode.data = edit_item_form.itemcode.data.upper()
-            cursor.execute('SELECT * FROM menu WHERE item_code = %s', (edit_item_form.itemcode.data,))
-            checkitem = cursor.fetchone()
-            try:
-                if checkitem['item_code'] != itemcode:
-                    msg = 'This Item Code Exist In The Database'
-            except:
-                if edit_item_form.itemcode.data[0] not in ['S', 'M','D', 'E', 'W']:
-                    msg = 'Invalid Item Code'
-                else:
-                    cursor.execute('UPDATE menu SET item_code= %s, item_name = %s, item_desc= %s, item_price= %s WHERE item_code = %s', (edit_item_form.itemcode.data, edit_item_form.itemname.data, edit_item_form.itemdesc.data, edit_item_form.itemprice.data, itemcode,))
-                    mysql.connection.commit()
-                    return redirect(url_for('staffadditem', staff_name=staff_name))
+        edit_item_form.itemcode.data = edit_item_form.itemcode.data.upper()
+        cursor.execute('SELECT * FROM menu WHERE item_code = %s', (edit_item_form.itemcode.data,))
+        checkitem = cursor.fetchone()
+        if checkitem['item_code'] != itemcode:
+            msg = 'This Item Code Exist In The Database'
+        elif edit_item_form.itemcode.data[0] not in ['S', 'M','D', 'E', 'W']:
+            msg = 'Invalid Item Code'
+        else:
+            cursor.execute('UPDATE menu SET item_code= %s, item_name = %s, item_desc= %s, item_price= %s WHERE item_code = %s', (edit_item_form.itemcode.data, edit_item_form.itemname.data, edit_item_form.itemdesc.data, edit_item_form.itemprice.data, itemcode,))
+            mysql.connection.commit()
+            return redirect(url_for('staffadditem'))
     else:
         cursor.execute('SELECT * FROM menu WHERE item_code = %s', (itemcode,))  # Get Item Info based on the item code choosen
         item = cursor.fetchone()
@@ -432,16 +436,16 @@ def staffedititem(itemcode, staff_name):
         edit_item_form.itemdesc.data = item['item_desc']
         edit_item_form.itemprice.data = item['item_price']
 
-    return render_template('Menu_Edititem.html', form=edit_item_form, staff_name=staff_name, msg=msg)
+    return render_template('Menu_Edititem.html', form=edit_item_form, msg=msg)
 
 
 # Remove Menu Item
-@app.route('/staffdelitem/<itemcode>/<staff_name>', methods=['GET', 'POST'])
-def staffdelitem(itemcode, staff_name):
+@app.route('/staffdelitem/<itemcode>', methods=['GET', 'POST'])
+def staffdelitem(itemcode):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('DELETE FROM menu WHERE item_code = %s ', [itemcode])
     mysql.connection.commit()
-    return redirect(url_for('staffadditem', staff_name=staff_name))
+    return redirect(url_for('staffadditem'))
 
 
 #Akif
@@ -455,38 +459,38 @@ def retrieve_Members():
 
 
 # Update Member for Staff
-@app.route('/updateMemberstaff/<email>/<staff_name>', methods=['GET', 'POST'])
-def update_memberstaff(email, staff_name):
+@app.route('/updateMemberstaff/<mememail>', methods=['GET', 'POST'])
+def update_memberstaff(mememail):
     update_user_form = UpdatememberdetailstaffForm(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     msg = ''
     if request.method == 'POST' and update_user_form.validate():
         cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
         account = cursor.fetchone()
-        if email != account['email']:   # Do Not Allow Change Of Email if The Email Address Entered Is Found In The Database
+        if mememail != account['email']:   # Do Not Allow Change Of Email if The Email Address Entered Is Found In The Database
             msg = "This Email Has Been Used"
         else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, sign_up_date = %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.signup_date.data, email,))
+            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, sign_up_date = %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.signup_date.data, mememail,))
             mysql.connection.commit()
-            return redirect(url_for('retrieve_Members', staff_name=staff_name))
+            return redirect(url_for('retrieve_Members'))
     else:   # Pre Fill Form
-        cursor.execute('SELECT * FROM account WHERE email = %s', (email,))
+        cursor.execute('SELECT * FROM account WHERE email = %s', (mememail,))
         account = cursor.fetchone()
         update_user_form.full_name.data = account['full_name']
         update_user_form.email.data = account['email']
         update_user_form.phone_number.data = account['phone_num']
         update_user_form.signup_date.data = account['sign_up_date']
 
-    return render_template('Member_updateUser.html', form=update_user_form, staff_name=staff_name, msg=msg)
+    return render_template('Member_updateUser.html', form=update_user_form, msg=msg)
 
 
 # Delete Member
-@app.route('/deleteMember/<mememail>/<staff_name>', methods=['POST'])
-def delete_Member(mememail, staff_name):
+@app.route('/deleteMember/<mememail>', methods=['POST'])
+def delete_Member(mememail):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('DELETE FROM account WHERE email = %s ', [mememail])
     mysql.connection.commit()
-    return redirect(url_for('retrieve_Members', staff_name=staff_name))
+    return redirect(url_for('retrieve_Members'))
 
 
 #Referal Codes
@@ -498,6 +502,7 @@ def referal_codes():
     cursor.execute('SELECT * FROM rewards ')
     code_list = cursor.fetchall()
     if request.method == 'POST' and createcode.validate():
+        createcode.code.data.upper()
         cursor.execute('SELECT * FROM rewards WHERE reward_code = %s', (createcode.code.data,))
         code = cursor.fetchone()
         if code:    # Do Not Allow Duplicated Codes (By Checking if code number exist in the database)
@@ -507,7 +512,7 @@ def referal_codes():
             mysql.connection.commit()
             return redirect(url_for('referal_codes'))
 
-    return render_template('Member_StaffReferalCodes.html', form=createcode, count=len(code_list), code_list=code_list)
+    return render_template('Member_StaffReferalCodes.html', form=createcode, count=len(code_list), code_list=code_list, msg = msg)
 
 #Delete Referal Codes
 @app.route('/deleteReferal/<codenum>', methods=['GET', 'POST'])
@@ -520,7 +525,7 @@ def delete_code(codenum):
 
 #Create Staff User
 @app.route('/CreateStaff', methods=['GET','POST'])
-def create_staff(staff_name):
+def create_staff():
     msg = ''
     create_user_form = CreateStaff(request.form)
     if request.method == 'POST' and create_user_form.validate():
@@ -573,10 +578,7 @@ def update_staff(toupdate):     # toupdate Variable Is Used in a case where 1 st
         else:
             cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, staff_id= %s, hire_date= %s, job_title= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.staff_id.data, update_user_form.hire_date.data, update_user_form.job_title.data, staff['email'],))
             mysql.connection.commit()
-            if session['email'] == staff['email']:
-                return redirect(url_for('staffretrieve', staff_name=update_user_form.full_name.data))
-            else:
-                return redirect(url_for('staffretrieve'))
+            return redirect(url_for('staffretrieve'))
     else:
         cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))     # Get Account Information
         account = cursor.fetchone()
@@ -587,7 +589,7 @@ def update_staff(toupdate):     # toupdate Variable Is Used in a case where 1 st
         update_user_form.hire_date.data = account['hire_date']
         update_user_form.job_title.data = account['job_title']
 
-    return render_template('Staff_updateuser.html', form=update_user_form)
+    return render_template('Staff_updateuser.html', form=update_user_form, msg=msg)
 
 
 @app.route('/deleteStaff/<delstaffemail>/', methods=['POST'])
@@ -598,11 +600,11 @@ def delete_staff(delstaffemail):
     return redirect(url_for('staffretrieve'))
 
 
-@app.route('/updatestaffpass/', methods=['GET', 'POST'])
+@app.route('/updatestaffpass', methods=['GET', 'POST'])
 def Changepass_staff():
      update_user_form = ChangePasswordForm(request.form)
      cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-     cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (session['email']))
+     cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (session['stafflogged'],))
      staff = cursor.fetchone()
      msg = ''
      if request.method == 'POST' and update_user_form.validate():

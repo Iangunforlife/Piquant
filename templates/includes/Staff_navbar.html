@@ -2,7 +2,7 @@
 <body>
 <nav class="navbar navbar-expand-sm bg-light navbar-light" >
 <!-- Links -->
-  <p class="navbar-brand"> Hello {{session['email']}} </p>
+  <p class="navbar-brand"> Hello {{session['stafflogged']}} </p>
   <ul class="navbar-nav wholenavbar">
 
     <li class="nav-item">
@@ -12,7 +12,6 @@
       <a class="nav-link navbaritem" href="{{url_for('orderpagestaff')}}"> Retrive Orders</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members')}}"> Retrive Members</a>
       <a class="nav-link navbaritem" href="{{url_for('staffadditem')}}"> Edit Menu</a>
     </li>
     <li class="nav-item">
@@ -32,9 +31,9 @@
         Account Setting
       </a>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="{{url_for('update_staff', toupdate=staff_name)}}">Change Info</a>
+        <a class="dropdown-item" href="{{url_for('update_staff', toupdate=session['stafflogged'])}}">Change Info</a>
         <a class="dropdown-item" href="{{url_for('Changepass_staff')}}">Change Password</a>
-        <a class="dropdown-item" href="/">Logout</a>
+        <a class="dropdown-item" href="/logout">Logout</a>
       </div>
 
   </ul>
