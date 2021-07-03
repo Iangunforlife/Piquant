@@ -215,11 +215,8 @@ def referral(state):
 def logout():
     session.pop('login', None)
     session.pop('email', None)
-    try:
-        session.pop('stafflogged', None)
-    except:
-        pass
-    return redirect(url_for('member_login'))
+    session.pop('stafflogged', None)
+    return redirect(url_for('home'))
 
 @app.route('/membersucess')
 def member_updatesucess():
@@ -240,7 +237,7 @@ def update_member():
         else:
             cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, session['email'],))
             mysql.connection.commit()
-            return redirect(url_for('member_updatesucess'))
+            return redirect(url_for('referral', state=''))
     else:   # Pre Fill Information in the form
         cursor.execute('SELECT * FROM account WHERE email = %s', (session['email'],))
         account = cursor.fetchone()
@@ -296,12 +293,22 @@ def checkstaff():
 
 @app.route('/Staffpage')
 def staffpage():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     return render_template('Staff_Page.html')
 
 
 #Reservation Form (Joel And Ernest)
 @app.route('/retrieveReservation')
 def retrieve():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM reservation')
     users_list = cursor.fetchall()     # Retrieve All Reservatio
@@ -310,6 +317,11 @@ def retrieve():
 
 @app.route('/updateUser/<id>', methods=['GET', 'POST'])
 def update_user(id):
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     update_user_form = ReservationForm(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM reservation WHERE reservation_id = %s', id)       # Get Entire Row That Contains The Reservation ID
@@ -353,6 +365,17 @@ def changetable(state):
 
 @app.route('/orderpage_staff')
 def orderpagestaff():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    try:
+        session['tablealloc']   # Check If Table Allocation Exist
+    except:
+        session['tablealloc'] = True   # Turn On Table Allocation
+        session['tablenum'] = 1    # If Session Does Not Exist, Put as Default Table
     # To Get Orders
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     # Get All Menu Information
@@ -389,6 +412,11 @@ def delorderpagestaff(ordernum):
 # Add Item To Menu:
 @app.route('/staffadditem', methods=['GET', 'POST'])
 def staffadditem():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     msg = ''
     add_item_form = addmenu(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -413,6 +441,11 @@ def staffadditem():
 # Edit Item On Menu:
 @app.route('/staffedititem/<itemcode>', methods=['GET', 'POST'])
 def staffedititem(itemcode):
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     edit_item_form = addmenu(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     msg = ''
@@ -452,6 +485,11 @@ def staffdelitem(itemcode):
 # Retrieve Member
 @app.route('/retrieveMembers')
 def retrieve_Members():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM account where member_level is not null ')     # Get Only Members (Staff has no member Level (AKA NULL value), Therefore, it won't be displayed'
     users_list = cursor.fetchall()
@@ -461,6 +499,11 @@ def retrieve_Members():
 # Update Member for Staff
 @app.route('/updateMemberstaff/<mememail>', methods=['GET', 'POST'])
 def update_memberstaff(mememail):
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     update_user_form = UpdatememberdetailstaffForm(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     msg = ''
@@ -496,6 +539,11 @@ def delete_Member(mememail):
 #Referal Codes
 @app.route('/Referalcodes', methods=['GET','POST'])
 def referal_codes():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     msg = ''
     createcode = CreateCode(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -526,6 +574,11 @@ def delete_code(codenum):
 #Create Staff User
 @app.route('/CreateStaff', methods=['GET','POST'])
 def create_staff():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     msg = ''
     create_user_form = CreateStaff(request.form)
     if request.method == 'POST' and create_user_form.validate():
@@ -552,11 +605,21 @@ def create_staff():
 
 @app.route('/confirmstaff/<newuser>')
 def confirmstaff(newuser):
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     return render_template('Staff_Confirm.html', newuser=newuser)
 
 
 @app.route('/staffRetrieve')
 def staffretrieve():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM account where staff_id is not null ')     # Get Staff (Members will not be included as their staff_id is a null value)
     users_list = cursor.fetchall()
@@ -565,6 +628,11 @@ def staffretrieve():
 
 @app.route('/updateStaff/<toupdate>', methods=['GET', 'POST'])
 def update_staff(toupdate):     # toupdate Variable Is Used in a case where 1 staff Member is editing another Staff Member's Information). toupdate is the staff memeber's name
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
     update_user_form = UpdateStaff(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (toupdate,))  # Get Staff Email based on the staff name entered
@@ -602,22 +670,27 @@ def delete_staff(delstaffemail):
 
 @app.route('/updatestaffpass', methods=['GET', 'POST'])
 def Changepass_staff():
-     update_user_form = ChangePasswordForm(request.form)
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+    update_user_form = ChangePasswordForm(request.form)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (session['stafflogged'],))
+    staff = cursor.fetchone()
+    msg = ''
+    if request.method == 'POST' and update_user_form.validate():
      cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-     cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (session['stafflogged'],))
-     staff = cursor.fetchone()
-     msg = ''
-     if request.method == 'POST' and update_user_form.validate():
-         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-         cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))
-         account = cursor.fetchone()
-         if update_user_form.oldpassword.data == account['password']:   # Ensure Old Password Matches The Password That The User Entered
-             cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, staff['email'],))
-             mysql.connection.commit()
-             return redirect(url_for('member_updatesucess'))
-         else:
-             msg = 'Incorrect Password'
-     return render_template('Staff_updateselfpass.html', form=update_user_form, msg=msg)
+     cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))
+     account = cursor.fetchone()
+     if update_user_form.oldpassword.data == account['password']:   # Ensure Old Password Matches The Password That The User Entered
+         cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, staff['email'],))
+         mysql.connection.commit()
+         return redirect(url_for('member_updatesucess'))
+     else:
+         msg = 'Incorrect Password'
+    return render_template('Staff_updateselfpass.html', form=update_user_form, msg=msg)
 
 
 if __name__ == '__main__':
