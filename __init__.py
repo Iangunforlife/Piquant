@@ -28,8 +28,8 @@ app.config['TESTING'] = False
 # To Send Email
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'piquant.nyp@gmail.com'
-app.config['MAIL_PASSWORD'] = ''
+app.config['MAIL_USERNAME'] = ''
+app.config['MAIL_PASSWORD'] = 'Piquantnyp@01'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
@@ -235,7 +235,12 @@ def member_login(email):
                 msg = 'This Account Has Been Locked, Please Reset Your Password To Unlock Your Account'
             elif check_user_form.password.data == account['password']:      # Check If Password Entered By User Is The Same As The One In The Database
                 session.pop('loginattempt', None)
-                return redirect(url_for('referral', email=account['email'], state=" "))
+                # To Force User To Change Password
+                if account['pwd_expiry'] <= datetime.today().date():       # Compare Password Expiry Date To Current Date
+                    session['acctrecoveremail'] = account['email']
+                    return redirect(url_for('Change_Acct_Password', email=email))   # Redirect to Password Change Page
+                else:
+                    return redirect(url_for('referral', email=account['email'], state=" "))
             else:
                 msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
         else:
@@ -264,7 +269,7 @@ def referral(email, state):
         for a in code_list:
             if a['reward_code'] == claim_form.claim_code.data:
                 if a['status'] == "Claimed":       # Check Status
-                     check = "used"     # Return Variable To Let Webapge Know That The Code is Used
+                     check = "used"     # Return Variable To Let Webpage Know That The Code is Used
                 else:
                     check = "claim"
                     cursor.execute('UPDATE rewards SET status = %s WHERE reward_code = %s', ('Claimed', a['reward_code']))  # Update Status To Update
@@ -787,7 +792,10 @@ def Change_Acct_Password(email):
     update_user_form = ChangeMemberPassword(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('UPDATE account SET password = %s, account_status = NULL WHERE email = %s', (update_user_form.newpassword.data, session['acctrecoveremail'],))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
+        curdate = date.today()   # Get Today's date
+        expiry_date = curdate + timedelta(days=90)
+        pwd_expiry = expiry_date.strftime("%Y-%m-%d")   # To Create New Date According To SQL Format
+        cursor.execute('UPDATE account SET password = %s, pwd_expiry = %s, account_status = NULL WHERE email = %s', (update_user_form.newpassword.data, pwd_expiry, session['acctrecoveremail'],))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
         mysql.connection.commit()
         session.pop('acctrecoveremail', None)
         return redirect(url_for('acct_updatesuccess', email=email))
@@ -837,8 +845,8 @@ def generate_otp(email):
     message = client.messages \
     .create(
          body= str('This Is Your OTP {}' .format(otp)),
-         from_='+13126983345',
-         to='+6588582648'
+         from_='',
+         to=''
      )
      """
     return otp
