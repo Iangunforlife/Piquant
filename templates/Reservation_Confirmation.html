@@ -11,6 +11,6 @@
   <p>Date: {{get_user['reservation_date']}} </p>
   <p>Time: {{get_user['reservation_time']}} </p>
   <p>Additional note: {{get_user['additional_note']}} </p>
-  <a href="{{ url_for('number', email=email)}} "><button class="btn btn-success">Confirm</button></a>
+  <a href="{{ url_for('number')}} "><button class="btn btn-success">Confirm</button></a>
 </div>
 {% endblock %}

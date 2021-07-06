@@ -23,11 +23,11 @@
 <br>
 <div class="border-top pt-3">
   <small class="text-muted">
-    <a class="ml-2" href="{{ url_for('create_Member', email=email) }}">Need an account?</a>
+    <a class="ml-2" href="{{ url_for('create_Member') }}">Need an account?</a>
     <br>
-    <a class="ml-2" href="{{ url_for('acct_forgotpass', email=email)}}">Forgot Password?</a>
+    <a class="ml-2" href="{{ url_for('acct_forgotpass')}}">Forgot Password?</a>
     <br>
-    <a class="ml-2" href="{{ url_for('acct_forgotacct', email=email) }}">Forgot Account?</a>
+    <a class="ml-2" href="{{ url_for('acct_forgotacct' }}">Forgot Account?</a>
   </small>
 </div>
 {% endblock %}

@@ -39,9 +39,9 @@
         <td>{{ user['sign_up_date'] }}</td>
         <td>{{ user['member_level'] }}</td>
         <td>{{ user['member_completion'] }}</td>
-        <td><a href="/updateMemberstaff/{{user['email']}}/{{staff_name}}" class="btn btn-warning">Update</a></td>
+        <td><a href="/updateMemberstaff/{{user['email']}}" class="btn btn-warning">Update</a></td>
         <td>
-          <form action="{{url_for('delete_Member', mememail=user['email'], staff_name=staff_name)}}" method="POST">
+          <form action="{{url_for('delete_Member', mememail=user['email'])}}" method="POST">
             <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user['full_name']}}?');">
           </form>
         </td>
@@ -49,6 +49,6 @@
     {% endfor %}
     </tbody>
   </table>
-    <a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+    <a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
 </div>
 {% endblock %}
