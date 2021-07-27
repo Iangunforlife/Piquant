@@ -1,7 +1,7 @@
 <html>
 <body>
 <nav class="navbar navbar-expand-sm bg-light navbar-light" >
-<!-- Links -->
+  <a class="navbar-brand" href="/"><img src="{{url_for('static',filename = 'img/logo.png')}}" alt=""></a>
   <p class="navbar-brand"> Hello {{ staff_name }} </p>
   <ul class="navbar-nav wholenavbar">
 
@@ -12,20 +12,12 @@
       <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staff_name=staff_name)}}"> Retrive Orders</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('staffadditem', staff_name=staff_name)}}"> Edit Menu</a>
-    </li>
-    <li class="nav-item">
       <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staff_name=staff_name)}}"> Retrive Members</a>
     </li>
     <li class="nav-item">
       <a class="nav-link navbaritem" href="{{url_for('referal_codes', staff_name=staff_name)}}"> Loyalty Codes </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('create_staff', staff_name=staff_name)}}" >Create New Staff User</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('staffretrieve', staff_name=staff_name)}}">Retrive Staff User</a>
-    </li>
+
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
         Account Setting

@@ -1,12 +1,10 @@
-{% extends "base.html" %}
+{% extends "staff_base.html" %}
 {% block title %}Piquant - Update Info{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <br>
-{% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
+
 <h1 class="display-4">Update Password</h1>
 
 <form method="POST" action="">

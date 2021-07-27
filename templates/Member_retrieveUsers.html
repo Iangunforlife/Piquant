@@ -1,11 +1,9 @@
-{% extends "base.html" %}
+{% extends 'staff_base.html'%}
 {% block title %}Piquant - Staff Retrieve Users{% endblock %}
 
 {% block content %}
 <br>
-{% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
+
 <h1 class="display-4">Retrieve Users</h1>
 <div>
   {% if count == 0 %}
@@ -51,4 +49,5 @@
   </table>
     <a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
 </div>
+
 {% endblock %}

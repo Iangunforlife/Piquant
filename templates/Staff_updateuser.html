@@ -1,15 +1,13 @@
-{% extends "base.html" %}
+{% extends 'staff_base.html' %}
 {% block title %}Piquant - Update Staff User{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <br>
-{% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
-<h1 class="display-4">Update User</h1>
 
-<form method="post" action="">
+<h1 class="display-4">Update Info</h1>
+
+<form method="post" action="Staff_Userslist.html">
   <div class="form-group">
     {{ render_field(form.full_name, class="form-control") }}
   </div>
@@ -18,9 +16,6 @@
   </div>
   <div class="form-group">
     {{ render_field(form.phone_number, class="form-control") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.hire_date, class="form-control") }}
   </div>
   <div class="form-group">
     {{ render_field(form.staff_id, class="form-control") }}

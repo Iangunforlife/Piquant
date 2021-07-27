@@ -1,12 +1,8 @@
-{% extends "base.html" %}
+{% extends "staff_base.html" %}
 {% block title %}Piquant - Staff Loyalty Codes{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
-<br>
-{% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
 <h1 class="display-4"> Loyalty Codes</h1>
 <div>
   {% if count == 0 %}
@@ -45,8 +41,6 @@
     <div class="form-group">
       {{ render_field(form.code, class="form-control") }}
     </div>
-    {{ msg }}
-    <br>
     <input type="submit" value="Submit" class="btn btn-success"/>
   </form>
 </div>
