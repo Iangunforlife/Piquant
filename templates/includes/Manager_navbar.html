@@ -1,0 +1,49 @@
+<html>
+<body>
+<nav class="navbar navbar-expand-sm bg-light navbar-light" >
+  <a class="navbar-brand" href="/"><img src="{{url_for('static',filename = 'img/logo.png')}}" alt=""></a>
+  <p class="navbar-brand"> Hello {{ staff_name }} </p>
+  <ul class="navbar-nav wholenavbar">
+
+    <li class="nav-item">
+      <a class="nav-link" href="{{url_for('retrieve', staff_name=staff_name, manager_id=manager_id)}}"> Retrive Reserve User</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staff_name=staff_name, manager_id=manager_id)}}"> Retrive Orders</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staff_name=staff_name, manager_id=manager_id)}}"> Retrive Members</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('referal_codes', staff_name=staff_name, manager_id=manager_id)}}"> Loyalty Codes </a>
+    </li>
+
+      <li class="nav-item">
+        <a class="nav-link navbaritem" href="{{url_for('create_staff', staff_name=staff_name, manager_id=manager_id)}}" >Create New Staff User</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link navbaritem" href="{{url_for('create_manager', staff_name=staff_name, manager_id=manager_id)}}" >Create New Manager</a>
+      </li>
+
+    <li class="nav-item">
+      <a class="nav-link navbaritem" href="{{url_for('staffretrieve', staff_name=staff_name, manager_id=manager_id)}}">Retrive Staff User</a>
+    </li>
+
+    <li class="nav-item">
+       <a class="nav-link navbaritem" href="{{url_for('manager_audit', staff_name=staff_name, manager_id=manager_id)}}">Staff Audit</a>
+      </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
+        Account Setting
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="{{url_for('update_man', staff_name=staff_name, manager_id=manager_id)}}">Change Info</a>
+        <a class="dropdown-item" href="{{url_for('Changepass_man', staff_name=staff_name, manager_id=manager_id)}}">Change Password</a>
+        <a class="dropdown-item" href="/">Logout</a>
+      </div>
+
+  </ul>
+</nav>
+</body>
+</html>
+

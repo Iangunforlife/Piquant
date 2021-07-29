@@ -1,0 +1,36 @@
+{% extends "manager_base.html" %}
+{% block title %}Piquant - Create Staff User {% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<br>
+
+<h2 class="display-4">Create New Manager</h2>
+<br/>
+<form action="" method="post">
+  <div class="form-group">
+    {{ render_field(form.full_name, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.email, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.password, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.phone_number, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.staff_id, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.manager_id, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.job_title, class="form-control") }}
+  </div>
+  <input type="submit" value="Next" class="btn btn-success"/>
+</form>
+<br>
+<a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+{% endblock %}
