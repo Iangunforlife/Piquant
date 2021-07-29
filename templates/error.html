@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Error page{% endblock %}
+{% block head %}
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Text+Me+One&display=swap" rel="stylesheet">
+    <!-- Custom stylesheet -->
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+
+{% endblock %}
+
+{% block content %}
+    <div id="error">
+      <div class="error">
+         <div class="all_error">
+             <img src="{{url_for('static', filename='img/error.png')}}">
+              <div class="content">
+                  <br>
+                  <h2>Click <a href="{{url_for('home')}}">here</a> to return to the website</h2>
+              </div>
+         </div>
+      </div>
+   </div>
+{% endblock %}
