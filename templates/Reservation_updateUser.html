@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Staff Update Reservation {% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<br>
+{% block staffnavbar %}
+  {% include 'includes/Staff_navbar.html' %}
+{% endblock %}
+<h1 class="display-4">Update User</h1>
+
+<form method="post" action="">
+  <div class="form-group">
+    {{ render_field(form.salutation, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.first_name, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.last_name, class="form-control") }}
+  </div>
+  <div>
+    {{ render_field(form.phone_number, class="form-control") }}
+  </div>
+  <div>
+    {{ render_field(form.date, class="form-control") }}
+  </div>
+  <div>
+    {{ render_field(form.time, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.email, class="form-control") }}
+  </div>
+  <div class="form-group">
+    {{ render_field(form.full_name, class="form-control") }}
+  </div>
+  <div>
+    {{ render_field(form.cn, class="form-control") }}
+  </div>
+  <div>
+    {{ render_field(form.expire, class="form-control") }}
+  </div>
+  <div>
+    {{ render_field(form.cvv, class="form-control") }}
+  </div>
+  <br>
+  <input type="submit" value="Submit" class="btn btn-success"/>
+</form>
+{% endblock %}

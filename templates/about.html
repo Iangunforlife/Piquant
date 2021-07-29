@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}About {% endblock %}
+{% block content %}
+
+<img style="width:100%; Height:50%" src="{{url_for('static',filename='img/restaurant.jpg')}}">
+<br>
+<h1 class="abouttextcenter">The restaurant</h1>
+<hr>
+<h2 class="abouttextcenter">Located in the heart of Singapore on the crowded streets of Orchard, Piquant serves authentic and affordable food.</h2>
+<p class="aboutpara"> Piquant is a fine dining establishment that was created through hardwork by group members, Ian Sim, Joel Chan, Ernest Yan, Akif and Zhi Yang.</p>
+<p class="aboutpara">Serving many different types of food,the kitchen draws its ideas from cultures in many different countries such as,China,Russia,India and more.</p>
+<p class="aboutpara">From Prata served with chicken curry to Bliny,the restaurants menu balances intense flavors with fresh local produce or ingredients from other countries.</p>
+<p class="aboutpara">Restaurant Piquant's menu is served alongside the finest selection of wine,popular local drinks and not to forget cocktails as well.</p>
+<br>
+<p class="aboutpara">In 2021,Restaurant Piquant was awarded <strong>2 michelin stars</strong>,making it one of the rare few restaurants in Singapore to be awarded 2 michelin stars.</p>
+<hr>
+<div class="row">
+    <div class="col-sm-6">
+        <img class="aboutimage" src="{{url_for('static',filename='img/restaurant.jpg')}}">
+        <p class="abouttextcenter">RESTAURANT</p>
+    </div>
+    <div class="col-sm-6">
+        <img class="aboutimage" src="{{url_for('static',filename='img/aboutfoodpic.jpg')}}">
+        <p class="abouttextcenter"> FOOD</p>
+    </div>
+</div>
+<br>
+{% endblock %}
+

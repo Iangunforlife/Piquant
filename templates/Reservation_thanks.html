@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Reservation Confirmation{% endblock %}
+{% block content %}
+<div class="reservethxnotification">
+  <p>Thank you for reserving a table! Your reservation would be sent to your email.
+  <span class="reservethxclose">x</span>
+  </p>
+</div>
+<br>
+<h2 class="display-4 textcenter">Your reservation number is</h2>
+<br>
+<p id="number" class="reservethxnum"></p>
+<h3 class="display-4 textcenter"> see you there! </h3>
+<br>
+<br>
+<div class="button">
+<a href="{{ url_for('home2', email=email)}}"><button class="btn btn-danger">Return to home page</button></a>
+</div>
+<script>
+  document.getElementById("number").innerHTML = Math.floor((Math.random() * 100) + 1);
+
+  var closebtns = document.getElementsByClassName("reservethxclose");
+  var i;
+
+  for (i = 0; i < closebtns.length; i++) {
+      closebtns[i].addEventListener("click", function() {
+          this.parentElement.style.display = 'none';
+      });
+}
+</script>
+{% endblock %}
