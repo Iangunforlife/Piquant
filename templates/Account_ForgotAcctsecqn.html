@@ -9,13 +9,13 @@
 <h4> Select Your Favourite Picture: </h4>
 
 <form method="POST" action="">
-  {% for subfield in form %}
-  {{ subfield(style="list-style:none") }}
+    {% for subfield in form %}
 
-  {% endfor %}
-
-  <input type="submit" value="Submit" class="btn btn-success"/>
+    {{ subfield(style="list-style:none") }}
+    {% endfor %}
+    <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
+
 {% for count in range(4) %}
  <script>
         {% for subfield in form %}

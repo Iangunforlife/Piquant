@@ -24,9 +24,6 @@
         <td> {{a['item_code']}}</td>
         <td> {{a['item_name']}}</td>
         <td> $ {{a['item_price']}}</td>
-        <td> <a href="/staffedititem/{{a['item_code']}}/{{staff_name}}" class="btn btn-warning">Update</a> </td>
-        <td>
-        <form action="{{url_for('staffdelitem', itemcode=a['item_code'], staff_name=staff_name)}}" method="POST">
         <td> <a href="/staffedititem/{{a['item_code']}}" class="btn btn-warning">Update</a> </td>
         <td>
         <form action="{{url_for('staffdelitem', itemcode=a['item_code'])}}" method="POST">
