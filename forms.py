@@ -130,5 +130,10 @@ class secpic(Form):
     secpic = RadioField('pic')
 
 class uploadfavpic(Form):
-    favpic = FileField('File', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    chosensecqn = StringField('Question:', [validators.Length(min=0, max=150), validators.DataRequired()])
+    pic1 = FileField('Pic 1', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    pic2 = FileField('Pic 2', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    pic3 = FileField('Pic 3', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    pic4 = FileField('Pic 4', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    picchose = RadioField('Correct Picture', choices=[(1, 'Pic 1'), (2, 'Pic 2'), (3, 'Pic 3'), (4, 'Pic 4')])
 

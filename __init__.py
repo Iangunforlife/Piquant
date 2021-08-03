@@ -7,9 +7,6 @@ import MySQLdb.cursors
 from flask_mail import Mail, Message
 import os
 from twilio.rest import Client
-import pandas as pd
-from openpyxl import load_workbook
-import pathlib
 
 app = Flask(__name__)
 # For Session
@@ -31,7 +28,7 @@ app.config['TESTING'] = False
 # To Send Email
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'piquant.nyp@gmail.com'
+app.config['MAIL_USERNAME'] = ''
 app.config['MAIL_PASSWORD'] = ''
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
@@ -252,9 +249,11 @@ def member_login():
         else:
             msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
         session['loginattempt'] = session['loginattempt'] + 1   # Increase Login Attempt By One
+        '''
         if session['loginattempt'] == 5:    # If Login Attempt Reached 10, Account Will Be Locked [Needs to be equal to 11 as the system will add 1 attempt to allow user to try after the initial 3 failed attempt]
             cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Locked For 1 Minutes", check_user_form.email.data,))     # Set Account Status To Blocked In SQL
             mysql.connection.commit()
+        '''
         if session['loginattempt'] == 11:    # If Login Attempt Reached 10, Account Will Be Locked [Needs to be equal to 11 as the system will add 1 attempt to allow user to try after the initial 3 failed attempt]
             cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Blocked", check_user_form.email.data,))     # Set Account Status To Blocked In SQL
             mysql.connection.commit()
@@ -851,6 +850,8 @@ def acct_forgotacct():
         account = cursor.fetchone()
         if account:
             session['acctrecoveremail'] = account['email']       # Put Email In A Session For Use Later
+            session['acctrecoverphone'] = check_user_form.phone_number.data
+            session['choosesecpicattempt'] = 0
             return redirect(url_for('acctsecqn'))
         else:
             print("Account Not Found")
@@ -878,6 +879,37 @@ def acctresentemail_otp():
     session.pop('OTP', None)
     session['OTP'] = generate_otp('email', session['EmailOTP'])
     return redirect(url_for('mementer_otp'))
+
+
+# Enter SMS OTP: (For Forgot Account)
+@app.route('/acctforgotacctotp', methods=['GET', 'POST'])
+def forgotacctenter_otp():
+    check_user_form = EnterOTP(request.form)
+    msg = ''
+    if request.method == 'POST' and check_user_form.validate():
+        if int(check_user_form.OTP.data) == int(session['OTP']):
+            session.pop('OTP', None)
+            return redirect(url_for('forgotacctshow'))
+        else:
+            msg = "Incorrect OTP"
+    return render_template('Account_ForgotAccountOTP.html', form=check_user_form, msg=msg)
+
+
+# Resent Phone OTP (For Forgot Account)
+@app.route('/acctresentsmsotp', methods=['GET', 'POST'])
+def acctresentsms_otp():
+    session.pop('OTP', None)
+    session['OTP'] = generate_otp('phone', session['acctrecoverphone'])
+    return redirect(url_for('forgotacctenter_otp'))
+
+
+# Show Email Address
+@app.route('/acctforgotacctshow', methods=['GET', 'POST'])
+def forgotacctshow():
+    email = session['acctrecoveremail']
+    session.pop('acctrecover', None)       # Remove User's Email From The Session acctrecover
+    session.pop('acctrecoverphone', None)   # Remove User's Phone Number From The Session
+    return render_template('Account_ForgotAccountShow.html', youremail=email)
 
 
 # Mandatory Change Password:
@@ -930,33 +962,38 @@ def Change_Acct_Password():
 # Not Completed
 @app.route('/Acctforgotacctsecqn', methods=['GET', 'POST'])
 def acctsecqn():
+    print(session['choosesecpicattempt'])
     msg = ''
     mememail = session['acctrecoveremail']      # Get User's Email From The Phone Number They Entered
-
-    memselectedpic = mememail.replace('@', '') + "_memsecpic"   # Get Picture File Name
+    photolist = []            # Add Picture That User Has Choosen When Setting Up Account Recovery
+    for a in range(1,5):
+        memselectedpic = mememail.replace('@', '') + "_memsecpic" + str(a)    # Get Picture File Name
+        photolist.append(memselectedpic)
+    '''
     a = 0
-    photolist = [memselectedpic]            # Add Picture That User Has Choosen When Setting Up Account Recovery
     while a < 3:
         randnum = random.randint(2,5)       # Generate A Random Int That Corresponds With A Picture Number
         pictoadd = 'pic' + str(randnum)     # Find This Pic File Name
         photolist.append(pictoadd)          # Append To The List
         a += 1
+    '''
     random.shuffle(photolist)       # Shuffle Order Of Pictures To Be Shown
     check_user_form = secpic(request.form)
     check_user_form.secpic.choices = [(p, p) for p in photolist]    # Show Pictures In Radio Button Format
-    if request.method == 'POST' and len(check_user_form.secpic.data) > 1:
-        print(check_user_form.secpic.data)
-        if len(check_user_form.secpic.data) <= 3:
-            print('hi 2')
-            if check_user_form.secpic.data in [memselectedpic]:       # If Option That User Has Choosen Matches The One In The Account Recovery
-                 session.pop('acctrecover', None)       # Remove User's Email From The Session acctrecover
-                 return redirect(url_for('referral', state=" "))
-            else:
-                msg = 'Incorrect'
-
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM security_qn WHERE email = %s' , ([session['acctrecoveremail']]))
+    acctsecinfo = cursor.fetchone()
+    question = acctsecinfo['Security_Question']
+    answer = mememail.replace('@', '') + "_memsecpic" + acctsecinfo['answer']
+    if session['choosesecpicattempt'] >= 2:
+        session['OTP'] = generate_otp('phone', session['acctrecoverphone'])
+        return redirect(url_for('forgotacctenter_otp'))
+    if request.method == 'POST' and check_user_form.validate():
+        if check_user_form.secpic.data == answer:       # If Option That User Has Choosen Matches The One In The Account Recovery
+             return redirect(url_for('forgotacctshow'))
         else:
-            msg = 'Incorrect'
-    return render_template('Account_ForgotAcctsecqn.html', form=check_user_form, msg=msg)
+            session['choosesecpicattempt'] = session['choosesecpicattempt'] + 1
+    return render_template('Account_ForgotAcctsecqn.html', form=check_user_form, question=question, msg=msg)
 
 
 # Upload Their Fav Pic
@@ -965,27 +1002,43 @@ def acctsecfavpic():
     upload_form = uploadfavpic(request.form)
     msg = ""
     if request.method == 'POST':
-        fileuploaded = request.files[upload_form.favpic.name].read()    # Get Image In Pure Data Format
-        filename = str(session['email']).replace('@', '') + "_memsecpic.jpg"   # Prep File Name
-        print(filename)
-        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename)), 'wb').write(fileuploaded)    # Save The Picture That Is Uploaded By The User
+        fileuploaded1 = request.files[upload_form.pic1.name].read()    # Get Image 1 In Pure Data Format
+        fileuploaded2 = request.files[upload_form.pic2.name].read()    # Get Image 2 In Pure Data Format
+        fileuploaded3 = request.files[upload_form.pic3.name].read()    # Get Image 3 In Pure Data Format
+        fileuploaded4 = request.files[upload_form.pic4.name].read()    # Get Image 4 In Pure Data Format
+        filename1 = str(session['email']).replace('@', '') + "_memsecpic" + '1' + ".jpg"   # Prep File Name
+        filename2 = str(session['email']).replace('@', '') + "_memsecpic" + '2' + ".jpg"   # Prep File Name
+        filename3 = str(session['email']).replace('@', '') + "_memsecpic" + '3' + ".jpg"   # Prep File Name
+        filename4 = str(session['email']).replace('@', '') + "_memsecpic" + '4' + ".jpg"   # Prep File Name
+        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename1)), 'wb').write(fileuploaded1)    # Save The Picture 1 That Is Uploaded By The User
+        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename2)), 'wb').write(fileuploaded2)    # Save The Picture 1 That Is Uploaded By The User
+        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename3)), 'wb').write(fileuploaded3)    # Save The Picture 1 That Is Uploaded By The User
+        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename4)), 'wb').write(fileuploaded4)    # Save The Picture 1 That Is Uploaded By The User
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([session['email']]))  # Check if user has previously set up security questions before
+        gotaccount = cursor.fetchone()
+        if gotaccount:
+            cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data,))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
+        else:
+            cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
+        mysql.connection.commit()
         return redirect(url_for('referral', state = " "))
-    return render_template('Member_UploadFavPic.html', form=upload_form, msg=msg)
+    return render_template('Account_UploadFavPic.html', form=upload_form, msg=msg)
 
 
 def generate_otp(method, numemail):
     otp = random.randint(100000, 999999)
-    msg = Message('OTP Forgot Password', sender='piquant.nyp@gmail.com', recipients=[email])
-    msg.body = str('This Is Your OTP {}' .format(otp))
-    mail.send(msg)
-    """
-    message = client.messages \
-    .create(
-         body= str('This Is Your OTP {}' .format(otp)),
-         from_='+13126983345',
-         to='+6588582648'
-     )
-     """
+    if method == 'email':
+        msg = Message('OTP Forgot Password', sender='piquant.nyp@gmail.com', recipients=[numemail])
+        msg.body = str('This Is Your OTP {}' .format(otp))
+        mail.send(msg)
+    elif method == 'phone':
+        message = client.messages \
+        .create(
+             body= str('This Is Your OTP {}' .format(otp)),
+             from_='',
+             to=''
+         )
     return otp
 
 if __name__ == '__main__':
