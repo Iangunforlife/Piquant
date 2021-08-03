@@ -118,12 +118,16 @@ class ChangeMemberPassword(Form):
     newpassword = PasswordField('Password', [validators.DataRequired(), validators.EqualTo('cfmpassword', message='Passwords must match')],  render_kw={"placeholder": "New Password"})
     cfmpassword = PasswordField('Reenter Password', [validators.DataRequired()], render_kw={"placeholder": "Reenter Password"})
 
+'''
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
 class secpic(Form):
     secpic = MultiCheckboxField('pic', widget=widgets.TableWidget())
+'''
+class secpic(Form):
+    secpic = RadioField('pic')
 
 class uploadfavpic(Form):
     favpic = FileField('File', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])

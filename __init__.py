@@ -832,7 +832,7 @@ def acct_forgotpass():
         cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data ,))
         account = cursor.fetchone()
         if account:
-            session['OTP'] = generate_otp(account['email'])
+            session['OTP'] = generate_otp('email', account['email'])
             session['acctrecoveremail'] = account['email']
             return redirect(url_for('acctenter_otp', email=email))
         else:
@@ -859,7 +859,7 @@ def acct_forgotacct():
     return render_template('Account_ForgotAccount.html', form=check_user_form)
 
 
-# Enter Email OTP:
+# Enter Email OTP (For Forgot Password)
 @app.route('/acctforgotpassotp', methods=['GET', 'POST'])
 def acctenter_otp():
     check_user_form = EnterOTP(request.form)
@@ -872,11 +872,11 @@ def acctenter_otp():
             msg = "Incorrect OTP"
     return render_template('Account_ForgotPassOTP.html', form=check_user_form, msg=msg)
 
-
-@app.route('/acctresentotp', methods=['GET', 'POST'])
-def acctresent_otp():
+# Resent Email OTP (For Forgot Password)
+@app.route('/acctresentemailotp', methods=['GET', 'POST'])
+def acctresentemail_otp():
     session.pop('OTP', None)
-    session['OTP'] = generate_otp(session['EmailOTP'])
+    session['OTP'] = generate_otp('email', session['EmailOTP'])
     return redirect(url_for('mementer_otp'))
 
 
@@ -958,6 +958,7 @@ def acctsecqn():
             msg = 'Incorrect'
     return render_template('Account_ForgotAcctsecqn.html', form=check_user_form, msg=msg)
 
+
 # Upload Their Fav Pic
 @app.route('/Acctsecfavpic', methods=['GET', 'POST'])
 def acctsecfavpic():
@@ -972,7 +973,7 @@ def acctsecfavpic():
     return render_template('Member_UploadFavPic.html', form=upload_form, msg=msg)
 
 
-def generate_otp(email):
+def generate_otp(method, numemail):
     otp = random.randint(100000, 999999)
     msg = Message('OTP Forgot Password', sender='piquant.nyp@gmail.com', recipients=[email])
     msg.body = str('This Is Your OTP {}' .format(otp))
