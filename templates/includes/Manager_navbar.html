@@ -6,16 +6,16 @@
   <ul class="navbar-nav wholenavbar">
 
     <li class="nav-item">
-      <a class="nav-link" href="{{url_for('retrieve', staff_name=staff_name, manager_id=manager_id)}}"> Retrive Reserve User</a>
+      <a class="nav-link" href="{{url_for('retrieve', staff_name=staff_name)}}"> Retrive Reserve User</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staff_name=staff_name, manager_id=manager_id)}}"> Retrive Orders</a>
+      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staff_name=staff_name)}}"> Retrive Orders</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staff_name=staff_name, manager_id=manager_id)}}"> Retrive Members</a>
+      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staff_name=staff_name)}}"> Retrive Members</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('referal_codes', staff_name=staff_name, manager_id=manager_id)}}"> Loyalty Codes </a>
+      <a class="nav-link navbaritem" href="{{url_for('referal_codes', staff_name=staff_name)}}"> Loyalty Codes </a>
     </li>
 
       <li class="nav-item">
@@ -39,7 +39,7 @@
       <div class="dropdown-menu">
         <a class="dropdown-item" href="{{url_for('update_man', staff_name=staff_name, manager_id=manager_id)}}">Change Info</a>
         <a class="dropdown-item" href="{{url_for('Changepass_man', staff_name=staff_name, manager_id=manager_id)}}">Change Password</a>
-        <a class="dropdown-item" href="/">Logout</a>
+        <a class="dropdown-item" href="{{url_for('logout', staff_name=staff_name)}}">Logout</a>
       </div>
 
   </ul>
