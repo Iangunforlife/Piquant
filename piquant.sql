@@ -2,6 +2,16 @@ CREATE DATABASE IF NOT EXISTS `Piquant` DEFAULT CHARACTER SET utf8 COLLATE
 utf8_general_ci;
 USE `Piquant`;
 
+Delimiter $$
+create procedure error_handling()
+begin
+Declare continue handler for 1062
+select 'Duplicate keys found';
+Declare continue handler for 1064
+select 'unknown command';
+end $$
+Delimiter ; 
+
 CREATE TABLE IF NOT EXISTS `Menu`(`item_code` varchar(6), item_name varchar(50), item_price decimal(3,2),
                                     PRIMARY KEY(item_code));
 
@@ -33,11 +43,10 @@ CREATE TABLE IF NOT EXISTS `Account`(`email` varchar(100) NOT NULL, `full_name` 
 CREATE TABLE IF NOT EXISTS `Rewards`(`reward_code` varchar(10), `status` varchar(20),
                                          PRIMARY KEY(`reward_code`));       
 
-CREATE TABLE IF NOT EXISTS `Audit`(`email` varchar(100) NOT NULL, `full_name` varchar(50), `staff_id` varchar(30), `manager_id` varchar(30), `login_time` varchar(200), `logout_time` varchar(200), `pwd_expiry` date, `password` varchar (128) NOT NULL,
-`password_status` varchar(20) CHECK (`password_status` in ('Valid', 'Expired')) DEFAULT 'Valid', `action` varchar(100) DEFAULT 'No action',
+CREATE TABLE IF NOT EXISTS `Audit`(`email` varchar(100) NOT NULL, `full_name` varchar(50), `staff_id` varchar(30), `manager_id` varchar(30), `login_time` varchar(200), `logout_time` varchar(200),
+`action` varchar(100) DEFAULT 'No action', `failed_login` int(100) DEFAULT 0, `usage` int(100), `role` varchar(50), `suspicious` int(100) default 0,
 PRIMARY KEY (`email`),
 CONSTRAINT FK_AccountEmail FOREIGN KEY (`email`) references piquant.account(`email`));
-
 
 # staff account
 insert into piquant.account VALUES('chanjcjoel@gmail.com', 'Joel Chan', '69', 'Staff','98117266', null, null, null, 'Joel', null, '2021-07-01', 'chef');
@@ -52,33 +61,24 @@ insert into piquant.account VALUES('13458769ey@gmail.com', 'Ernest Yan','redhat'
 
 #user audit
 
-insert into piquant.audit VALUES('thisisernestyan@gmail.com', 'Ernest Yan','Ernest','Ernest',null,null,null,'10','Valid', 'No action');
-insert into piquant.audit VALUES('chanjcjoel@gmail.com', 'Joel Chan', 'Joel',null,null,null,null,'69', 'Valid', 'No action');
-insert into piquant.audit VALUES('ianwxsim@gmail.com', 'Ian Sim','Ian','Ian',null,null,null,'123', 'Valid', 'No action');
-insert into piquant.audit VALUES('hozhiyang2003@gmail.com','Ho Zhi Yang', 'ZY',null,null,null,null,'77','Valid', 'No action');
-insert into piquant.audit VALUES('destion91@gmail.com', 'Akif Suwandi','Akif',null,null,null,null,'5','Valid', 'No action');
-insert into piquant.audit VALUES('13458769ey@gmail.com', 'Ernest Yan',null,null,null,null,null,'redhat','Valid', 'No action');
+insert into piquant.audit VALUES('thisisernestyan@gmail.com', 'Ernest Yan','Ernest','Ernest',null,null,'No action',0,null,'Manager',0);
+insert into piquant.audit VALUES('chanjcjoel@gmail.com', 'Joel Chan', 'Joel',null,null,null,'No action',0,null, 'Staff',0);
+insert into piquant.audit VALUES('ianwxsim@gmail.com', 'Ian Sim','Ian','Ian',null,null, 'No action',0,null,'Manager',0);
+insert into piquant.audit VALUES('hozhiyang2003@gmail.com','Ho Zhi Yang', 'ZY',null,null,null,'No action',0,null,'Staff',0);
+insert into piquant.audit VALUES('destion91@gmail.com', 'Akif Suwandi','Akif',null,null,null,'No action',0,null,'Staff',0);
 
-select * from piquant.account;
 select * from piquant.audit;
-select * from piquant.reservation;
-
-create user "Ian" identified by "redhat"; 
-create user "Ernest" identified by "homie"; 
 
 create view Staff_Audit as
-select * from piquant.audit
-where staff_id is not null; 
+select * from piquant.audit; 
+
+create user "Ian" identified by "redhat";
+create user "Ernest" identified by "handsome";
 
 create role Manager;
-grant Manager to "Ian";
+grant Manager to Ian, Ernest;
 grant all on Staff_Audit to Manager;
 
-create view DB_audit as
-select * from piquant.audit;
 
-create role DB_admin;
-grant DB_admin to "Ernest";
-grant all on DB_audit to DB_admin;
-
+call error_handling();
 
