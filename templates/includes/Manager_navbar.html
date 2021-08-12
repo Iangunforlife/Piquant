@@ -39,7 +39,7 @@
       <div class="dropdown-menu">
         <a class="dropdown-item" href="{{url_for('update_man', staff_name=staff_name, manager_id=manager_id)}}">Change Info</a>
         <a class="dropdown-item" href="{{url_for('Changepass_man', staff_name=staff_name, manager_id=manager_id)}}">Change Password</a>
-        <a class="dropdown-item" href="{{url_for('logout', staff_name=staff_name)}}">Logout</a>
+        <a class="dropdown-item" href="{{url_for('logout', staff_name=staff_name, manager_id=manager_id)}}">Logout</a>
       </div>
 
   </ul>

@@ -7,7 +7,7 @@
 
 <h1 class="display-4">Update Info</h1>
 
-<form method="post" action="Staff_Userslist.html">
+<form method="post" action=" ">
   <div class="form-group">
     {{ render_field(form.full_name, class="form-control") }}
   </div>
@@ -27,7 +27,9 @@
   {{msg}}
 <br>
   <br>
+  <form action="{{url_for('staffretrieve', staff_name=staff_name)}}" method="POST">
   <input type="submit" value="Submit" class="btn btn-primary"/>
+  </form>
 </form>
 <br>
 <a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
