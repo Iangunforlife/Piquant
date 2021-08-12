@@ -1,0 +1,24 @@
+{% extends "manager_base.html" %}
+{% block title %}Piquant - Staff Audit{% endblock %}
+{% block content %}
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Piquant</h3>
+        </div>
+
+            <div>
+                <a href="{{url_for('manager_audit', staff_name=staff_name, audit=audit)}}">Audit table</a>
+                </div>
+
+                <div>
+                <a href="{{url_for('manager_dashboard', staff_name=staff_name)}}">Dashboard</a>
+                </div>
+
+    </nav>
+</div>
+
+    <div>
+        <iframe width="900" height="800" frameborder="0" scrolling="no" src="//plotly.com/dashboard/Meatyhippo:2/embed"></iframe>    </div>
+{% endblock %}
