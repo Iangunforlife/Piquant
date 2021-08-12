@@ -1,13 +1,19 @@
-{% extends 'staff_base.html' %}
+{% extends 'base.html' %}
 {% block title %}Piquant - Update Staff User{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <br>
-
+{% block staffnavbar %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
 <h1 class="display-4">Update Info</h1>
 
-<form method="post" action="Staff_Userslist.html">
+<form method="post">
   <div class="form-group">
     {{ render_field(form.full_name, class="form-control") }}
   </div>
@@ -21,6 +27,9 @@
     {{ render_field(form.staff_id, class="form-control") }}
   </div>
   <div class="form-group">
+    {{ render_field(form.hire_date, class="form-control") }}
+  </div>
+  <div class="form-group">
     {{ render_field(form.job_title, class="form-control") }}
   </div>
 <br>
@@ -30,5 +39,5 @@
   <input type="submit" value="Submit" class="btn btn-primary"/>
 </form>
 <br>
-<a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+<a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}

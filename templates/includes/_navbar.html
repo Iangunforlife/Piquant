@@ -4,19 +4,20 @@
 <nav class="navbar navbar-expand-sm bg-light navbar-light">
   <!-- Brand -->
   <a class="navbar-brand" href="/"><img src="{{url_for('static',filename = 'img/logo.png')}}" alt=""></a>
-  {% if email == " "%}
+
   <!-- Links -->
   <ul class="navbar-nav wholenavbar">
     <li class="nav-item">
       <a class="nav-link navbarfirst" href="/">Home</a>
     </li>
+
     <!-- Dropdown -->
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
         Membership
       </a>
       <div class="dropdown-menu">
-        {% if 'login' in session %}
+        {% if 'loggedin' in session %}
         <a class="dropdown-item" href="{{url_for('referral', state=' ')}}">Rewards</a>
         {% else %}
         <a class="dropdown-item" href="{{url_for('member_login', state=' ')}}">Rewards</a>
@@ -44,7 +45,7 @@
     </li>
     {% endif %}
 
-    {% if 'login' in session %}
+    {% if 'loggedin' in session %}
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
         Hello {{session['email']}}

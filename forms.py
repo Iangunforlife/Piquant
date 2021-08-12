@@ -69,8 +69,10 @@ class CreateStaff(Form):
     password = PasswordField('New Password', [validators.DataRequired()], render_kw={"placeholder": "New Password"})
     phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
-    staff_id = StringField('Staff ID', [validators.Length(min=1, max=7), validators.DataRequired()],
+    staff_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
+    manager_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
+                               render_kw={"placeholder": "Manager ID (Optional)"})
     job_title = StringField('Job Title', [validators.Length(min=1, max=60), validators.DataRequired()],
                                render_kw={"placeholder": "Job Title"})
 
@@ -81,8 +83,10 @@ class UpdateStaff(Form):
                         render_kw={"placeholder": "123@email.com"})
     phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
-    staff_id = StringField('Staff ID', [validators.Length(min=1, max=7), validators.DataRequired()],
+    staff_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
+    manager_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
+                               render_kw={"placeholder": "Manager ID (Optional)"})
     hire_date = DateField('Hire Date(YYYY-MM-DD)', [validators.DataRequired()])
     job_title = StringField('Job Title', [validators.Length(min=1, max=60), validators.DataRequired()],
                                render_kw={"placeholder": "Job Title"})
@@ -118,14 +122,6 @@ class ChangeMemberPassword(Form):
     newpassword = PasswordField('Password', [validators.DataRequired(), validators.EqualTo('cfmpassword', message='Passwords must match')],  render_kw={"placeholder": "New Password"})
     cfmpassword = PasswordField('Reenter Password', [validators.DataRequired()], render_kw={"placeholder": "Reenter Password"})
 
-'''
-class MultiCheckboxField(SelectMultipleField):
-    widget = widgets.ListWidget(prefix_label=False)
-    option_widget = widgets.CheckboxInput()
-
-class secpic(Form):
-    secpic = MultiCheckboxField('pic', widget=widgets.TableWidget())
-'''
 class secpic(Form):
     secpic = RadioField('pic')
 

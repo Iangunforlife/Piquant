@@ -2,44 +2,40 @@
 <body>
 <nav class="navbar navbar-expand-sm bg-light navbar-light" >
   <a class="navbar-brand" href="/"><img src="{{url_for('static',filename = 'img/logo.png')}}" alt=""></a>
-  <p class="navbar-brand"> Hello {{ staff_name }} </p>
+  <p class="navbar-brand"> Hello {{ session['stafflogged'] }} </p>
   <ul class="navbar-nav wholenavbar">
 
     <li class="nav-item">
-      <a class="nav-link" href="{{url_for('retrieve', staff_name=staff_name)}}"> Retrive Reserve User</a>
+      <a class="nav-link" href="{{url_for('retrieve', )}}"> Retrive Reserve User</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff', staff_name=staff_name)}}"> Retrive Orders</a>
+      <a class="nav-link navbaritem" href="{{url_for('orderpagestaff')}}"> Retrive Orders</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members', staff_name=staff_name)}}"> Retrive Members</a>
+      <a class="nav-link navbaritem" href="{{url_for('retrieve_Members')}}"> Retrive Members</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('referal_codes', staff_name=staff_name)}}"> Loyalty Codes </a>
+      <a class="nav-link navbaritem" href="{{url_for('referal_codes')}}"> Loyalty Codes </a>
     </li>
 
       <li class="nav-item">
-        <a class="nav-link navbaritem" href="{{url_for('create_staff', staff_name=staff_name, manager_id=manager_id)}}" >Create New Staff User</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link navbaritem" href="{{url_for('create_manager', staff_name=staff_name, manager_id=manager_id)}}" >Create New Manager</a>
+        <a class="nav-link navbaritem" href="{{url_for('create_staff')}}" >Create New Staff User</a>
       </li>
 
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('staffretrieve', staff_name=staff_name, manager_id=manager_id)}}">Retrive Staff User</a>
+      <a class="nav-link navbaritem" href="{{url_for('staffretrieve')}}">Retrive Staff User</a>
     </li>
 
-    <li class="nav-item">
-       <a class="nav-link navbaritem" href="{{url_for('manager_audit', staff_name=staff_name, manager_id=manager_id)}}">Staff Audit</a>
-      </li>
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle navbaritem" href="#" data-toggle="dropdown">
         Account Setting
       </a>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="{{url_for('update_man', staff_name=staff_name, manager_id=manager_id)}}">Change Info</a>
-        <a class="dropdown-item" href="{{url_for('Changepass_man', staff_name=staff_name, manager_id=manager_id)}}">Change Password</a>
-        <a class="dropdown-item" href="{{url_for('logout', staff_name=staff_name)}}">Logout</a>
+        <a class="dropdown-item" href="{{url_for('update_staff', toupdate=session['stafflogged'])}}">Change Info</a>
+        <a class="dropdown-item" href="{{url_for('Changepass_staff')}}">Change Password</a>
+        <a class="dropdown-item" href="{{url_for('acctsecfavpic')}}">Upload Pic</a>
+        <a class="dropdown-item" href="{{url_for('shutdown')}}">Shutdown Server</a>
+        <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
       </div>
 
   </ul>

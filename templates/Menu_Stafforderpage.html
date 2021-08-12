@@ -4,8 +4,12 @@
 {% block content %}
 <br>
 {% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
 <h1 class="display-4"> Orders </h1>
 <p> <br> Current Table Number Assigned: {{session['tablenum']}} </p>
 <a href = "{{url_for('changetable', state='F')}}"> <button class="btn btn-danger"> Decrease Table Num </button> </a>

@@ -1,9 +1,15 @@
-{% extends 'staff_base.html'%}
+{% extends 'base.html'%}
 {% block title %}Piquant - Staff Retrieve Users{% endblock %}
 
 {% block content %}
 <br>
-
+{% block staffnavbar %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
 <h1 class="display-4">Retrieve Users</h1>
 <div>
   {% if count == 0 %}

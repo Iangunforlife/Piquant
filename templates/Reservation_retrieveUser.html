@@ -1,8 +1,14 @@
-{% extends "staff_base.html" %}
+{% extends "base.html" %}
 {% block title %}Piquant - Staff Retrive Reservation {% endblock %}
 
 {% block content %}
-
+{% block staffnavbar %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
 <h1 class="display-4">Confirmation</h1>
 <div>
   {% if count == 0 %}

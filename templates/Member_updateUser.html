@@ -1,12 +1,16 @@
-{% extends "staff_base.html" %}
+{% extends "base.html" %}
 {% block title %}Piquant - Staff Update Member Details{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <br>
 {% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
 
 <h1 class="display-4">Update Members Details</h1>
 

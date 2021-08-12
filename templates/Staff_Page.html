@@ -1,2 +1,14 @@
-{% extends "staff_base.html" %}
+{% extends "base.html" %}
 {% block title %} Piquant - Staff Menu {% endblock %}
+
+{% block content %}
+<br>
+{% block staffnavbar %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+{% endblock %}
+
+{% endblock %}
