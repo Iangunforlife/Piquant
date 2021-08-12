@@ -1,11 +1,9 @@
-{% extends "base.html" %}
+{% extends "manager_base.html" %}
 {% block title %}Piquant - Staff Accounts{% endblock %}
 
 {% block content %}
 <br>
-{% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
+
 <h1 class="display-4">Staff User List</h1>
 <div>
   {% if count == 0 %}

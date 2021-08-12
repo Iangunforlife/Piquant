@@ -1,0 +1,74 @@
+{% extends "manager_base.html" %}
+{% block title %}Piquant - Staff Audit{% endblock %}
+{% block content %}
+
+{% block javascript %}
+    <script src="{{ url_for('static',filename='java.js') }}"></script>
+{% endblock %}
+
+ <div class="audit">
+   <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+     <h1 class="display-4">Staff Audit</h1>
+   <br>
+  <table id="myTable">
+    <tr class="header">
+      <th>Staff Name</th>
+      <th>Login Time</th>
+      <th>Logout Time</th>
+      <th>Password</th>
+      <th>Password expiry</th>
+      <th>Password status</th>
+        <th>Action</th>
+    </tr>
+      {% for user in audit %}
+      {% if user['staff_id'] != None %}
+      <tr>
+        <td>{{user['staff_id']}}</td>
+
+        {% if user['login_time'] != None %}
+        <td>{{user['login_time']}}</td>
+        {% else %}
+        <td>--</td>
+        {% endif %}
+
+        {% if user['logout_time'] != None %}
+        <td>{{user['logout_time']}}</td>
+        {% else %}
+        <td>--</td>
+        {% endif %}
+
+        {% if user['password'] != None %}
+        <td>{{user['password']}}</td>
+        {% else %}
+        <td>--</td>
+        {% endif %}
+
+        {% if user['pwd_expiry'] != None %}
+        <td>{{user['pwd_expiry']}}</td>
+        {% else %}
+        <td>--</td>
+        {% endif %}
+
+        {% if user['password_status'] != None %}
+        <td>{{user['password_status'] }}</td>
+        {% else %}
+        <td>--</td>
+        {% endif %}
+
+        {% if user['action'] != None %}
+          <td>{{user['action']}}</td>
+        {% else %}
+        <td>--</td>
+        {% endif %}
+      </tr>
+      {% endif %}
+     {% endfor %}
+   </table>
+ </div>
+
+<br>
+<div>
+  <a href="{{url_for('manpage', staff_name=staff_name, manager_id=manager_id)}}"> <button class="btn btn-danger"> Back </button></a>
+</div>
+
+{% endblock %}
