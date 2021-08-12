@@ -7,6 +7,7 @@ import MySQLdb.cursors
 from flask_mail import Mail, Message
 import os
 from twilio.rest import Client
+from werkzeug.exceptions import RequestEntityTooLarge
 
 app = Flask(__name__)
 # For Session
@@ -45,7 +46,7 @@ client = Client(account_sid, auth_token)
 # To Upload Files
 # app.config['UPLOAD_EXTENSIONS'] = ['.jpg']
 app.config['UPLOAD_FOLDER'] = 'static/accountsecpic'
-app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # 4MB max-limit.
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 4MB max-limit.
 
 # Email To Be Passed into codes to check wether users are login or not
 @app.route('/')
@@ -68,7 +69,8 @@ def create_user():
     cursor.execute('SELECT * FROM account WHERE email = %s', [session['email']])       # Look For Account Information
     account = cursor.fetchone()
     if request.method == 'POST' and create_user_form.validate():
-        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, create_user_form.email.data, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data,create_user_form.cn.data,str(create_user_form.expire.data + '-01'),create_user_form.cvv.data,create_user_form.Additional_note.data))
+        useremail = create_user_form.email.data.lower()
+        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, useremail, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data,create_user_form.cn.data,str(create_user_form.expire.data + '-01'),create_user_form.cvv.data,create_user_form.Additional_note.data))
         mysql.connection.commit()   #Update SQL Database
         return redirect(url_for('retrieve_users'))
     if account != None:     # Pre Fill Form if user is logged in
@@ -96,7 +98,7 @@ def number():
     return render_template('Reservation_thanks.html', reservationid=reservationid)
 
 
-# Ian
+# Online Menu/Cart
 @app.route('/onlineorder')
 def orderpage1():
     try:
@@ -163,7 +165,6 @@ def submit():
     session.pop('ordersess', None)
     return render_template('Menu_Submit.html')
 
-#Akif
 # Create User
 @app.route('/createMember', methods=['GET', 'POST'])
 def create_Member():
@@ -173,15 +174,16 @@ def create_Member():
         signupdate = date.today()   # Get Today's date
         newdate = signupdate.strftime("%Y-%m-%d")   # To Create New Date According To SQL Format
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s', (create_user_form.email.data,))
+        useremail = create_user_form.email.data.lower()
+        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail,))
         account = cursor.fetchone()
         if account:     # Ensure That there will be no duplicates (As Email is A Primary Key In The Database)
             msg = 'This Email Has Been Taken'
         else:
-            cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %7s, %s, %s, NULL, NULL, NULL)', (create_user_form.email.data, create_user_form.full_name.data, create_user_form.password.data, 'Member',  create_user_form.phone_number.data , "Regular", "1/5", newdate))
+            cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %7s, %s, %s, NULL, NULL, NULL)', (useremail, create_user_form.full_name.data, create_user_form.password.data, 'Member',  create_user_form.phone_number.data , "Regular", "1/5", newdate))
             mysql.connection.commit()
             session['login'] = True
-            session['email'] = create_user_form.email.data
+            session['email'] = useremail
             return redirect(url_for('referral', state=" "))
     return render_template('Member_createUser.html', form=create_user_form, msg=msg)
 
@@ -189,6 +191,7 @@ def create_Member():
 # Login
 @app.route('/Memberlogin', methods=['GET', 'POST'])
 def member_login():
+    # New
     msg = ''
     try:    # Check If There's A Login Attempt Session In Place
         # At 5 Attempt
@@ -228,8 +231,9 @@ def member_login():
 
     check_user_form = LoginForm(request.form)
     if request.method == 'POST' and check_user_form.validate() and session['loginattempt'] != 5 and session['loginattempt'] != 11:
+        useremail = check_user_form.email.data.lower()
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s AND password = %s', (check_user_form.email.data,check_user_form.password.data,))
+        cursor.execute('SELECT * FROM account WHERE email = %s AND password = %s', (useremail,check_user_form.password.data,))
         account = cursor.fetchone()
         if account:     # If Account Exist In DataBase
             if account['account_status'] == "Blocked":
@@ -249,13 +253,8 @@ def member_login():
         else:
             msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
         session['loginattempt'] = session['loginattempt'] + 1   # Increase Login Attempt By One
-        '''
-        if session['loginattempt'] == 5:    # If Login Attempt Reached 10, Account Will Be Locked [Needs to be equal to 11 as the system will add 1 attempt to allow user to try after the initial 3 failed attempt]
-            cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Locked For 1 Minutes", check_user_form.email.data,))     # Set Account Status To Blocked In SQL
-            mysql.connection.commit()
-        '''
         if session['loginattempt'] == 11:    # If Login Attempt Reached 10, Account Will Be Locked [Needs to be equal to 11 as the system will add 1 attempt to allow user to try after the initial 3 failed attempt]
-            cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Blocked", check_user_form.email.data,))     # Set Account Status To Blocked In SQL
+            cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Blocked", useremail,))     # Set Account Status To Blocked In SQL
             mysql.connection.commit()
     return render_template('Member_login.html', form=check_user_form, msg=msg)
 
@@ -323,12 +322,13 @@ def update_member():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     msg = ''
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
+        useremail = update_user_form.email.data.lower()
+        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail,))
         account = cursor.fetchone()     # Fetch Only 1 SQL Record (Since Email Is A Primary Key, There Should Be Only 1 Record)
         if session['email'] != account['email']:   # Check Wether Database has this email or not
             msg = "This Email Has Been Used"
         else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, session['email'],))
+            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s WHERE email = %s', (useremail, update_user_form.full_name.data, update_user_form.phone_number.data, session['email'],))
             mysql.connection.commit()
             return redirect(url_for('acct_updatesuccess'))
     else:   # Pre Fill Information in the form
@@ -402,8 +402,9 @@ def checkstaff():
 
     check_user_form = LoginForm(request.form)
     if request.method == 'POST' and check_user_form.validate() and session['loginattempt'] != 5 and session['loginattempt'] != 11:
+        useremail = check_user_form.email.data.lower()
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data,))
+        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail,))
         account = cursor.fetchone()
         if account:
             if account['account_status'] == "Blocked":
@@ -421,7 +422,7 @@ def checkstaff():
             msg = "Incorrect Username/Password"
         session['loginattempt'] = session['loginattempt'] + 1   # Increase Login Attempt By One
         if session['loginattempt'] == 11:    # If Login Attempt Reached 10, Account Will Be Locked [Needs to be equal to 11 as the system will add 1 attempt to allow user to try after the initial 3 failed attempt]
-            cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Blocked", check_user_form.email.data,))     # Set Account Status To Blocked In SQL
+            cursor.execute('UPDATE account SET account_status = %s WHERE email = %s', ("Blocked", useremail,))     # Set Account Status To Blocked In SQL
             mysql.connection.commit()
 
     return render_template('Staff_login.html', form=check_user_form, msg=msg)
@@ -436,7 +437,7 @@ def staffpage():
     return render_template('Staff_Page.html')
 
 
-#Reservation Form (Joel And Ernest)
+# Reservation Form
 @app.route('/retrieveReservation')
 def retrieve():
     # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
@@ -462,7 +463,8 @@ def update_user(id):
     cursor.execute('SELECT * FROM reservation WHERE reservation_id = %s', [id])       # Get Entire Row That Contains The Reservation ID
     account = cursor.fetchone()
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('UPDATE reservation SET full_name= %s, email = %s, phone_num= %s, reservation_date= %s, reservation_time= %s, card_name= %s, card_number= %s, expiry_date= %s, cvv= %s, additional_note= %s WHERE reservation_id = %s', (update_user_form.full_name.data, update_user_form.email.data, update_user_form.phone_number.data, update_user_form.date.data, update_user_form.time.data, update_user_form.card_name.data, update_user_form.cn.data,str(update_user_form.expire.data + '-01'), update_user_form.cvv.data, update_user_form.Additional_note.data, id))
+        useremail = update_user_form.email.data.lower()
+        cursor.execute('UPDATE reservation SET full_name= %s, email = %s, phone_num= %s, reservation_date= %s, reservation_time= %s, card_name= %s, card_number= %s, expiry_date= %s, cvv= %s, additional_note= %s WHERE reservation_id = %s', (update_user_form.full_name.data, useremail, update_user_form.phone_number.data, update_user_form.date.data, update_user_form.time.data, update_user_form.card_name.data, update_user_form.cn.data,str(update_user_form.expire.data + '-01'), update_user_form.cvv.data, update_user_form.Additional_note.data, id))
         mysql.connection.commit()
         return redirect(url_for('retrieve'))
     else:   # Pre Fill Form
@@ -635,12 +637,13 @@ def update_memberstaff(mememail):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     msg = ''
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
+        useremail = update_user_form.email.data.lower()
+        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail,))
         account = cursor.fetchone()
         if mememail != account['email']:   # Do Not Allow Change Of Email if The Email Address Entered Is Found In The Database
             msg = "This Email Has Been Used"
         else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, sign_up_date = %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.signup_date.data, mememail,))
+            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, sign_up_date = %s WHERE email = %s', (useremail, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.signup_date.data, mememail,))
             mysql.connection.commit()
             return redirect(url_for('retrieve_Members'))
     else:   # Pre Fill Form
@@ -712,8 +715,9 @@ def create_staff():
         hire_date = date.today()    # Get Today's Date
         newdate = hire_date.strftime("%Y-%m-%d")    # To Format Date Into SQL Readable Format (YYYY-MM-DD)
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        useremail = create_user_form.email.data.lower()
         # Check If Email Exist In Database
-        cursor.execute('SELECT * FROM account WHERE email = %s', (create_user_form.email.data,))
+        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail,))
         account = cursor.fetchone()
         # Check If Staff ID Exist In Database
         cursor.execute('SELECT * FROM account WHERE staff_id = %s', (create_user_form.staff_id.data,))
@@ -724,9 +728,9 @@ def create_staff():
             if staffid:
                 msg = 'This Staff ID Has Been Taken'
             else:
-                cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, NULL, NULL, NULL, %s, %s, %s)', (create_user_form.email.data, create_user_form.full_name.data, create_user_form.password.data, 'Member',  create_user_form.phone_number.data , create_user_form.staff_id.data , newdate, create_user_form.job_title.data))
+                cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, NULL, NULL, NULL, %s, %s, %s)', (useremail, create_user_form.full_name.data, create_user_form.password.data, 'Member',  create_user_form.phone_number.data , create_user_form.staff_id.data , newdate, create_user_form.job_title.data))
                 mysql.connection.commit()
-                return redirect(url_for('confirmstaff', newuser=create_user_form.email.data))
+                return redirect(url_for('confirmstaff', newuser=useremail))
     return render_template('Staff_Create.html', form=create_user_form, msg=msg)
 
 
@@ -766,12 +770,13 @@ def update_staff(toupdate):     # toupdate Variable Is Used in a case where 1 st
     staff = cursor.fetchone()
     msg = ''
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
+        useremail = update_user_form.email.data.lower()
+        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail,))
         account = cursor.fetchone()
         if staff['email'] != account['email']:
             msg = "This Email Has Been Used"
         else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, staff_id= %s, hire_date= %s, job_title= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.staff_id.data, update_user_form.hire_date.data, update_user_form.job_title.data, staff['email'],))
+            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, staff_id= %s, hire_date= %s, job_title= %s WHERE email = %s', (useremail, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.staff_id.data, update_user_form.hire_date.data, update_user_form.job_title.data, staff['email'],))
             mysql.connection.commit()
             return redirect(url_for('staffretrieve'))
     else:
@@ -821,31 +826,76 @@ def Changepass_staff():
     return render_template('Staff_updateselfpass.html', form=update_user_form, msg=msg)
 
 
-# New Features (Account Manage)
+# New Features (Account Manage) -- Ian
 # Forgot Password
 @app.route('/Acctforgotpass', methods=['GET', 'POST'])
 def acct_forgotpass():
+    msg = ''
+    try:    # Check If There's A Login Attempt Session In Place
+        # At 3 Attempt
+        if session['acctrecoveryattempt'] >= 3:
+            try:
+                session['acctrecblktime']
+            except:
+                curtime = datetime.now()
+                blktill = curtime + timedelta(minutes=1)    # Block For 1 Minutes
+                session['acctrecblktime'] = blktill       # Block Attempts Till This Time
+            timeremain = str(session['acctrecblktime'] - datetime.now())       # Calculate Time Remaining
+            timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+            if timeremain == ' day,':       # If Block Time Is Up
+                session.pop('acctrecblktime', None)
+                msg = ''
+                session['acctrecoveryattempt'] = 0   # To Unblock User
+            else:
+                msg = 'Looks like you are trying too much, try again in ' + timeremain
+    except:     # Create A New Session called loginattempt
+        session['acctrecoveryattempt'] = 0
+
     check_user_form = Memforgotpassword(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if request.method == 'POST' and check_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (check_user_form.email.data ,))
+    if request.method == 'POST' and check_user_form.validate() and session['acctrecoveryattempt'] != 3:
+        useremail = check_user_form.email.data.lower()
+        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail ,))
         account = cursor.fetchone()
         if account:
             session['OTP'] = generate_otp('email', account['email'])
             session['acctrecoveremail'] = account['email']
+            session.pop('acctrecoveryattempt', None)
             return redirect(url_for('acctenter_otp', email=email))
         else:
             print("Account Not Found")
-            return redirect(url_for('acct_forgotpass', email=email))
-    return render_template('Account_ForgotPassword.html', form=check_user_form, email=email)
+            session['acctrecoveryattempt'] = session['acctrecoveryattempt'] + 1
+            return redirect(url_for('acct_forgotpass'))
+    return render_template('Account_ForgotPassword.html', form=check_user_form, msg=msg)
 
 
 # Forgot Account
 @app.route('/acctforgotacct', methods=['GET', 'POST'])
 def acct_forgotacct():
+    msg = ''
+    try:    # Check If There's A Login Attempt Session In Place
+        # At 3 Attempt
+        if session['acctrecoveryattempt'] >= 3:
+            try:
+                session['acctrecblktime']
+            except:
+                curtime = datetime.now()
+                blktill = curtime + timedelta(minutes=1)    # Block For 1 Minutes
+                session['acctrecblktime'] = blktill       # Block Attempts Till This Time
+            timeremain = str(session['acctrecblktime'] - datetime.now())       # Calculate Time Remaining
+            timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+            if timeremain == ' day,':       # If Block Time Is Up
+                session.pop('acctrecblktime', None)
+                msg = ''
+                session['acctrecoveryattempt'] = 0   # To Unblock User
+            else:
+                msg = 'Looks like you are trying too much, try again in ' + timeremain
+    except:     # Create A New Session called loginattempt
+        session['acctrecoveryattempt'] = 0
+
     check_user_form = Memforgotaccount(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    if request.method == 'POST' and check_user_form.validate():
+    if request.method == 'POST' and check_user_form.validate() and session['acctrecoveryattempt'] != 3:
         cursor.execute('SELECT * FROM account WHERE phone_num = %s', (check_user_form.phone_number.data,))
         account = cursor.fetchone()
         if account:
@@ -854,16 +904,19 @@ def acct_forgotacct():
             cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([account['email']],))
             checkgotpic = cursor.fetchone()
             if checkgotpic is None:
-                session['OTP'] = generate_otp('phone', session['acctrecoverphone'])
+                session['OTP'] = generate_otp('phone', str('+65' + session['acctrecoverphone']))
+                session.pop('acctrecoveryattempt', None)
                 return redirect(url_for('forgotacctenter_otp'))
             else:
                 session['choosesecpicattempt'] = 0
+                session.pop('acctrecoveryattempt', None)
                 return redirect(url_for('acctsecqn'))
         else:
             print("Account Not Found")
+            session['acctrecoveryattempt'] = session['acctrecoveryattempt'] + 1
             return redirect(url_for('acct_forgotacct'))
 
-    return render_template('Account_ForgotAccount.html', form=check_user_form)
+    return render_template('Account_ForgotAccount.html', form=check_user_form, msg=msg)
 
 
 # Enter Email OTP (For Forgot Password)
@@ -905,7 +958,7 @@ def forgotacctenter_otp():
 @app.route('/acctresentsmsotp', methods=['GET', 'POST'])
 def acctresentsms_otp():
     session.pop('OTP', None)
-    session['OTP'] = generate_otp('phone', session['acctrecoverphone'])
+    session['OTP'] = generate_otp('phone', str('+65' + session['acctrecoverphone']))
     return redirect(url_for('forgotacctenter_otp'))
 
 
@@ -937,7 +990,6 @@ def Change_Acct_Password():
                     state = "used"
                     break
             if state != 'used':
-                print(len(pwdhist))
                 if len(pwdhist) >= 2:
                     firstocc = pwdhist[0].get('serial_no')
                     cursor.execute('DELETE FROM password_hist WHERE serial_no = %s', [firstocc])
@@ -973,14 +1025,6 @@ def acctsecqn():
     for a in range(1,5):
         memselectedpic = mememail.replace('@', '') + "_memsecpic" + str(a)    # Get Picture File Name
         photolist.append(memselectedpic)
-    '''
-    a = 0
-    while a < 3:
-        randnum = random.randint(2,5)       # Generate A Random Int That Corresponds With A Picture Number
-        pictoadd = 'pic' + str(randnum)     # Find This Pic File Name
-        photolist.append(pictoadd)          # Append To The List
-        a += 1
-    '''
     random.shuffle(photolist)       # Shuffle Order Of Pictures To Be Shown
     check_user_form = secpic(request.form)
     check_user_form.secpic.choices = [(p, p) for p in photolist]    # Show Pictures In Radio Button Format
@@ -989,8 +1033,8 @@ def acctsecqn():
     acctsecinfo = cursor.fetchone()
     question = acctsecinfo['Security_Question']
     answer = mememail.replace('@', '') + "_memsecpic" + acctsecinfo['answer']
-    if session['choosesecpicattempt'] >= 2:
-        session['OTP'] = generate_otp('phone', session['acctrecoverphone'])
+    if session['choosesecpicattempt'] >= 2: # Change Over to SMS OTP
+        session['OTP'] = generate_otp('phone', str('+65' + session['acctrecoverphone']))
         return redirect(url_for('forgotacctenter_otp'))
     if request.method == 'POST' and check_user_form.validate():
         if check_user_form.secpic.data == answer:       # If Option That User Has Choosen Matches The One In The Account Recovery
@@ -1010,16 +1054,16 @@ def acctsecfavpic():
         fileuploaded2 = request.files[upload_form.pic2.name].read()    # Get Image 2 In Pure Data Format
         fileuploaded3 = request.files[upload_form.pic3.name].read()    # Get Image 3 In Pure Data Format
         fileuploaded4 = request.files[upload_form.pic4.name].read()    # Get Image 4 In Pure Data Format
-        filename1 = str(session['email']).replace('@', '') + "_memsecpic" + '1' + ".jpg"   # Prep File Name
-        filename2 = str(session['email']).replace('@', '') + "_memsecpic" + '2' + ".jpg"   # Prep File Name
-        filename3 = str(session['email']).replace('@', '') + "_memsecpic" + '3' + ".jpg"   # Prep File Name
-        filename4 = str(session['email']).replace('@', '') + "_memsecpic" + '4' + ".jpg"   # Prep File Name
-        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename1)), 'wb').write(fileuploaded1)    # Save The Picture 1 That Is Uploaded By The User
-        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename2)), 'wb').write(fileuploaded2)    # Save The Picture 1 That Is Uploaded By The User
-        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename3)), 'wb').write(fileuploaded3)    # Save The Picture 1 That Is Uploaded By The User
-        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename4)), 'wb').write(fileuploaded4)    # Save The Picture 1 That Is Uploaded By The User
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        if session['stafflogged'] is None:  # Using memeber Page
+        if session['stafflogged'] is None:  # Using member Page
+            filename1 = str(session['email']).replace('@', '') + "_memsecpic" + '1' + ".jpg"   # Prep File Name
+            filename2 = str(session['email']).replace('@', '') + "_memsecpic" + '2' + ".jpg"   # Prep File Name
+            filename3 = str(session['email']).replace('@', '') + "_memsecpic" + '3' + ".jpg"   # Prep File Name
+            filename4 = str(session['email']).replace('@', '') + "_memsecpic" + '4' + ".jpg"   # Prep File Name
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename1)), 'wb').write(fileuploaded1)    # Save The Picture 1 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename2)), 'wb').write(fileuploaded2)    # Save The Picture 2 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename3)), 'wb').write(fileuploaded3)    # Save The Picture 3 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename4)), 'wb').write(fileuploaded4)    # Save The Picture 4 That Is Uploaded By The User
             cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([session['email']]))  # Check if user has previously set up security questions before
             gotaccount = cursor.fetchone()
             if gotaccount:
@@ -1030,16 +1074,30 @@ def acctsecfavpic():
             return redirect(url_for('referral', state = " "))
         else:   # Using Staff Page
             cursor.execute('SELECT * FROM account WHERE full_name = %s', ([session['stafflogged']]))
-            staffaccount = cursor.fetchone()
+            staffaccount = cursor.fetchone() # Since Staff and User Email are not stored the same way in session, Have to get email from staff name
+            filename1 = str(staffaccount['email']).replace('@', '') + "_memsecpic" + '1' + ".jpg"   # Prep File Name
+            filename2 = str(staffaccount['email']).replace('@', '') + "_memsecpic" + '2' + ".jpg"   # Prep File Name
+            filename3 = str(staffaccount['email']).replace('@', '') + "_memsecpic" + '3' + ".jpg"   # Prep File Name
+            filename4 = str(staffaccount['email']).replace('@', '') + "_memsecpic" + '4' + ".jpg"   # Prep File Name
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename1)), 'wb').write(fileuploaded1)    # Save The Picture 1 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename2)), 'wb').write(fileuploaded2)    # Save The Picture 2 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename3)), 'wb').write(fileuploaded3)    # Save The Picture 3 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename4)), 'wb').write(fileuploaded4)    # Save The Picture 4 That Is Uploaded By The User
             cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([staffaccount['email']]))  # Check if user has previously set up security questions before
             gotaccount = cursor.fetchone()
             if gotaccount:
-                cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data, session['email']))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
+                cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data, staffaccount['email']))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
             else:
-                cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
+                cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (staffaccount['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
             mysql.connection.commit()
             return redirect(url_for('staffpage'))
     return render_template('Account_UploadFavPic.html', form=upload_form, msg=msg)
+
+# Exception Handling For Uploading Files
+@app.errorhandler(413)
+@app.errorhandler(RequestEntityTooLarge)
+def app_handle_413(e):
+    return redirect(url_for('acctsecfavpic'))
 
 
 def generate_otp(method, numemail):
@@ -1053,7 +1111,7 @@ def generate_otp(method, numemail):
         .create(
              body= str('This Is Your OTP {}' .format(otp)),
              from_='',
-             to=''
+             to = numemail
          )
     return otp
 
