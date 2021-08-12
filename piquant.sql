@@ -20,12 +20,22 @@ CREATE TABLE IF NOT EXISTS `Reservation`(`reservation_id` int(6) NOT NULL AUTO_I
                                            PRIMARY KEY(`reservation_id`)) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `Account`(`email` varchar(100) NOT NULL, `full_name` varchar(50),
-                                        `password` varchar(128) NOT NULL, `account_type` varchar(50),
+                                        `password` varchar(255) NOT NULL, `account_type` varchar(50),
                                         `phone_num` varchar(8) NOT NULL, `member_level` varchar(30), 
                                         `member_completion` varchar(8), `sign_up_date` date,
                                         `staff_id` varchar(7),  `hire_date` date, `job_title` varchar(60),
                                         PRIMARY KEY(`email`)) ;
                                        
 CREATE TABLE IF NOT EXISTS `Rewards`(`reward_code` varchar(10), `status` varchar(20),
-                                         PRIMARY KEY(`reward_code`));                                       
+                                         PRIMARY KEY(`reward_code`));         
+-- new
+CREATE TABLE IF NOT EXISTS `Password_Hist`(`serial_no` int NOT NULL AUTO_INCREMENT, `email` varchar(100) NOT NULL, 
+										    `password` varchar(255) NOT NULL, 
+											PRIMARY KEY(`serial_no`)) ENGINE=InnoDB;   
+   
+CREATE TABLE IF NOT EXISTS `security_qn`(`email`  varchar(100) NOT NULL, `Security_Question` varchar(200) NOT NULL,
+										 `answer` varchar(5) NOT NULL,
+                                         PRIMARY KEY(`email`));     
+			
+
 

@@ -1,5 +1,8 @@
-from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField, DateField
+from flask_wtf.file import FileRequired, FileAllowed
+from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, validators, BooleanField, DateField, \
+    RadioField, FileField, widgets, SelectMultipleField
 from wtforms.validators import email
+from flask_wtf import RecaptchaField
 
 class ReservationForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()])
@@ -90,3 +93,47 @@ class addmenu(Form):
     itemname = StringField('Item Name', [validators.Length(min=0, max=50), validators.DataRequired()])
     itemdesc = StringField('Item Description', [validators.Length(min=0, max=300), validators.DataRequired()])
     itemprice = StringField('Item Price (x.xx)', [validators.Length(min=3, max=5), validators.DataRequired()])
+
+class Memforgotpassword(Form):
+    email = StringField('Email', [email(), validators.DataRequired()],
+                        render_kw={"placeholder": "Email"})
+    recaptcha = RecaptchaField()
+
+class Memforgotaccount(Form):
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
+                               render_kw={"placeholder": "Phone Number"})
+    recaptcha = RecaptchaField()
+
+class EnterOTP(Form):
+    OTP = StringField('OTP', [validators.Length(min=6, max=6), validators.DataRequired()],
+                      render_kw={"placeholder": "OTP"})
+
+class SecQn(Form):
+    SecAns1 = StringField('', [validators.Length(min=1, max=50), validators.DataRequired()],
+                      render_kw={"placeholder": "Answer"})
+    SecAns2 = StringField('', [validators.Length(min=1, max=50), validators.DataRequired()],
+                      render_kw={"placeholder": "Answer"})
+
+class ChangeMemberPassword(Form):
+    newpassword = PasswordField('Password', [validators.DataRequired(), validators.EqualTo('cfmpassword', message='Passwords must match')],  render_kw={"placeholder": "New Password"})
+    cfmpassword = PasswordField('Reenter Password', [validators.DataRequired()], render_kw={"placeholder": "Reenter Password"})
+
+'''
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
+class secpic(Form):
+    secpic = MultiCheckboxField('pic', widget=widgets.TableWidget())
+'''
+class secpic(Form):
+    secpic = RadioField('pic')
+
+class uploadfavpic(Form):
+    chosensecqn = StringField('Question:', [validators.Length(min=0, max=150), validators.DataRequired()])
+    pic1 = FileField('Pic 1', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    pic2 = FileField('Pic 2', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    pic3 = FileField('Pic 3', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    pic4 = FileField('Pic 4', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    picchose = RadioField('Correct Picture', choices=[(1, 'Pic 1'), (2, 'Pic 2'), (3, 'Pic 3'), (4, 'Pic 4')])
+

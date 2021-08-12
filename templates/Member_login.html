@@ -15,17 +15,19 @@
   </div>
   <input type="submit" value="Login" class="btn btn-success"/>
 </form>
-
 <br>
 <a href="/"> <button class="btn btn-danger"> Back </button> </a>
 <br>
-
-<p> {{msg}} </p>
-
+<br>
+{{msg}}
 <br>
 <div class="border-top pt-3">
   <small class="text-muted">
     <a class="ml-2" href="{{ url_for('create_Member') }}">Need an account?</a>
+    <br>
+    <a class="ml-2" href="{{ url_for('acct_forgotpass')}}">Forgot Password?</a>
+    <br>
+    <a class="ml-2" href="{{ url_for('acct_forgotacct') }}">Forgot Account?</a>
   </small>
 </div>
 {% endblock %}

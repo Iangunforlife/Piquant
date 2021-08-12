@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Security Question{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<br>
+<h1 class="display-4">Security Question</h1>
+
+<h4> {{question}} </h4>
+
+<form method="POST" action="">
+    {% for subfield in form %}
+
+    {{ subfield(style="list-style:none") }}
+    {% endfor %}
+    <input type="submit" value="Submit" class="btn btn-success"/>
+</form>
+
+{% for count in range(4) %}
+ <script>
+        {% for subfield in form %}
+        var label = document.querySelector('label[for="secpic-{{count}}"]');
+        label.innerHTML = ' <img src="{{url_for('static', filename='accountsecpic/' + subfield.choices[count][1] + '.jpg')}}" style="width:20%;"> ';
+        {% endfor %}
+ </script>
+{% endfor %}
+{% endblock %}
