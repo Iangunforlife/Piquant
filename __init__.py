@@ -851,8 +851,14 @@ def acct_forgotacct():
         if account:
             session['acctrecoveremail'] = account['email']       # Put Email In A Session For Use Later
             session['acctrecoverphone'] = check_user_form.phone_number.data
-            session['choosesecpicattempt'] = 0
-            return redirect(url_for('acctsecqn'))
+            cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([account['email']],))
+            checkgotpic = cursor.fetchone()
+            if checkgotpic is None:
+                session['OTP'] = generate_otp('phone', session['acctrecoverphone'])
+                return redirect(url_for('forgotacctenter_otp'))
+            else:
+                session['choosesecpicattempt'] = 0
+                return redirect(url_for('acctsecqn'))
         else:
             print("Account Not Found")
             return redirect(url_for('acct_forgotacct'))
@@ -959,10 +965,8 @@ def Change_Acct_Password():
     return render_template('Account_ChangePassword.html', form=update_user_form, msg=msg)
 
 
-# Not Completed
 @app.route('/Acctforgotacctsecqn', methods=['GET', 'POST'])
 def acctsecqn():
-    print(session['choosesecpicattempt'])
     msg = ''
     mememail = session['acctrecoveremail']      # Get User's Email From The Phone Number They Entered
     photolist = []            # Add Picture That User Has Choosen When Setting Up Account Recovery
@@ -1015,14 +1019,26 @@ def acctsecfavpic():
         open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename3)), 'wb').write(fileuploaded3)    # Save The Picture 1 That Is Uploaded By The User
         open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename4)), 'wb').write(fileuploaded4)    # Save The Picture 1 That Is Uploaded By The User
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([session['email']]))  # Check if user has previously set up security questions before
-        gotaccount = cursor.fetchone()
-        if gotaccount:
-            cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data,))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
-        else:
-            cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
-        mysql.connection.commit()
-        return redirect(url_for('referral', state = " "))
+        if session['stafflogged'] is None:  # Using memeber Page
+            cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([session['email']]))  # Check if user has previously set up security questions before
+            gotaccount = cursor.fetchone()
+            if gotaccount:
+                cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data, session['email']))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
+            else:
+                cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
+            mysql.connection.commit()
+            return redirect(url_for('referral', state = " "))
+        else:   # Using Staff Page
+            cursor.execute('SELECT * FROM account WHERE full_name = %s', ([session['stafflogged']]))
+            staffaccount = cursor.fetchone()
+            cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([staffaccount['email']]))  # Check if user has previously set up security questions before
+            gotaccount = cursor.fetchone()
+            if gotaccount:
+                cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data, session['email']))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
+            else:
+                cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
+            mysql.connection.commit()
+            return redirect(url_for('staffpage'))
     return render_template('Account_UploadFavPic.html', form=upload_form, msg=msg)
 
 
@@ -1040,6 +1056,17 @@ def generate_otp(method, numemail):
              to=''
          )
     return otp
+
+
+# Extra, Shutdown Server
+@app.route('/shutdown', methods=['GET'])
+def shutdown():
+    shutdown_server()
+    return redirect(url_for('home'))
+
+def shutdown_server():
+    check = request.environ.get('werkzeug.server.shutdown')
+    check()
 
 if __name__ == '__main__':
     app.run(debug=True)

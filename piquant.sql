@@ -28,9 +28,14 @@ CREATE TABLE IF NOT EXISTS `Account`(`email` varchar(100) NOT NULL, `full_name` 
                                        
 CREATE TABLE IF NOT EXISTS `Rewards`(`reward_code` varchar(10), `status` varchar(20),
                                          PRIMARY KEY(`reward_code`));         
-
+-- new
 CREATE TABLE IF NOT EXISTS `Password_Hist`(`serial_no` int NOT NULL AUTO_INCREMENT, `email` varchar(100) NOT NULL, 
 										    `password` varchar(255) NOT NULL, 
 											PRIMARY KEY(`serial_no`)) ENGINE=InnoDB;   
+   
+CREATE TABLE IF NOT EXISTS `security_qn`(`email`  varchar(100) NOT NULL, `Security_Question` varchar(200) NOT NULL,
+										 `answer` varchar(5) NOT NULL,
+                                         PRIMARY KEY(`email`));     
+			
 
 
