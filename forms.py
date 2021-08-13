@@ -18,13 +18,24 @@ class ReservationForm(Form):
 
 # Akif
 class CreateUserForm(Form):
-    full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
+    full_name = StringField('Full Name', [validators.Length(min=2, max=30), validators.Regexp("^(?!.*[~`!@#$%^&()={}[\]:;,<>+\/?])[a-zA-Z_.-]", message="Invalid username (special cahracters allowed '_ and -')"), validators.DataRequired()],
                             render_kw={"placeholder": "Full Name"})
-    email = StringField('Email', [email(), validators.DataRequired()],
+    email = StringField('Email', [email(), validators.Length(max=100, message="Email too long"), validators.DataRequired()],
                         render_kw={"placeholder": "123@email.com"})
-    password = PasswordField('New Password', [validators.DataRequired()], render_kw={"placeholder": "New Password"})
-    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.DataRequired()],
+    password = PasswordField('New Password',
+                             [validators.Length(min=8, max=64, message="Password must be at least 8 characters long."),
+                              validators.Regexp("^(?=.*[a-z])", message="Password must have a lowercase character"),
+                              validators.Regexp("^(?=.*[A-Z])", message="Password must have an uppercase character"),
+                              validators.Regexp("^(?=.*\\d)", message="Password must contain a number"),
+                              validators.Regexp(
+                                  "(?=.*[@$!%*#?&])", message="Password must contain a special character"
+                              ), validators.DataRequired(),
+                              validators.EqualTo('confirm', message='Passwords must match')],
+                             render_kw={"placeholder": "New Password"})
+    confirm = PasswordField('Confirm Password', render_kw={"placeholder": "Confirm Password"})
+    phone_number = StringField('Phone_Number', [validators.Length(min=8, max=8), validators.regexp("^(?!.*[a-zA-Z~`!@#$%^&()_={}[\]:;,.<>+\/?-])(?=.*[0-9])", message="Only numbers are allowed"), validators.DataRequired()],
                                render_kw={"placeholder": "Phone Number"})
+    recaptcha = RecaptchaField()
 
 class UpdatememberdetailForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()],
@@ -71,7 +82,7 @@ class CreateStaff(Form):
                                render_kw={"placeholder": "Phone Number"})
     staff_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
-    manager_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
+    manager_id = StringField('Manager ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Manager ID (Optional)"})
     job_title = StringField('Job Title', [validators.Length(min=1, max=60), validators.DataRequired()],
                                render_kw={"placeholder": "Job Title"})
@@ -85,7 +96,7 @@ class UpdateStaff(Form):
                                render_kw={"placeholder": "Phone Number"})
     staff_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
-    manager_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
+    manager_id = StringField('Manager ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Manager ID (Optional)"})
     hire_date = DateField('Hire Date(YYYY-MM-DD)', [validators.DataRequired()])
     job_title = StringField('Job Title', [validators.Length(min=1, max=60), validators.DataRequired()],

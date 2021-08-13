@@ -15,6 +15,24 @@ import os
 from twilio.rest import Client
 from werkzeug.exceptions import RequestEntityTooLarge
 
+# Zhi Yang's Email OTP
+'''
+import bcrypt
+from tkinter import *
+from tkinter import messagebox
+import tkinter
+'''
+# Zhi Yang Watchdog
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+import sys
+import time
+import smtplib
+import subprocess
+from watchdog.events import FileSystemEventHandler, PatternMatchingEventHandler
+from watchdog.observers import Observer
+from email.mime.text import MIMEText
+
 app = Flask(__name__)
 # For Session
 app.secret_key = 'Secret'
@@ -22,7 +40,7 @@ app.secret_key = 'Secret'
 # For SQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''   # Enter Your Own SQL Information
+app.config['MYSQL_PASSWORD'] = 'Iansql@11'   # Enter Your Own SQL Information
 app.config['MYSQL_DB'] = 'piquant'  # Load Up piquant schema
 mysql = MySQL(app)
 
@@ -247,7 +265,6 @@ def cart():
     return render_template('Menu_Cartpage.html', order_list=order_list, oldorder_list=oldorder_list, iteminfo=iteminfo, total=total)
 
 @app.route('/deleteitem/<ordernum>')
-
 def deleteitem(ordernum):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('DELETE FROM cart WHERE order_num = %s', [ordernum])
@@ -284,6 +301,17 @@ def create_Member():
         if account:     # Ensure That there will be no duplicates (As Email is A Primary Key In The Database)
             msg = 'This Email Has Been Taken'
         else:
+            # Password Hashing
+            # Create a random number (Salt)
+            salt = bcrypt.gensalt(rounds=16)
+            # A hashed value is created with hashpw() function, which takes the cleartext value and a salt as parameters.
+            hash_password = bcrypt.hashpw(create_user_form.password.data.encode(), salt)
+            '''
+            cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NULL, NULL, NULL)'
+                           , (create_user_form.email.data, create_user_form.full_name.data
+                              , hash_password, 'Member',
+                              create_user_form.phone_number.data, "Regular", "1/5", newdate))
+            '''
             cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %7s, %s, %s, NULL, NULL, NULL)', (useremail, create_user_form.full_name.data, create_user_form.password.data, 'Member',  create_user_form.phone_number.data , "Regular", "1/5", newdate))
             cursor.execute('UPDATE account SET login_time = %s pwd_expiry= %s WHERE email = %s', (login_time,exp_date,create_user_form.email.data,))
             cursor.execute('UPDATE audit SET action = %s WHERE email = %s', ('Signed up as member', create_user_form.email.data,))
@@ -597,8 +625,7 @@ def staffpage():
         return redirect(url_for('checkstaff'))
     return render_template('Staff_Page.html')
 
-@app.route('/Managerpage/')
-
+# TBC
 def manpage():
     # Check If Manager is Logged In
     try:
@@ -609,8 +636,6 @@ def manpage():
 
 # Reservation Form
 @app.route('/retrieveReservation')
-
-
 def retrieve():
     # Check If All Staff (includes managers) Is Logged In (This Is To Prevent User From Using The Back Button)
     try:
@@ -869,8 +894,6 @@ def delete_Member(mememail):
 
 #Referal Codes
 @app.route('/Referalcodes', methods=['GET','POST'])
-
-
 def referal_codes():
     # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
     try:

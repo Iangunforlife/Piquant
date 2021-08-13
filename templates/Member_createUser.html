@@ -1,27 +1,89 @@
 {% extends "base.html" %}
 {% block title %}Piquant - Create Account{% endblock %}
+
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 
+<link rel="stylesheet" href="{{url_for('static', filename='css/validation.css')}}">
 <h1 class="display-4">Create Member</h1>
 
-<form method="POST" action="">
+<form method="POST" action="" id="registration">
+
   <div class="form-group">
-    {{ render_field(form.full_name, class="form-control") }}
+
+          <label for="full_name">
+      {{ render_field(form.full_name, class="form-control", id="full_name") }}
+      <ul class="input-requirements">
+          <li>At least 3 characters long</li>
+          <li>Must only contain letters and numbers (no special characters)</li>
+      </ul>
+ </label>
+  </div>
+
+
+  <div class="form-group">
+          <label for="email">
+
+    {{ render_field(form.email, class="form-control", id="email") }}
+          <ul class="input-requirements">
+          <li>The email cannot contain special characters such as "<>" or "()" or ";"</li>
+      </ul>
+          </label>
   </div>
   <div class="form-group">
-    {{ render_field(form.email, class="form-control") }}
+      <label for="password">
+    {{ render_field(form.password, class="form-control", id="password") }}
+      <ul class="input-requirements">
+					<li>At least 8 characters long (and less than 100 characters)</li>
+					<li>Contains at least 1 number</li>
+					<li>Contains at least 1 lowercase letter</li>
+					<li>Contains at least 1 uppercase letter</li>
+					<li>Contains a special character (e.g. @ !)</li>
+				</ul>
+      </label>
   </div>
   <div class="form-group">
-    {{ render_field(form.password, class="form-control") }}
+      <label for="confirm">
+    {{ render_field(form.confirm, class="form-control", id="confirm")}}
+
+          <ul class="input-requirements">
+          <li>Password needs to match the above password</li>
+      </ul>
+
+      </label>
   </div>
   <div class="form-group">
-    {{ render_field(form.phone_number, class="form-control") }}
+      <label for="phone_number">
+    {{ render_field(form.phone_number, class="form-control",  id="phone_number")}}
+
+          <ul class="input-requirements">
+          <li>phone number can only contain 8 numeric characters</li>
+      </ul>
+
+          </label>
   </div>
 <br>
-  {{msg}}
+    <div class="center">
+        {{msg}}
+    </div>
 <br>
-  <input type="submit" value="Submit" class="btn btn-success"/>
+
+
+    <div class="center">
+        <div class=".g-recaptcha">
+        {{form.recaptcha}}
+        </div>
+    </div>
+
+ {% for error in form.recaptcha.errors %}
+  <ul class="center">
+      <li style="color:red;">{{ error }}</li>
+  {% endfor %}
+  </ul>
+  <br>
+
+
+  <input type="submit" value="Submit" class="center" class="btn btn-success"/>
 </form>
 <br>
 <a href="/"> <button class="btn btn-danger"> Back </button> </a>
@@ -33,4 +95,7 @@
   </small>
 </div>
 <br>
+
+<script src="{{url_for('static',filename = 'Script.js')}}"></script>
+
 {% endblock %}
