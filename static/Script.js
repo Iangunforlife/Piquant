@@ -110,7 +110,6 @@ var usernameValidityChecks = [
 /*
 Email validation
 RFC 2821, 2822 Compliant
-document.getElementById("demo").innerHTML = email.value
 */
 
 var emailValidityChecks = [

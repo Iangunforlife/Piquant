@@ -75,7 +75,9 @@
 
 
 <br>
-  {{msg}}
+    <div class="center">
+        {{msg}}
+    </div>
 <br>
 
 
@@ -86,7 +88,7 @@
     </div>
 
  {% for error in form.recaptcha.errors %}
-  <ul>
+  <ul class="center">
       <li style="color:red;">{{ error }}</li>
   {% endfor %}
   </ul>

@@ -10,10 +10,27 @@ import bcrypt
 from tkinter import *
 from tkinter import messagebox
 import tkinter
-import time
+
 import os
 import random
+
+
+
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+import sys
+import time
 import smtplib
+import subprocess
+
+from watchdog.events import FileSystemEventHandler, PatternMatchingEventHandler
+from watchdog.observers import Observer
+from email.mime.text import MIMEText
+
+
+
+
 
 
 app = Flask(__name__)
@@ -215,7 +232,6 @@ def create_Member(email):
                 Window = out_Window
                 end = time.time()
                 t = format(end - start)
-                print(float(t))
                 if float(t) >= 60:
                     messagebox.showinfo("Time out", "Session Expired ...Time out Please regenerate OTP")
                     Window.destroy()
@@ -234,8 +250,6 @@ def create_Member(email):
                                           , hash_password, 'Member',
                                           create_user_form.phone_number.data, "Regular", "1/5", newdate))
                         mysql.connection.commit()
-
-                        print(hash_password)
 
                         create_Member.otp = "true"
                         return True
