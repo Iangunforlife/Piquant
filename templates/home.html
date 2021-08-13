@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Home{% endblock %}
+{% block content %}
+<h1 class="display-4 homeh1">Piquant</h1>
+<img src="{{url_for('static',filename='img/restaurant.jpg')}}" class="homerest">
+
+<h1 class="display-4 homeh1">Our chefs</h1>
+<div class="row">
+   <div class ="col-sm-6">
+       <h1>Gordon Ramsay</h1>
+       <img src="{{url_for('static',filename = 'img/Ramsay.png')}}" alt="" class="homechefpic">
+   </div>
+   <div class="col-sm-6 homepara">
+       <p>
+            Scotland-born Ramsay needs no introduction with his string of successful restaurants worldwide and appearances on TV shows such as Hell's Kitchen and MasterChef US. His namesake establishment, Restaurant Gordon Ramsay,
+            has held three Michelin stars since 2001.
+       </p>
+       <p>
+            The highly acclaimed chef is also the author of a number of bestselling books, including his autobiography. Gordon Ramsay was also very famous for roasting people in Hell's Kitchen.
+       </p>
+   </div>
+</div>
+<div class="row">
+   <div class="col-sm-6">
+       <h1>Jamie Oliver</h1>
+       <img src="{{url_for('static',filename = 'img/Jamie.jpg')}}" alt="" class="homechefpic">
+   </div>
+   <div class="col-sm-6 homepara">
+       <p>
+        Jamie Oliver is a British chef and restaurateur. He is known for his approachable and healthy cuisine, which has led him to front numerous television shows.</p>
+        <p>
+            In 2005, he opened a campaign, Feed Me Better, to introduce schoolchildren to healthier foods, which was later backed by the government.
+        </p>
+   </div>
+</div>
+{% endblock %}

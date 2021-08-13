@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %} Piquant - Staff Cart {% endblock %}
+
+{% block content %}
+<br>
+{% block staffnavbar %}
+  {% include 'includes/Staff_navbar.html' %}
+{% endblock %}
+<h1 class="display-4"> Orders </h1>
+<p> <br> Current Table Number Assigned: {{currenttable}} </p>
+<a href = "{{url_for('changetable', state='F')}}"> <button class="btn btn-danger"> Decrease Table Num </button> </a>
+<a href = "{{url_for('changetable', state='T')}}"> <button class="btn btn-success"> Increase Table Num </button> </a>
+<br>
+<br>
+<h3> All Orders </h3>
+{% for a in order_listdict %} <!-- Order from all tables -->
+<div>
+    <p> </p>
+    <p> Table: {{ a.get_tablenum() }} </p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td> Item Code </td>
+                <td> Item </td>
+                <td> Quanity </td>
+                <td> Action </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in a.get_order() %} <!-- Order from only 1 table -->
+            {% if a.get_order().get(b) > 0 %} <!-- If Quanity From Table More Then 1, Then It Will Show Up -->
+            <tr>
+                <td> {{ b }} </td>
+                <td> {{ a.getnamefromcode(b) }} </td>
+                <td> {{ a.get_order().get(b)}} </td>  <!-- Quanity -->
+                <td> <a href="{{url_for('staffdeleteitem', deleteitem=b, tablenum=a.get_tablenum(), staff_name=staff_name)}}"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+{% endfor %}
+<a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+{% endblock %}

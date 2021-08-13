@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Reservation Confirmation{% endblock %}
+
+{% block content %}
+<h1 class="display-4 reservecofhead">Confirmation</h1>
+
+<div class="reservecofcontent">
+  <div class="reservecofvl"></div>
+  <p>User ID: {{get_user.get_user_id()}} </p>
+  <p>First Name: {{get_user.get_first_name()}} </p>
+  <p>Last Name: {{get_user.get_last_name()}} </p>
+  <p>Salutation: {{get_user.get_salutation()}} </p>
+  <p>Email: {{get_user.get_email()}} </p>
+  <p>Additional note: {{get_user.get_additional_note()}} </p>
+
+  <a href="{{ url_for('number', email=email)}} "><button class="btn btn-success">Confirm</button></a>
+
+</div>
+{% endblock %}
