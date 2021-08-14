@@ -54,7 +54,7 @@
   </div>
   <div class="form-group">
       <label for="phone_number">
-    {{ render_field(form.phone_number, class="form-control",  id="phone_number")}}
+    {{ render_field(form.phone_number, class="form-control", id="phone_number")}}
 
           <ul class="input-requirements">
           <li>phone number can only contain 8 numeric characters</li>
@@ -83,7 +83,7 @@
   <br>
 
 
-  <input type="submit" value="Submit" class="center" class="btn btn-success"/>
+  <input type="submit" value="Submit" class="center btn btn-success"/>
 </form>
 <br>
 <a href="/"> <button class="btn btn-danger"> Back </button> </a>
@@ -96,6 +96,6 @@
 </div>
 <br>
 
-<script src="{{url_for('static',filename = 'Script.js')}}"></script>
+<script src="{{url_for('static',filename = 'Javascript/CreateMemberScript.js')}}"></script>
 
 {% endblock %}

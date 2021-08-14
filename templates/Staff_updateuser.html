@@ -26,6 +26,11 @@
   <div class="form-group">
     {{ render_field(form.staff_id, class="form-control") }}
   </div>
+    {% if 'manager_id' in session %}
+    <div class="form-group">
+    {{ render_field(form.manager_id, class="form-control") }}
+  </div>
+    {% endif %}
   <div class="form-group">
     {{ render_field(form.hire_date, class="form-control") }}
   </div>

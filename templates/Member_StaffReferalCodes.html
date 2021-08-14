@@ -3,6 +3,7 @@
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
+<br>
 {% block staffnavbar %}
     {% if 'manager_id' in session %}
         {% include 'Includes/Manager_navbar.html' %}
@@ -53,4 +54,7 @@
 </div>
 <br>
 <a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
+<br>
+{{ msg }}
+<br>
 {% endblock %}

@@ -82,7 +82,7 @@ class CreateStaff(Form):
                                render_kw={"placeholder": "Phone Number"})
     staff_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
-    manager_id = StringField('Manager ID', [validators.Length(min=1, max=30), validators.DataRequired()],
+    manager_id = StringField('Manager ID', [validators.Length(min=0, max=30)],
                                render_kw={"placeholder": "Manager ID (Optional)"})
     job_title = StringField('Job Title', [validators.Length(min=1, max=60), validators.DataRequired()],
                                render_kw={"placeholder": "Job Title"})
@@ -96,11 +96,12 @@ class UpdateStaff(Form):
                                render_kw={"placeholder": "Phone Number"})
     staff_id = StringField('Staff ID', [validators.Length(min=1, max=30), validators.DataRequired()],
                                render_kw={"placeholder": "Staff ID"})
-    manager_id = StringField('Manager ID', [validators.Length(min=1, max=30), validators.DataRequired()],
+    manager_id = StringField('Manager ID', [validators.Length(min=0, max=30)],
                                render_kw={"placeholder": "Manager ID (Optional)"})
     hire_date = DateField('Hire Date(YYYY-MM-DD)', [validators.DataRequired()])
     job_title = StringField('Job Title', [validators.Length(min=1, max=60), validators.DataRequired()],
                                render_kw={"placeholder": "Job Title"})
+
 
 # Adding New Menu Items
 class addmenu(Form):

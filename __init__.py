@@ -4,16 +4,16 @@ import Member_Completion, GenerateOrderNum, random, logging
 from datetime import date, datetime, timedelta
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
-from datetime import date
 import datetime
 from handler import error
 from functools import wraps # don't need to pip install
 import splunklib.client as client # pip install splunk-sdk
 import socket
-from flask_mail import Mail, Message
+from flask_mail import Mail, Message    # To Send Email
 import os
-from twilio.rest import Client
-from werkzeug.exceptions import RequestEntityTooLarge
+from twilio.rest import Client  # To Send SMS
+from werkzeug.exceptions import RequestEntityTooLarge   # To Verify Image Size Does Not Exceed 16MB
+import bcrypt   # For Hashing
 
 # Zhi Yang's Email OTP
 '''
@@ -21,6 +21,7 @@ import bcrypt
 from tkinter import *
 from tkinter import messagebox
 import tkinter
+'''
 '''
 # Zhi Yang Watchdog
 from watchdog.observers import Observer
@@ -32,6 +33,7 @@ import subprocess
 from watchdog.events import FileSystemEventHandler, PatternMatchingEventHandler
 from watchdog.observers import Observer
 from email.mime.text import MIMEText
+'''
 
 app = Flask(__name__)
 # For Session
@@ -40,7 +42,7 @@ app.secret_key = 'Secret'
 # For SQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Iansql@11'   # Enter Your Own SQL Information
+app.config['MYSQL_PASSWORD'] = ''   # Enter Your Own SQL Information
 app.config['MYSQL_DB'] = 'piquant'  # Load Up piquant schema
 mysql = MySQL(app)
 
@@ -81,6 +83,7 @@ file_handler = logging.FileHandler('piquant.log')
 file_handler.setFormatter(formatter)
 
 logger.addHandler(file_handler)
+
 '''
 #for splunk
 service = client.connect(
@@ -225,7 +228,6 @@ def orderpage1():
 
 
 @app.route('/addingorder/<orderitem>')
-
 def addingorder(orderitem):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     newordernum = session['ordersess'] + '_' + str(GenerateOrderNum.generateordernum()) # Generate A Random Order Number To Store
@@ -448,6 +450,19 @@ def acct_updatesuccess():
 
 @app.route('/logout')   # Universal Logout Function
 def logout():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    logouttime = str(datetime.datetime.now().replace(microsecond=0))
+    # For Audit
+    if 'email' in session:
+        logger.info("{} is logged out".format(session['email']))
+        cursor.execute('UPDATE audit SET action = %s, logout_time = %s WHERE email = %s ', ('Logged out', logouttime, session['email'],))
+    if 'manager_id' in session:
+        logger.info("{} is logged out".format(session['manager_id']))
+        cursor.execute('UPDATE audit SET action = %s, logout_time = %s WHERE staff_id = %s ', ('Logged out', logouttime, session['manager_id'],))
+    if 'staff_id' in session:
+        logger.info("{} is logged out".format(session['staff_id']))
+        cursor.execute('UPDATE audit SET action = %s, logout_time = %s WHERE staff_id = %s ', ('Logged out', logouttime, session['staff_id'],))
+    mysql.connection.commit()
     session.pop('loggedin', None)
     session.pop('email', None)
     session.pop('stafflogged', None)
@@ -961,8 +976,11 @@ def create_staff():
                 curdate = date.today()   # Get Today's date
                 expiry_date = curdate + timedelta(days=90)
                 pwd_expiry = expiry_date.strftime("%Y-%m-%d")   # To Create New Date According To SQL Format
-                cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %s, NULL, NULL, NULL, %s, %s, %s, %s)', (useremail, create_user_form.full_name.data, create_user_form.password.data, pwd_expiry, 'Staff',  create_user_form.phone_number.data , create_user_form.staff_id.data, create_user_form.manager_id.data, newdate, create_user_form.job_title.data))
-                cursor.execute('INSERT INTO audit VALUES (%s, %s, %s, NULL, NULL, NULL, NULL, NULL, NULL, NULL)', (create_user_form.email.data, create_user_form.full_name, create_user_form.staff_id))
+                if len(create_user_form.manager_id.data) == 0:  # For Normal Staff
+                    cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %s, NULL, NULL, NULL, %s, NULL, %s, %s, NULL)', ([useremail, create_user_form.full_name.data, create_user_form.password.data, pwd_expiry, 'Staff',  create_user_form.phone_number.data , create_user_form.staff_id.data, newdate, create_user_form.job_title.data]))
+                else:   # For Those With Manager ID
+                    cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %s, NULL, NULL, NULL, %s, %s, %s, %s, NULL)', ([useremail, create_user_form.full_name.data, create_user_form.password.data, pwd_expiry, 'Staff',  create_user_form.phone_number.data , create_user_form.staff_id.data, create_user_form.manager_id.data, newdate, create_user_form.job_title.data]))
+                cursor.execute('INSERT INTO audit VALUES (%s, %s, %s, NULL, NULL, NULL, NULL, NULL, NULL, NULL)', (useremail, create_user_form.full_name.data, create_user_form.staff_id.data))
                 cursor.execute('UPDATE audit SET action = %s WHERE staff_id = %s',('Created new staff', session['staff_id'],))
                 mysql.connection.commit()
                 return redirect(url_for('confirmstaff', newuser=useremail))
@@ -1015,11 +1033,14 @@ def update_staff(toupdate):  # toupdate Variable Is Used in a case where 1 staff
         if staff['email'] != account['email']:
             msg = "This Email Has Been Used"
         else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, staff_id=%s, manager_id=%s,  hire_date= %s, job_title= %s WHERE email = %s', (useremail, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.staff_id.data, update_user_form.manager_id.data, update_user_form.hire_date.data, update_user_form.job_title.data, staff['email'],))
+            if len(update_user_form.manager_id.data) == 0: # For Those Without Manager ID
+                cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, staff_id=%s, hire_date= %s, manager_id=NULL, job_title= %s WHERE email = %s', (useremail, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.staff_id.data, update_user_form.hire_date.data, update_user_form.job_title.data, staff['email'],))
+            else:   # For Those With Manager ID
+                cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, staff_id=%s, manager_id=%s, hire_date= %s, job_title= %s WHERE email = %s', (useremail, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.staff_id.data, update_user_form.manager_id.data, update_user_form.hire_date.data, update_user_form.job_title.data, staff['email'],))
             cursor.execute('UPDATE audit SET action = %s WHERE staff_id = %s',('Updated self profile', session['staff_id'],))
             logger.info("{} updated self profile".format(session['staff_id']))
             mysql.connection.commit()
-            return redirect(url_for('staffretrieve'))
+            return redirect(url_for('staffpage'))
     else:
         cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))     # Get Account Information
         account = cursor.fetchone()
@@ -1027,6 +1048,7 @@ def update_staff(toupdate):  # toupdate Variable Is Used in a case where 1 staff
         update_user_form.email.data = account['email']
         update_user_form.phone_number.data = account['phone_num']
         update_user_form.staff_id.data = account['staff_id']
+        update_user_form.manager_id.data = account['manager_id']
         update_user_form.hire_date.data = account['hire_date']
         update_user_form.job_title.data = account['job_title']
 
@@ -1300,24 +1322,8 @@ def acctsecfavpic():
         fileuploaded3 = request.files[upload_form.pic3.name].read()    # Get Image 3 In Pure Data Format
         fileuploaded4 = request.files[upload_form.pic4.name].read()    # Get Image 4 In Pure Data Format
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        if session['stafflogged'] is None:  # Using member Page
-            filename1 = str(session['email']).replace('@', '') + "_memsecpic" + '1' + ".jpg"   # Prep File Name
-            filename2 = str(session['email']).replace('@', '') + "_memsecpic" + '2' + ".jpg"   # Prep File Name
-            filename3 = str(session['email']).replace('@', '') + "_memsecpic" + '3' + ".jpg"   # Prep File Name
-            filename4 = str(session['email']).replace('@', '') + "_memsecpic" + '4' + ".jpg"   # Prep File Name
-            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename1)), 'wb').write(fileuploaded1)    # Save The Picture 1 That Is Uploaded By The User
-            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename2)), 'wb').write(fileuploaded2)    # Save The Picture 2 That Is Uploaded By The User
-            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename3)), 'wb').write(fileuploaded3)    # Save The Picture 3 That Is Uploaded By The User
-            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename4)), 'wb').write(fileuploaded4)    # Save The Picture 4 That Is Uploaded By The User
-            cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([session['email']]))  # Check if user has previously set up security questions before
-            gotaccount = cursor.fetchone()
-            if gotaccount:
-                cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data, session['email']))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
-            else:
-                cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
-            mysql.connection.commit()
-            return redirect(url_for('referral', state = " "))
-        else:   # Using Staff Page
+        try:    # Using Staff Page
+            session['stafflogged']
             cursor.execute('SELECT * FROM account WHERE full_name = %s', ([session['stafflogged']]))
             staffaccount = cursor.fetchone() # Since Staff and User Email are not stored the same way in session, Have to get email from staff name
             filename1 = str(staffaccount['email']).replace('@', '') + "_memsecpic" + '1' + ".jpg"   # Prep File Name
@@ -1336,6 +1342,23 @@ def acctsecfavpic():
                 cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (staffaccount['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
             mysql.connection.commit()
             return redirect(url_for('staffpage'))
+        except:   # Using member Page
+            filename1 = str(session['email']).replace('@', '') + "_memsecpic" + '1' + ".jpg"   # Prep File Name
+            filename2 = str(session['email']).replace('@', '') + "_memsecpic" + '2' + ".jpg"   # Prep File Name
+            filename3 = str(session['email']).replace('@', '') + "_memsecpic" + '3' + ".jpg"   # Prep File Name
+            filename4 = str(session['email']).replace('@', '') + "_memsecpic" + '4' + ".jpg"   # Prep File Name
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename1)), 'wb').write(fileuploaded1)    # Save The Picture 1 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename2)), 'wb').write(fileuploaded2)    # Save The Picture 2 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename3)), 'wb').write(fileuploaded3)    # Save The Picture 3 That Is Uploaded By The User
+            open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename4)), 'wb').write(fileuploaded4)    # Save The Picture 4 That Is Uploaded By The User
+            cursor.execute('SELECT * FROM security_qn WHERE email = %s', ([session['email']]))  # Check if user has previously set up security questions before
+            gotaccount = cursor.fetchone()
+            if gotaccount:
+                cursor.execute('UPDATE security_qn SET Security_Question = %s, answer = %s WHERE email = %s', (upload_form.chosensecqn.data, upload_form.picchose.data, session['email']))   # Update SQL To New Password That User Entered and Unlock User Account If Locked
+            else:
+                cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
+            mysql.connection.commit()
+            return redirect(url_for('referral', state = " "))
     return render_template('Account_UploadFavPic.html', form=upload_form, msg=msg)
 
 # Exception Handling For Uploading Files
@@ -1345,7 +1368,7 @@ def app_handle_413(e):
     return redirect(url_for('acctsecfavpic'))
 
 
-def generate_otp(method, numemail):
+def generate_otp(method, numemail):     # numemail can be a phone number of email address, depending on the method passed in
     otp = random.randint(100000, 999999)
     if method == 'email':
         msg = Message('OTP Forgot Password', sender='piquant.nyp@gmail.com', recipients=[numemail])
