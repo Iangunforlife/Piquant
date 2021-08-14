@@ -14,22 +14,19 @@
         </div>
 
             <div>
-                <a href="{{url_for('manager_audit', staff_name=staff_name, audit=audit)}}">Audit table</a>
+                <a href="{{url_for('manager_audit', staff_name=staff_name, audit=audit)}}" class="text">Audit table</a>
                 </div>
-
+                <br>
                 <div>
-                <a href="{{url_for('manager_dashboard', staff_name=staff_name)}}">Dashboard</a>
+                <a href="{{url_for('manager_dashboard', staff_name=staff_name)}}" class="text">Dashboard</a>
                 </div>
 
     </nav>
 </div>
-<div class="audit">
+<div class="audit container-fluid">
    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
-     <h1 class="display-4">Staff Audit</h1>
-   <a href="../audit.csv" download="audit.csv"><button class="btn btn-success">Download csv file</button></a>
-
-   <br>
-        <div class="table-responsive">
+     <h1 class="display-4" style="text-align:center;">Staff Audit</h1>
+        <div class="table-responsive container-fluid">
           <table id="myTable" class="table table-striped">
             <tr class="header">
                <th>Staff Name</th>
