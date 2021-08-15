@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
 from forms import *
 import Member_Completion, GenerateOrderNum, random, logging
 from flask_mysqldb import MySQL
@@ -22,6 +22,18 @@ import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
+
+# Joel File Encryption
+import rsa
+from reportlab.platypus import SimpleDocTemplate, Table, Paragraph, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+import PyPDF2
+from zipfile import ZipFile
+import requests
+import io
+
 
 # Zhi Yang's Email OTP
 '''
@@ -194,6 +206,13 @@ def home():
 def about():
     return render_template('about.html')
 
+# Joel New
+@app.route('/download')
+def download_file():
+    path = "Receipt.zip"
+    return send_file(path, as_attachment=True)
+def upload_form():
+    return render_template('download.html')
 # Customer Pages
 @app.route('/Reservation', methods=['GET','POST'])
 def create_user():
@@ -211,7 +230,117 @@ def create_user():
         cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, useremail, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data,create_user_form.cn.data,str(create_user_form.expire.data + '-01'),create_user_form.cvv.data,create_user_form.Additional_note.data))
         mysql.connection.commit()   #Update SQL Database
         logger.info('{} has made a reservation'.format(create_user_form.full_name.data))
-        return redirect(url_for('retrieve_users', email=email))
+        # Joel New
+        cns = str(create_user_form.cn.data)
+        cvvs = str(create_user_form.cvv.data)
+        eds = str(create_user_form.expire.data)
+
+        em1 = rsa.encrypt(cns.encode(), publicKey)
+        em2 = rsa.encrypt(cvvs.encode(), publicKey)
+        em3 = rsa.encrypt(eds.encode(), publicKey)
+
+        print("Credit card number:", cns)
+        print("Credit card CVV:", cvvs)
+        print("Credit card expiry date:", eds)
+
+        print("encrypted credit card number: ", em1)
+        print("encrypted CVV: ", em2)
+        print("encrypted expiry date: ", em3)
+
+        dm1 = rsa.decrypt(em1, privateKey).decode()
+        dm2 = rsa.decrypt(em2, privateKey).decode()
+        dm3 = rsa.decrypt(em3, privateKey).decode()
+
+        print("decrypted credit card name: ", dm1)
+        print("decrypted CVV: ", dm2)
+        print("decrypted expiry date: ", dm3)
+
+        d = create_user_form.date.data
+        fn = create_user_form.first_name.data
+        ln = create_user_form.last_name.data
+        t = create_user_form.time.data
+        pn = create_user_form.phone_number.data
+        ppap = create_user_form.phone_number.data + create_user_form.last_name.data     # Password for Zip
+
+        DATA = [
+            ["Date", "First name", "Last name", "Time", "Phone Number"],
+            [d, fn, ln, t, pn],
+        ]
+
+        pdf = SimpleDocTemplate("PReceipt.pdf", pagesize=A4)
+
+        styles = getSampleStyleSheet()
+
+        title_style = styles["Heading1"]
+
+        title_style.alignment = 1
+
+        title = Paragraph("PIQUANT", title_style)
+
+        style = TableStyle(
+            [
+                ("BOX", (0, 0), (-1, -1), 1, colors.black),
+                ("GRID", (0, 0), (4, 4), 1, colors.black),
+                ("BACKGROUND", (0, 0), (3, 0), colors.white),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+            ]
+        )
+
+        table = Table(DATA, style=style)
+
+        #######
+        pdf.build([title, table])
+
+        pdf_in_file = open("PReceipt.pdf", 'rb')
+
+        inputpdf = PyPDF2.PdfFileReader(pdf_in_file)
+        pages_no = inputpdf.numPages
+
+        for i in range(pages_no):
+            inputpdf = PyPDF2.PdfFileReader(pdf_in_file)
+
+            output = PyPDF2.PdfFileWriter()
+
+            output.addPage(inputpdf.getPage(i))
+            output.encrypt(ppap)
+
+            with open("PReceiptProtected.pdf", "wb") as outputStream:
+                output.write(outputStream)
+
+        ######
+        zipObj = ZipFile('Receipt.zip', 'w')
+
+        zipObj.write('PreceiptProtected.pdf')
+
+        zipObj.close()
+
+        ######
+        endpoint = "https://api.virusscannerapi.com/virusscan"
+        headers = {
+            'X-ApplicationID': 'e725e24f-6c29-4c01-93a9-6f4b0c1ed03d',
+            'X-SecretKey': 'b50a1340-ad8e-4af9-93e4-38f78341e5ea'
+        }
+        file = open("Receipt.zip", "rb")
+        data = {
+            'async': 'false',
+        }
+        files = {
+            'inputFile': ('Receipt.zip', file.read())
+        }
+        r = requests.post(url=endpoint, data=data, headers=headers, files=files)
+        response = r.text
+        print(response)
+        #######
+
+        filename1 = "ppapp"
+        fileuploaded1 = request.files[ReservationForm.selfie.name].read()  # Get Image 1 In Pure Data Format
+        open(os.path.join(app.config['UPLOAD_FOLDER'],str(filename1)), 'wb').write(fileuploaded1)  # Save The Picture 1 That Is Uploaded By The User
+
+
+
+        return redirect(url_for('retrieve_users'))
     if account != None:     # Pre Fill Form if user is logged in
         create_user_form.full_name.data = account['full_name']
         create_user_form.email.data = account['email']

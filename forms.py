@@ -14,7 +14,7 @@ class ReservationForm(Form):
     cn =StringField('Card Number', [validators.Length(min=16, max=16), validators.DataRequired()])
     expire = StringField('Expiry date of card YYYY-MM', [validators.Length(min=7, max=7), validators.DataRequired()])
     cvv =StringField('CVV', [validators.Length(min=1, max=3), validators.DataRequired()])
-    Additional_note = TextAreaField('Additional note', [validators.Optional()])
+    selfie = FileField('Pic 1', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
 
 
 # Member Account Creation
