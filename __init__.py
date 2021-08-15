@@ -24,7 +24,8 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 
 # Joel File Encryption
-import rsa
+# import rsa (SQL cnnt store rsa format)
+from cryptography.fernet import Fernet
 from reportlab.platypus import SimpleDocTemplate, Table, Paragraph, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -207,12 +208,14 @@ def about():
     return render_template('about.html')
 
 # Joel New
-@app.route('/download')
-def download_file():
+@app.route('/download_reciept')
+def download_reciept():
     path = "Receipt.zip"
     return send_file(path, as_attachment=True)
 def upload_form():
     return render_template('download.html')
+
+
 # Customer Pages
 @app.route('/Reservation', methods=['GET','POST'])
 def create_user():
@@ -224,59 +227,43 @@ def create_user():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM account WHERE email = %s', [session['email']])       # Look For Account Information
     account = cursor.fetchone()
-    if request.method == 'POST' and create_user_form.validate():
+    if request.method == 'POST':
         # add in update user action here
-        useremail = create_user_form.email.data.lower()
-        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, useremail, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data,create_user_form.cn.data,str(create_user_form.expire.data + '-01'),create_user_form.cvv.data,create_user_form.Additional_note.data))
-        mysql.connection.commit()   #Update SQL Database
-        logger.info('{} has made a reservation'.format(create_user_form.full_name.data))
         # Joel New
+        symmetrickey = Fernet.generate_key() # Generate symetric key
+        f = Fernet(symmetrickey) # Load key to crypto API
+
         cns = str(create_user_form.cn.data)
         cvvs = str(create_user_form.cvv.data)
-        eds = str(create_user_form.expire.data)
+        # eds = str(create_user_form.expire.data)
 
-        em1 = rsa.encrypt(cns.encode(), publicKey)
-        em2 = rsa.encrypt(cvvs.encode(), publicKey)
-        em3 = rsa.encrypt(eds.encode(), publicKey)
+        encryptcreditcard = f.encrypt(cns.encode())
+        encryptcvv = f.encrypt(cvvs.encode())
 
-        print("Credit card number:", cns)
-        print("Credit card CVV:", cvvs)
-        print("Credit card expiry date:", eds)
+        # TBC
+        useremail = create_user_form.email.data.lower()
+        selfie = request.files[create_user_form.selfie.name].read()  # Get Image 1 In Pure Data Format
+        filename = str(useremail).replace('@', '') + "_mempic" + '1' + ".jpg"
+        open(os.path.join(app.config['UPLOAD_FOLDER'], str(filename)), 'wb').write(selfie)  # Save The Picture 1 That Is Uploaded By The User
 
-        print("encrypted credit card number: ", em1)
-        print("encrypted CVV: ", em2)
-        print("encrypted expiry date: ", em3)
+        rdate = create_user_form.date.data
+        rfullname = create_user_form.full_name.data
+        rtime = create_user_form.time.data
+        rphone = create_user_form.phone_number.data
+        newemail = create_user_form.email.data.lower()
+        password = create_user_form.phone_number.data + newemail    # Password for Zip (Phone + Email)
+        print(password)
 
-        dm1 = rsa.decrypt(em1, privateKey).decode()
-        dm2 = rsa.decrypt(em2, privateKey).decode()
-        dm3 = rsa.decrypt(em3, privateKey).decode()
-
-        print("decrypted credit card name: ", dm1)
-        print("decrypted CVV: ", dm2)
-        print("decrypted expiry date: ", dm3)
-
-        d = create_user_form.date.data
-        fn = create_user_form.first_name.data
-        ln = create_user_form.last_name.data
-        t = create_user_form.time.data
-        pn = create_user_form.phone_number.data
-        ppap = create_user_form.phone_number.data + create_user_form.last_name.data     # Password for Zip
-
+        # PDF
         DATA = [
-            ["Date", "First name", "Last name", "Time", "Phone Number"],
-            [d, fn, ln, t, pn],
+            ["Date", "Full name", "Time", "Phone Number"],
+            [rdate, rfullname, rtime, rphone],
         ]
-
         pdf = SimpleDocTemplate("PReceipt.pdf", pagesize=A4)
-
         styles = getSampleStyleSheet()
-
         title_style = styles["Heading1"]
-
         title_style.alignment = 1
-
         title = Paragraph("PIQUANT", title_style)
-
         style = TableStyle(
             [
                 ("BOX", (0, 0), (-1, -1), 1, colors.black),
@@ -287,60 +274,54 @@ def create_user():
                 ("BACKGROUND", (0, 1), (-1, -1), colors.white),
             ]
         )
-
         table = Table(DATA, style=style)
 
-        #######
+        # For Locking PDF
         pdf.build([title, table])
-
-        pdf_in_file = open("PReceipt.pdf", 'rb')
-
-        inputpdf = PyPDF2.PdfFileReader(pdf_in_file)
-        pages_no = inputpdf.numPages
-
+        pdf_in_file = open("PReceipt.pdf", 'rb')    # Open Reciepts File that is not locked
+        inputpdf = PyPDF2.PdfFileReader(pdf_in_file)    # Read content of PDF
+        pages_no = inputpdf.numPages    # Find number of pages
         for i in range(pages_no):
             inputpdf = PyPDF2.PdfFileReader(pdf_in_file)
-
             output = PyPDF2.PdfFileWriter()
-
             output.addPage(inputpdf.getPage(i))
-            output.encrypt(ppap)
+            output.encrypt(password)    # Lock File With Password
 
             with open("PReceiptProtected.pdf", "wb") as outputStream:
                 output.write(outputStream)
 
-        ######
-        zipObj = ZipFile('Receipt.zip', 'w')
-
-        zipObj.write('PreceiptProtected.pdf')
-
+        # For Zipping
+        zipObj = ZipFile('Receipt.zip', 'w')    # Create new Zip file
+        zipObj.write('PreceiptProtected.pdf')   # Put PDF in the Zip
         zipObj.close()
 
-        ######
+        # Scan Photo Uploaded for Virus
         endpoint = "https://api.virusscannerapi.com/virusscan"
-        headers = {
+        picfilename = 'static/accountsecpic/' + str(useremail).replace('@', '') + "_mempic" + '1' + ".jpg"
+        headers2 = {
             'X-ApplicationID': 'e725e24f-6c29-4c01-93a9-6f4b0c1ed03d',
             'X-SecretKey': 'b50a1340-ad8e-4af9-93e4-38f78341e5ea'
         }
-        file = open("Receipt.zip", "rb")
-        data = {
+        file2 = open(picfilename, "rb")
+        data2 = {
             'async': 'false',
         }
-        files = {
-            'inputFile': ('Receipt.zip', file.read())
+        files2 = {
+            'inputFile': (picfilename, file2.read())
         }
-        r = requests.post(url=endpoint, data=data, headers=headers, files=files)
+        r = requests.post(url=endpoint, data=data2, headers=headers2, files=files2)
         response = r.text
         print(response)
+
         #######
 
-        filename1 = "ppapp"
-        fileuploaded1 = request.files[ReservationForm.selfie.name].read()  # Get Image 1 In Pure Data Format
-        open(os.path.join(app.config['UPLOAD_FOLDER'],str(filename1)), 'wb').write(fileuploaded1)  # Save The Picture 1 That Is Uploaded By The User
-
-
+        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, useremail, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data, encryptcreditcard, str(create_user_form.expire.data + '-01'), encryptcvv, create_user_form.Additional_note.data, symmetrickey))
+        mysql.connection.commit()   #Update SQL Database
+        logger.info('{} has made a reservation'.format(create_user_form.full_name.data))
 
         return redirect(url_for('retrieve_users'))
+
+
     if account != None:     # Pre Fill Form if user is logged in
         create_user_form.full_name.data = account['full_name']
         create_user_form.email.data = account['email']
@@ -978,21 +959,38 @@ def update_user(id):
     account = cursor.fetchone()
     if request.method == 'POST' and update_user_form.validate():
         useremail = update_user_form.email.data.lower()
-        cursor.execute('UPDATE reservation SET full_name= %s, email = %s, phone_num= %s, reservation_date= %s, reservation_time= %s, card_name= %s, card_number= %s, expiry_date= %s, cvv= %s, additional_note= %s WHERE reservation_id = %s', (update_user_form.full_name.data, useremail, update_user_form.phone_number.data, update_user_form.date.data, update_user_form.time.data, update_user_form.card_name.data, update_user_form.cn.data,str(update_user_form.expire.data + '-01'), update_user_form.cvv.data, update_user_form.Additional_note.data, id))
+        symmetrickey = Fernet.generate_key() # Generate symetric key
+        f = Fernet(symmetrickey) # Load key to crypto API
+
+        cns = str(update_user_form.cn.data)
+        cvvs = str(update_user_form.cvv.data)
+
+        encryptcreditcard = f.encrypt(cns.encode())
+        encryptcvv = f.encrypt(cvvs.encode())
+
+        cursor.execute('UPDATE reservation SET full_name= %s, email = %s, phone_num= %s, reservation_date= %s, reservation_time= %s, card_name= %s, card_number= %s, expiry_date= %s, cvv= %s, additional_note= %s, encrypt_key = %s WHERE reservation_id = %s', (update_user_form.full_name.data, useremail, update_user_form.phone_number.data, update_user_form.date.data, update_user_form.time.data, update_user_form.card_name.data, encryptcreditcard ,str(update_user_form.expire.data + '-01'), encryptcvv, update_user_form.Additional_note.data, symmetrickey, id))
         cursor.execute('UPDATE audit SET action = %s WHERE staff_id = %s', ('Updated reservation', session['staff_id'],))
         logger.info("{} updated reservation".format(session['staff_id']))
         mysql.connection.commit()
         return redirect(url_for('retrieve'))
     else:   # Pre Fill Form
+        # Decrypt Credit Card Number and CVV
+        symmetrickey = account['encrypt_key'] # Generate symetric key
+        f = Fernet(symmetrickey) # Load key to crypto API
+        decrytcardnobinary = f.decrypt(account['card_number'].encode())
+        decrytcardno = decrytcardnobinary.decode()
+        decrytcvvbinary = f.decrypt(account['cvv'].encode())
+        decryptcvv = decrytcvvbinary.decode()
+        # Pre Fill Form
         update_user_form.full_name.data = account['full_name']
         update_user_form.email.data = account['email']
         update_user_form.phone_number.data = account['phone_num']
         update_user_form.date.data = account['reservation_date']
         update_user_form.time.data = account['reservation_time']
         update_user_form.card_name.data = account['card_name']
-        update_user_form.cn.data = account['card_number']
+        update_user_form.cn.data = decrytcardno
         update_user_form.expire.data = str(account['expiry_date'])[0:7]     # Only Display Year and Month
-        update_user_form.cvv.data = account['cvv']
+        update_user_form.cvv.data = decryptcvv
         update_user_form.Additional_note.data = account['additional_note']
     return render_template('Reservation_updateUser.html', form=update_user_form)
 
@@ -1790,8 +1788,9 @@ def acctsecfavpic():
             else:
                 cursor.execute('INSERT INTO security_qn VALUES (%s, %s, %s)', (session['email'], upload_form.chosensecqn.data, upload_form.picchose.data))    # Add Correct Picture into Database
             mysql.connection.commit()
-            return redirect(url_for('referral', state = " "))
+            return redirect(url_for('referral', referral_state=" "))
     return render_template('Account_UploadFavPic.html', form=upload_form, msg=msg)
+
 
 # Exception Handling For Uploading Files
 @app.errorhandler(413)
@@ -1822,6 +1821,7 @@ def generate_otp(method, numemail, reason):     # numemail can be a phone number
              to = numemail
          )
     return otp
+
 
 # Verify Account (Choose OTP Method):
 @app.route('/AuthenticateAcct', methods=['GET', 'POST'])

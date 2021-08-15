@@ -14,7 +14,8 @@ class ReservationForm(Form):
     cn =StringField('Card Number', [validators.Length(min=16, max=16), validators.DataRequired()])
     expire = StringField('Expiry date of card YYYY-MM', [validators.Length(min=7, max=7), validators.DataRequired()])
     cvv =StringField('CVV', [validators.Length(min=1, max=3), validators.DataRequired()])
-    selfie = FileField('Pic 1', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
+    Additional_note = TextAreaField('Additional note', [validators.Optional()])
+    selfie = FileField('For Recognition Purposes, Please Upload A Selfie:', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
 
 
 # Member Account Creation
@@ -43,6 +44,7 @@ class LoginForm(Form):
     email = StringField('Email', [email(), validators.DataRequired()],
                         render_kw={"placeholder": "Email"})
     password = PasswordField('Password', [validators.DataRequired()], render_kw={"placeholder": "Password"})
+    # validators.regexp("^(?=.[a-z])(?=.[A-Z])(?=.[0-9])(?=.[@$!%#?&])[a-zA-Z0-9@$!%*#?&]{7,100}", message="Invalid Characters")
 
 # Referal Code
 class ClaimCode(Form):
@@ -183,4 +185,3 @@ class AuthenticateAccount(Form):
 
 class Choose2fa(Form):
     fa2methodoption = RadioField('2FA status', choices=[('Yes', 'Yes'), ("No", 'No')])
-

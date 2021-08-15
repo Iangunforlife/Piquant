@@ -14,7 +14,8 @@
 <br>
 <br>
 <div class="button">
-<a href="/"><button class="btn btn-danger">Return to home page</button></a>
+  <a href="{{ url_for('download_reciept') }}"><button class="btn btn-success">Download Reciept</button></a>
+  <a href="/"><button class="btn btn-danger">Return to home page</button></a>
 </div>
 <script>
   document.getElementById("number").innerHTML = Math.floor((Math.random() * 100) + 1);
