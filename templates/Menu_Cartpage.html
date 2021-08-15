@@ -2,66 +2,39 @@
 {% block title %} Piquant - Cart {% endblock %}
 
 {% block content %}
-<h1 class="display-4 textcenter"> Current Cart</h1>
+<h1 class="display-4 textcenter"> Cart</h1>
 <div>
     <table class="table table-striped">
         <thead>
             <tr>
                 <td> Item Code </td>
                 <td> Item </td>
-                <td> Quantity </td>
+                <td> Quanity </td>
                 <td> Price </td>
                 <td> Action </td>
             </tr>
         </thead>
         <tbody>
-            {% for a in order_list %} <!-- Order from all tables -->
+            {% for a in order_listdict %} <!-- Order from all tables -->
+            {% for b in a.get_order() %} <!-- Order from only 1 table -->
+            {% if a.get_order().get(b) > 0 %} <!-- Quanity From Table -->
             <tr>
-                <td> {{ a['item_code'] }} </td>
-                {% for b in iteminfo %}
-                {% if b['item_code'] == a['item_code'] %}
-                <td> {{ b['item_name'] }} </td>
-                <td> {{ a['quantity'] }} </td>  <!-- Quanity -->
-                <td> $ {{ b['item_price'] * a['quantity'] }} </td>  <!-- Price -->
-                <td> <a href="/deleteitem/{{a['order_num']}}/email=email"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
+                <td> {{ b }} </td>
+                <td> {{ a.getnamefromcode(b) }} </td>
+                <td> {{ a.get_order().get(b)}} </td>  <!-- Quanity -->
+                <td> $ {{ a.getpricefromcode(b) * a.get_order().get(b) }} </td>  <!-- Price -->
+                <td> <a href="{{url_for('deleteitem', deleteitem=b, tablenum=tablenum, email=email)}}"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
             </tr>
             {% endif %}
             {% endfor %}
             {% endfor %}
         </tbody>
     </table>
-    <br>
+    <p class="cartprice"> Total: $ {{ total }} </p>
     <div class="button">
         <a href = "{{url_for('orderpage1', email=email)}}"> <button class="btn btn-danger"> Back </button> </a>
         &nbsp;
         <a href = "{{url_for('submit', email=email)}}"> <button class="btn btn-success"> Confirm </button> </a>
     </div>
-    <br>
-    <h1 class="display-4 textcenter"> Past Order </h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <td> Item Code </td>
-                <td> Item </td>
-                <td> Quantity </td>
-                <td> Price </td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in oldorder_list %} <!-- Order from all tables -->
-            <tr>
-                <td> {{ c['item_code'] }} </td>
-                {% for d in iteminfo %}
-                {% if d['item_code'] == c['item_code'] %}
-                <td> {{ d['item_name'] }} </td>
-                <td> {{ c['quantity'] }} </td>  <!-- Quanity -->
-                <td> $ {{ d['item_price'] * c['quantity'] }} </td>  <!-- Price -->
-            </tr>
-            {% endif %}
-            {% endfor %}
-            {% endfor %}
-        </tbody>
-    </table>
-    <p class="cartprice"> Current Total: $ {{ total }} </p>
 </div>
 {% endblock %}

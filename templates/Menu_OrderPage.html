@@ -21,7 +21,7 @@
         <a class="nav-link" data-toggle="pill" href="#order5">Wines</a>
       </li>
         <li class="nav-item">
-            <p> Table Number: <br> {{ session['tablenum'] }}</p>
+            <p> Table Number: <br> {{ tablenum }}</p>
         </li>
         <li class="nav-item">
             <a href = "{{url_for('cart', tablenum=tablenum, email=email )}}" class="nav-link"> <i class="fa fa-shopping-cart" style="font-size:30px; color:#FCC201"></i> </a>
@@ -34,73 +34,99 @@
 <div class="tab-content">
   <div class="tab-pane container active" id="order1">
       <h1 class="display-4 textcenter">Starters</h1>
-      {% for a in allitem %}
-      {% if a['item_code'][0] == 'S' %}
-          <div class="container-fluid" style="padding-top:3em;">
-            <h3 class="textcenter"> {{a['item_name']}} </h3>
-            <p class="ordermenudesc"> {{a['item_desc']}} </p>
-            <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
-          </div>
-      {% endif %}
-      {% endfor %}
+
+      <div class="container-fluid" style="padding-top:3em;">
+        <h3 class="textcenter"> Foie Gras </h3>
+        <p class="ordermenudesc"> Served with freshly picked goose liver from our own farms, immediately cooked upon ordering for ultimate fresheness </p>
+        <p class="ordermenuprice"> $12.00 </p>
+        <a href = "{{url_for('addingorder', orderitem='F01', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+      </div>
+
+
+      <div class="container-fluid" style="padding-top:3em;">
+        <h3 class="textcenter"> Mushroom Soup </h3>
+        <p class="ordermenudesc"> Cooked with freshly picked wild mushroom from Brussels and fresh herbs from the hills of Bulgaria. </p>
+        <p class="ordermenuprice"> $6.00 </p>
+          <a href = "{{url_for('addingorder', orderitem='F02', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+      </div>
   </div>
 
   <div class="tab-pane container fade" id="order2">
     <h1 class="display-4 textcenter">Mains</h1>
-      {% for a in allitem %}
-      {% if a['item_code'][0] == 'M' %}
-          <div class="container-fluid" style="padding-top:3em;">
-            <h3 class="textcenter"> {{a['item_name']}} </h3>
-            <p class="ordermenudesc"> {{a['item_desc']}} </p>
-            <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
-          </div>
-      {% endif %}
-      {% endfor %}
+
+    <div class="container-fluid" style="padding-top:3em;">
+        <h3 class="textcenter"> 150g Wagyu Beef </h3>
+        <p class="ordermenudesc"> Top-grade Wagyu-beef from Kobe,Japan, Served with sittake mushroom and oven-baked aspargrus.</p>
+        <p class="ordermenuprice"> $75.00 </p>
+        <a href = "{{url_for('addingorder', orderitem='F03', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+    </div>
+
+
+    <div class="container-fluid" style="padding-top:3em;">
+        <h3 class="textcenter"> Lobster Risotto </h3>
+        <p class="ordermenudesc"> Cooked with freshly picked and succlent Lobster from Sweden. Served with fresh Scallops and tobiko. </p>
+        <p class="ordermenuprice"> $40.00 </p>
+        <a href = "{{url_for('addingorder', orderitem='F04', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+    </div>
   </div>
 
   <div class="tab-pane container fade" id="order3">
       <h1 class="display-4 textcenter">Desserts</h1>
-      {% for a in allitem %}
-      {% if a['item_code'][0] == 'D' %}
-          <div class="container-fluid" style="padding-top:3em;">
-            <h3 class="textcenter"> {{a['item_name']}} </h3>
-            <p class="ordermenudesc"> {{a['item_desc']}} </p>
-            <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
-          </div>
-      {% endif %}
-      {% endfor %}
+
+      <div class="container-fluid" style="padding-top:3em;">
+        <h3 class="textcenter"> Chocolate Fondle </h3>
+        <p class="ordermenudesc"> Served with piping hot choclate as well as 15 world famous marshmellow to go with it </p>
+        <p class="ordermenuprice"> $20.00 </p>
+        <a href = "{{url_for('addingorder', orderitem='F05', tablenum=tablenum, email=email)}}">  <button class="btn btn-primary" style="float:right;">Add To Cart </button> </a>
+      </div>
+
+
+      <div class="container-fluid" style="padding-top:3em;">
+          <h3 class="textcenter"> Eclair </h3>
+          <p class="ordermenudesc"> Prepared with our  home-made recipe dough and chocolate. Comes with 5 Pieces. </p>
+          <p class="ordermenuprice"> $15.00 </p>
+          <a href = "{{url_for('addingorder', orderitem='F06', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+      </div>
+
   </div>
 
 
   <div class="tab-pane container fade" id="order4">
       <h1 class="display-4 textcenter">Drinks</h1>
-      {% for a in allitem %}
-      {% if a['item_code'][0] == 'E' %}
-          <div class="container-fluid" style="padding-top:3em;">
-            <h3 class="textcenter"> {{a['item_name']}} </h3>
-            <p class="ordermenudesc"> {{a['item_desc']}} </p>
-            <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
-          </div>
-      {% endif %}
-      {% endfor %}
+
+      <div class="container-fluid" style="padding-top:3em;">
+          <h3 class="textcenter"> Espresso </h3>
+          <p class="ordermenudesc"> Made with our fresh arabic coffee beans. Comes in a 350ml jug for your enjoyment </p>
+          <p class="ordermenuprice"> $10.00 </p>
+          <a href = "{{url_for('addingorder', orderitem='F07', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+      </div>
+
+
+        <div class="container-fluid" style="padding-top:3em;">
+            <h3 class="textcenter"> Singapore Mocktail </h3>
+            <p class="ordermenudesc"> Made with fresh pineapples, watermelon, grape and Apple juice to quench your thirst. Comes in a 350ml jug </p>
+            <p class="ordermenuprice"> $13.00 </p>
+            <a href = "{{url_for('addingorder', orderitem='F08', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+        </div>
   </div>
 
   <div class="tab-pane container fade" id="order5">
       <h1 class="display-4 textcenter">Wines</h1>
-      {% for a in allitem %}
-      {% if a['item_code'][0] == 'W' %}
-          <div class="container-fluid" style="padding-top:3em;">
-            <h3 class="textcenter"> {{a['item_name']}} </h3>
-            <p class="ordermenudesc"> {{a['item_desc']}} </p>
-            <p class="ordermenuprice"> ${{a['item_price']}} </p>
-            <a href = "{{url_for('addingorder', orderitem=a['item_code'], email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
-          </div>
-      {% endif %}
-      {% endfor %}
+
+      <div class="container-fluid" style="padding-top:3em;">
+        <h3 class="textcenter"> 1992 Wines </h3>
+        <p class="ordermenudesc"> Freshly imported wines from the USA. Comes in a 350ml bottle </p>
+        <p class="ordermenuprice"> $70.00 </p>
+        <a href = "{{url_for('addingorder', orderitem='F09', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+      </div>
+
+
+    <div class="container-fluid" style="padding-top:3em;">
+        <h3 class="textcenter"> Champagne </h3>
+        <p class="ordermenudesc"> Freshly imported Champagne from Sweden. Comes in a 300ml bottle </p>
+        <p class="ordermenuprice"> $90.00 </p>
+        <a href = "{{url_for('addingorder', orderitem='F10', tablenum=tablenum, email=email)}}"> <button class="btn btn-primary" style="float:right;"> Add To Cart </button> </a>
+    </div>
   </div>
 </div>
 <br>

@@ -7,52 +7,39 @@
   {% include 'includes/Staff_navbar.html' %}
 {% endblock %}
 <h1 class="display-4"> Orders </h1>
-<p> <br> Current Table Number Assigned: {{session['tablenum']}} </p>
+<p> <br> Current Table Number Assigned: {{currenttable}} </p>
 <a href = "{{url_for('changetable', state='F')}}"> <button class="btn btn-danger"> Decrease Table Num </button> </a>
 <a href = "{{url_for('changetable', state='T')}}"> <button class="btn btn-success"> Increase Table Num </button> </a>
 <br>
 <br>
 <h3> All Orders </h3>
-<!-- Display Only if there is at least 1 table -->
-{% if counttable|length > 0 %}
-<!-- Order from all tables -->
-{% for a in counttable %}
+{% for a in order_listdict %} <!-- Order from all tables -->
 <div>
     <p> </p>
-    <p> Table: {{ a['table_num'] }} </p>
+    <p> Table: {{ a.get_tablenum() }} </p>
     <table class="table table-striped">
         <thead>
             <tr>
-                <td> Order Number </td>
                 <td> Item Code </td>
                 <td> Item </td>
-                <td> Status </td>
+                <td> Quanity </td>
                 <td> Action </td>
             </tr>
         </thead>
         <tbody>
-            {% for b in allorders %}
+            {% for b in a.get_order() %} <!-- Order from only 1 table -->
+            {% if a.get_order().get(b) > 0 %} <!-- If Quanity From Table More Then 1, Then It Will Show Up -->
             <tr>
-                {% if b['table_num'] == a['table_num']|string %}
-                <td> {{ b['order_num'] }} </td>
-                <td> {{ b['item_code'] }} </td>
-                <!-- To look for Item Name -->
-                {% for d in iteminfo %}
-                {% if d['item_code'] == b['item_code'] %}
-                <td> {{ d['item_name'] }} </td>
-                {% endif %}
-                {% endfor %}
-                <td> {{b['status']}}</td>
-                <td> <a href="/stateorderpage_staff/{{b['order_num']}}/{{staff_name}}"> <button class="btn btn-success"> Served </button> </a></td>
-                 <!-- Delete -->
-                <td> <a href="/delorderpage_staff/{{b['order_num']}}/{{staff_name}}"> <button class="btn btn-danger"> Delete </button> </a> </td>
-                {% endif %}
+                <td> {{ b }} </td>
+                <td> {{ a.getnamefromcode(b) }} </td>
+                <td> {{ a.get_order().get(b)}} </td>  <!-- Quanity -->
+                <td> <a href="{{url_for('staffdeleteitem', deleteitem=b, tablenum=a.get_tablenum(), staffid=staffid)}}"> <button class="btn btn-danger"> Delete </button> </a> </td> <!-- Delete -->
             </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>
   </div>
 {% endfor %}
-{% endif %}
-<a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+<a href="{{url_for('staffpage', staffid=staffid)}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}

@@ -1,26 +1,36 @@
+from flask import Flask, render_template, request, redirect, url_for
+from forms import ReservationForm, stafflogin, CreateUserForm, UpdatememberForm, LoginForm, ClaimCode, CreateCode
+import User, shelve, addorder, tablenumgenerate, referalcode
 import rsa
-from flask import Flask, render_template, request, redirect, url_for, session
-from forms import *
-import Member_Completion, GenerateOrderNum
-from datetime import date, datetime
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
+from reportlab.platypus import SimpleDocTemplate, Table, Paragraph, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from flask import Flask, send_file, render_template
+import PyPDF2
+from zipfile import ZipFile
+import requests
+import io
+import os
 
 app = Flask(__name__)
-app.secret_key = 'Secret'
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'J03lch0n(250603)'   # Enter Your Own SQL Information
-app.config['MYSQL_DB'] = 'piquant'  # Load Up piquant schema
-mysql = MySQL(app)
 
+app.config['UPLOAD_FOLDER'] = 'static'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 4MB max-limit.
 
 #Email To Be Passed into codes to check wether users are login or not
 @app.route('/')
 def home():
     return render_template('home.html', email=" ")
 
-@app.route('/home2/<email>')    # For Logged in Users, Another Home Page Will Be Loaded
+@app.route('/download')
+def download_file():
+    path = "Receipt.zip"
+    return send_file(path, as_attachment=True)
+def upload_form():
+    return render_template('download.html')
+
+@app.route('/home2/<email>') #For Logged in Users
 def home2(email):
     return render_template('home.html', email=email)
 
@@ -32,122 +42,245 @@ def about(email):
 @app.route('/Reservation/<email>', methods=['GET','POST'])
 def create_user(email):
     create_user_form = ReservationForm(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM account WHERE email = %s', [email])       # Look For Account Information
-    account = cursor.fetchone()
-    if request.method == 'POST' and create_user_form.validate():
+    if request.method == 'POST':
+        users_dict = {}
+        db = shelve.open('storage.db', 'c')
+
+        try:
+            users_dict = db['RUsers']
+        except:
+            print("Error in retrieving Users from storage.db.")
+
         publicKey, privateKey = rsa.newkeys(512)
 
         cns = str(create_user_form.cn.data)
         cvvs = str(create_user_form.cvv.data)
+        eds = str(create_user_form.expire.data)
 
         em1 = rsa.encrypt(cns.encode(), publicKey)
         em2 = rsa.encrypt(cvvs.encode(), publicKey)
+        em3 = rsa.encrypt(eds.encode(), publicKey)
 
         print("Credit card number:", cns)
         print("Credit card CVV:", cvvs)
+        print("Credit card expiry date:", eds)
 
         print("encrypted credit card number: ", em1)
         print("encrypted CVV: ", em2)
+        print("encrypted expiry date: ", em3)
 
         dm1 = rsa.decrypt(em1, privateKey).decode()
         dm2 = rsa.decrypt(em2, privateKey).decode()
+        dm3 = rsa.decrypt(em3, privateKey).decode()
 
         print("decrypted credit card name: ", dm1)
         print("decrypted CVV: ", dm2)
-        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, create_user_form.email.data, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data,em1,str(create_user_form.expire.data + '-01'),em2,create_user_form.Additional_note.data))
-        mysql.connection.commit()   #Update SQL Database
+        print("decrypted expiry date: ", dm3)
+
+        d = create_user_form.date.data
+        fn = create_user_form.first_name.data
+        ln = create_user_form.last_name.data
+        t = create_user_form.time.data
+        pn = create_user_form.phone_number.data
+        ppap = create_user_form.phone_number.data + create_user_form.last_name.data     # Password for Zip
+
+        DATA = [
+            ["Date", "First name", "Last name", "Time", "Phone Number"],
+            [d, fn, ln, t, pn],
+        ]
+
+        pdf = SimpleDocTemplate("PReceipt.pdf", pagesize=A4)
+
+        styles = getSampleStyleSheet()
+
+        title_style = styles["Heading1"]
+
+        title_style.alignment = 1
+
+        title = Paragraph("PIQUANT", title_style)
+
+        style = TableStyle(
+            [
+                ("BOX", (0, 0), (-1, -1), 1, colors.black),
+                ("GRID", (0, 0), (4, 4), 1, colors.black),
+                ("BACKGROUND", (0, 0), (3, 0), colors.white),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+            ]
+        )
+
+        table = Table(DATA, style=style)
+
+        #######
+        pdf.build([title, table])
+
+        pdf_in_file = open("PReceipt.pdf", 'rb')
+
+        inputpdf = PyPDF2.PdfFileReader(pdf_in_file)
+        pages_no = inputpdf.numPages
+
+        for i in range(pages_no):
+            inputpdf = PyPDF2.PdfFileReader(pdf_in_file)
+
+            output = PyPDF2.PdfFileWriter()
+
+            output.addPage(inputpdf.getPage(i))
+            output.encrypt(ppap)
+
+            with open("PReceiptProtected.pdf", "wb") as outputStream:
+                output.write(outputStream)
+
+        ######
+        zipObj = ZipFile('Receipt.zip', 'w')
+
+        zipObj.write('PreceiptProtected.pdf')
+
+        zipObj.close()
+
+        ######
+        endpoint = "https://api.virusscannerapi.com/virusscan"
+        headers = {
+            'X-ApplicationID': 'e725e24f-6c29-4c01-93a9-6f4b0c1ed03d',
+            'X-SecretKey': 'b50a1340-ad8e-4af9-93e4-38f78341e5ea'
+        }
+        file = open("Receipt.zip", "rb")
+        data = {
+            'async': 'false',
+        }
+        files = {
+            'inputFile': ('Receipt.zip', file.read())
+        }
+        r = requests.post(url=endpoint, data=data, headers=headers, files=files)
+        response = r.text
+        print(response)
+        #######
+
+        filename1 = "ppapp"
+        fileuploaded1 = request.files[ReservationForm.selfie.name].read()  # Get Image 1 In Pure Data Format
+        open(os.path.join(app.config['UPLOAD_FOLDER'],str(filename1)), 'wb').write(fileuploaded1)  # Save The Picture 1 That Is Uploaded By The User
+
+
+        user = User.ReserveUser(create_user_form.first_name.data, create_user_form.last_name.data,
+                         create_user_form.salutation.data, create_user_form.email.data,
+                         create_user_form.Additional_note.data,create_user_form.phone_number.data,
+                         create_user_form.date.data,create_user_form.time.data,
+                         create_user_form.full_name.data,create_user_form.cn.data,
+                         create_user_form.expire.data,create_user_form.cvv.data,)
+        users_dict[user.get_user_id()] = user
+        db['RUsers'] = users_dict
+        db.close()
+
         return redirect(url_for('retrieve_users', email=email))
-    if account != None:     # Pre Fill Form if user is logged in
-        create_user_form.full_name.data = account['full_name']
-        create_user_form.email.data = account['email']
-        create_user_form.phone_number.data = account['phone_num']
+
     return render_template('Reservation.html', form=create_user_form, email=email)
 
 
-@app.route('/Confirmation/<email>/')
+@app.route('/Confirmation/<email>')
 def retrieve_users(email):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM reservation')
-    users_list = cursor.fetchall()  # Get everything in reservation
-    getuser = users_list[-1]    # Get Most Recent Record Only
+    users_dict = {}
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['RUsers']
+    db.close()
+
+    users_list = []
+    for key in users_dict:
+        user = users_dict.get(key)
+        users_list.append(user)
+
+    getuser = users_list[-1]
+
     return render_template('Reservation_Confirmation.html', count=len(users_list), get_user=getuser, email=email)
 
 
 @app.route('/thanks/<email>')
 def number(email):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM reservation')
-    users_list = cursor.fetchall()
-    reservationid = users_list[-1].get('reservation_id')
-    return render_template('Reservation_thanks.html', email=email, reservationid=reservationid)
+    return render_template('Reservation_thanks.html', email=email)
 
 
 # Ian
 @app.route('/onlineorder/<email>')
 def orderpage1(email):
+    table_dict = {}
+    db = shelve.open('storage.db', 'c')
     try:
-        session['tablealloc']
+        table_dict = db['Tablenum']
     except:
-         session['tablenum'] = 1
+        print("Error In Storage.db")
+
+    if len(table_dict) == 0:
+        table = tablenumgenerate.tablenumgen() #Create Class
+        table_dict["1"] = table  #STORE CLASS IN DICT
+        db['Tablenum'] = table_dict #STORE DICT IN SHELVE
+        tablenum = table_dict.get("1").get_tablenum()  #GET TABLE NUM FROM DICT THEN GET TABLENUM FROM SHELVE
+    else:
+        tablenum = table_dict.get("1").get_tablenum()  #GET TABLE NUM FROM DICT THEN GET TABLENUM FROM SHELVE
+
+    return render_template('Menu_OrderPage.html', tablenum=tablenum, email=email)
+
+@app.route('/addingorder/<orderitem>/<tablenum>/<email>')
+def addingorder(orderitem, tablenum, email):
+    order_dict = {}
+    db = shelve.open('storage.db', 'c')
     try:
-        session['onlineorder']
+        order_dict = db['Order']
+        print("hi")
     except:
-        session['onlineorder'] = True
-        session['tablealloc'] = True
-        now = datetime.now()
-        curtime = now.strftime("%H_%M_%S")
-        session['ordersess'] = str(session['tablenum']) + '_' + curtime
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM menu')
-    allitem = cursor.fetchall()
-    return render_template('Menu_OrderPage.html', email=email, allitem=allitem)
+        print("Wrong")
 
+    try:
+        order_dict.get(tablenum)
+        item = order_dict[tablenum]
+        item.add_order(orderitem)
+        order_dict[tablenum] = item
+        db['Order'] = order_dict
+        print(item.get_order(), "was stored in storage.db successfully with tablenum =", item.get_tablenum())
+    except:
+        table = addorder.addorder(tablenum)
+        table.add_order(orderitem)
+        order_dict[table.get_tablenum()] = table
+        db['Order'] = order_dict
+        print(table.get_order(), "was stored in storage.db successfully with tablenum =", table.get_tablenum())
 
-@app.route('/addingorder/<orderitem>/<email>')
-def addingorder(orderitem, email):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    newordernum = session['ordersess'] + '_' + str(GenerateOrderNum.generateordernum()) # Generate A Random Order Number To Store
-    cursor.execute('INSERT INTO cart VALUES (%s, %s, %s, %s, %s)', [newordernum, str(session['tablenum']), email, orderitem, 'Pending'])
-    mysql.connection.commit()
+    db.close()
     return redirect(url_for('orderpage1', email=email))
 
+@app.route('/cart/<tablenum>/<email>')
+def cart(tablenum, email):
+    get_order_dict = {}
+    db = shelve.open('storage.db', 'r')
+    get_order_dict = db['Order']
+    db.close()
 
-@app.route('/cart/<email>')
-def cart(email):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    order_listdict = [] #Order From THAT Tables
     total = 0
-    cursor.execute('SELECT * FROM menu')
-    iteminfo = cursor.fetchall()    # Get Everything From menu table
-    # Get Order From Session (Current Cart)
-    currentsession = '%' + session['ordersess'] + '%'
-    cursor.execute('SELECT order_num, item_code, count(*) quantity FROM cart WHERE order_num LIKE %s GROUP BY item_code', [currentsession])
-    order_list = cursor.fetchall()
-    # Get Order From Previous Session (Past Order)
-    cursor.execute('SELECT item_code, count(*) quantity FROM cart WHERE table_num = %s AND order_num NOT LIKE %s GROUP BY item_code', [session['tablenum'], currentsession])
-    oldorder_list = cursor.fetchall()
-    # Fetch All Order From This Table
-    cursor.execute('SELECT item_code, count(*) quantity FROM cart WHERE table_num = %s GROUP BY item_code', [session['tablenum']])
-    allorder_list = cursor.fetchall()
-    # To Find Total Price
-    for a in allorder_list: # Loop Through Cart
-        for b in iteminfo:  # Loop Thorugh Menu To Find Item Info (Must Use Loop as it is a tuple)
-            if b['item_code'] == a['item_code']:    # if Item Code from cart matches the one in menu, Item Info Is Found
-                total += (int(b['item_price']) * a['quantity'])     # Calculate Total
-    return render_template('Menu_Cartpage.html', order_list=order_list, oldorder_list=oldorder_list, iteminfo=iteminfo, total=total, email=email)
 
+    order = get_order_dict.get(tablenum)
+    order_listdict.append(order)   #Order From All The Tables
+    for tableorderitem in order_listdict:  #Individual Table Order Item (Stored Whole Class into Shelve)
+        total = tableorderitem.get_price()
 
-@app.route('/deleteitem/<ordernum>/<email>')
-def deleteitem(ordernum, email):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('DELETE FROM cart WHERE order_num = %s', [ordernum])
-    mysql.connection.commit()
-    return redirect(url_for('cart', email=email))
+    ptablenum = tablenum #SO THAT TABLENUM CAN TO RENDER TEMPLATE
+    print(ptablenum)
+    db.close()
+    return render_template('Menu_Cartpage.html', order_listdict=order_listdict, total=total, tablenum=ptablenum, email=email)
+
+@app.route('/deleteitem/<deleteitem>/<tablenum>/<email>')
+def deleteitem(deleteitem, tablenum, email):
+    del_order_dict = {}
+    db = shelve.open('storage.db', 'w')
+    del_order_dict = db['Order']
+
+    gettablenum = del_order_dict.get(tablenum) #Get Order (As A Whole Class) from tablenum provided
+    gettablenum.delete_order(deleteitem)
+    del_order_dict[tablenum] = gettablenum
+    db['Order'] = del_order_dict
+    db.close()
+
+    return redirect(url_for('cart', tablenum=tablenum, email=email))
 
 @app.route('/submit/<email>')
 def submit(email):
-    session.pop('onlineorder', None)
-    session.pop('ordersess', None)
     return render_template('Menu_Submit.html', email=email)
 
 
@@ -155,464 +288,504 @@ def submit(email):
 # Create User
 @app.route('/createMember/<email>', methods=['GET', 'POST'])
 def create_Member(email):
-    msg = ''
     create_user_form = CreateUserForm(request.form)
     if request.method == 'POST' and create_user_form.validate():
-        signupdate = date.today()   # Get Today's date
-        newdate = signupdate.strftime("%Y-%m-%d")   # To Create New Date According To SQL Format
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s', (create_user_form.email.data,))
-        account = cursor.fetchone()
-        if account:     # Ensure That there will be no duplicates (As Email is A Primary Key In The Database)
-            msg = 'This Email Has Been Taken'
-        else:
-            cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %7s, %s, %s, NULL, NULL, NULL)', (create_user_form.email.data, create_user_form.full_name.data, create_user_form.password.data, 'Member',  create_user_form.phone_number.data , "Regular", "1/5", newdate))
-            mysql.connection.commit()
-            return redirect(url_for('referral', email=create_user_form.email.data, state=" "))
-    return render_template('Member_createUser.html', form=create_user_form, email=email, msg=msg)
+        users_dict = {}
+        db = shelve.open('storage.db', 'c')
 
+        try:
+            users_dict = db['Member']
+        except:
+            print("Error in retrieving Users from storage.db.")
+
+        user = User.Member(create_user_form.full_name.data, create_user_form.email.data, create_user_form.password.data,
+                         create_user_form.sign_up_date.data, "Regular", "1/5")
+        users_dict[user.get_email()] = user
+        db['Member'] = users_dict
+
+        db.close()
+
+        return redirect(url_for('referral', email=create_user_form.email.data, state=" "))
+    return render_template('Member_createUser.html', form=create_user_form, email=email)
 
 # Login
-@app.route('/Memberlogin/<email>', methods=['GET', 'POST'])
-def member_login(email):
-    msg = ''
+@app.route('/Memberlogin/<email>/<state>', methods=['GET', 'POST'])
+def member_login(email, state):
     check_user_form = LoginForm(request.form)
     if request.method == 'POST' and check_user_form.validate():
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s AND password = %s', (check_user_form.email.data,check_user_form.password.data,))
-        account = cursor.fetchone()
-        if account:     # If Account Exist In DataBase
-            return redirect(url_for('referral', email=account['email'], state=" "))
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['Member']
+        db.close()
+
+        for a in users_dict:
+            member = users_dict.get(a)
+            if check_user_form.email.data ==  member.get_email():
+                if member.get_password() == check_user_form.password.data:
+                    email = member.get_email()
+                    state = "T"
+        if state == "T":
+            return redirect(url_for('referral', email=email, state=" "))
         else:
-            msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
-    return render_template('Member_login.html', form=check_user_form, email=email, msg=msg)
+            state = "F"
+            return redirect(url_for('member_login', email=email, state=state))
+
+    return render_template('Member_login.html', form=check_user_form, email=email, state=state)
 
 
 # Referral
 @app.route('/referral/<email>/<state>', methods=['GET', 'POST'])
 def referral(email, state):
     claim_form = ClaimCode(request.form)
+    member_dict = {}
     # For Show Completion Part
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM account WHERE email = %s', (email,))        # From Pratical wk 4 line 101, To Change To Session
-    account = cursor.fetchone()
+    db = shelve.open('storage.db', 'r')
+    member_dict = db['Member']
+    member = member_dict.get(email)
+    member.get_completion()
+    db.close()
 
     #For Claiming Codes
     if request.method == 'POST' and claim_form.validate():
-        check = ''
-        cursor.execute('SELECT * FROM rewards ')
-        code_list = cursor.fetchall()       # Get all Codes From Database
-        for a in code_list:
-            if a['reward_code'] == claim_form.claim_code.data:
-                if a['status'] == "Claimed":       # Check Status
-                     check = "used"     # Return Variable To Let Webapge Know That The Code is Used
-                else:
-                    check = "claim"
-                    cursor.execute('UPDATE rewards SET status = %s WHERE reward_code = %s', ('Claimed', a['reward_code']))  # Update Status To Update
-                    mysql.connection.commit()
+        db = shelve.open('storage.db', 'w')
+        code_dict = {}
+        check = ""
+        try:
+            code_dict = db['ClaimCode']
+        except:
+            print("Error in retrieving ClaimCode from storage.db.")
 
-        if check == "used":     #Shows if code has been claimed before
+        for a in code_dict:
+            if a == claim_form.claim_code.data:
+                getcode = code_dict[a]
+                if getcode.get_status() == "Claimed":
+                     check = "used"
+                else:
+                    getcode.set_status("Claimed")
+                    code_dict[getcode.get_codenum()] = getcode
+                    db['ClaimCode'] = code_dict
+                    check = "claim"
+
+        if check == "used": #Shows if code has been claimed before
+            db.close()
             return redirect(url_for('referral', email=email, state="used"))
         elif check == "claim":
-            newreward = Member_Completion.increase_completion(account['member_level'], account['member_completion'])     # Increase Completion Using Function
-            cursor.execute('UPDATE account SET member_level = %s, member_completion = %s WHERE email = %s', (newreward[0], newreward[1], email,))
-            mysql.connection.commit()
+            member.increase_completion()
+            member_dict[email] = member
+            db['Member'] = member_dict
+            db.close()
             return redirect(url_for('referral', email=email, state="claim"))
         else:
+            db.close()
             return redirect(url_for('referral', email=email, state="unclaimed"))
-    return render_template('Member_referral.html', email=email, form=claim_form, user=account, state=state)
 
-@app.route('/membersuccess/<email>')
-def member_updatesuccess(email):
+    return render_template('Member_referral.html', email=email, form=claim_form, user=member, state=state)
+
+@app.route('/membersucess/<email>')
+def member_updatesucess(email):
     return render_template('Member_Selfupdatesuccess.html', email=email)
-
 
 #Update Member (For Customers)
 @app.route('/updateMember/<email>/', methods=['GET', 'POST'])
 def update_member(email):
-    update_user_form = UpdatememberdetailForm(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    msg = ''
+    update_user_form = UpdatememberForm(request.form)
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
-        account = cursor.fetchone()     # Fetch Only 1 SQL Record (Since Email Is A Primary Key, There Should Be Only 1 Record)
-        if email != account['email']:   # Check Wether Database has this email or not
-            msg = "This Email Has Been Used"
-        else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, email,))
-            mysql.connection.commit()
-            return redirect(url_for('member_updatesuccess', email=email))
-    else:   # Pre Fill Information in the form
-        cursor.execute('SELECT * FROM account WHERE email = %s', (email,))
-        account = cursor.fetchone()
-        update_user_form.full_name.data = account['full_name']
-        update_user_form.email.data = account['email']
-        update_user_form.phone_number.data = account['phone_num']
-    return render_template('Member_updateself.html', form=update_user_form, email=email, msg=msg)
+        db = shelve.open('storage.db', 'w')
+        users_dict = db['Member']
 
+        temp = users_dict.get(email)
+        users_dict.pop(email)
 
-@app.route('/updateMemberpass/<email>/', methods=['GET', 'POST'])
-def update_memberpass(email):
-     update_user_form = ChangePasswordForm(request.form)
-     msg = ''
-     if request.method == 'POST' and update_user_form.validate():
-         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-         cursor.execute('SELECT * FROM account WHERE email = %s', (email,))
-         account = cursor.fetchone()
-         if update_user_form.oldpassword.data == account['password']:   # Check If Old Password Entered Is The Same One Entered By The User
-             cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, email,))   # Update SQL To New Password That User Entered
-             mysql.connection.commit()
-             return redirect(url_for('member_updatesuccess', email=email))
-         else:
-             msg = 'Incorrect Password'
-     return render_template('Member_updateselfpass.html', form=update_user_form, email=email, msg=msg)
+        replace = User.Member(update_user_form.full_name.data, update_user_form.email.data, update_user_form.password.data, temp.get_sign_up_date(), temp.get_level(), temp.get_completion())
+        users_dict[replace.get_email()] = replace
+        db['Member'] = users_dict
+        db.close()
+
+        return redirect(url_for('member_updatesucess', email=email))
+    else:
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['Member']
+        db.close()
+
+        user = users_dict.get(email)
+        update_user_form.full_name.data = user.get_full_name()
+        update_user_form.email.data = user.get_email()
+        update_user_form.password.data = user.get_password()
+
+        return render_template('Member_updateself.html', form=update_user_form, email=email)
 
 
 #Staff Pages
-@app.route('/Stafflogin/<email>', methods=['GET','POST'])
-def checkstaff(email):
-    check_user_form = LoginForm(request.form)
-    msg = ' '
+@app.route('/Stafflogin/<state>/<email>', methods=['GET','POST'])
+def checkstaff(state, email):
+    check_user_form = stafflogin(request.form)
+    state = state
+    staffid = ""
     if request.method == 'POST' and check_user_form.validate():
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM account WHERE email = %s AND password = %s', (check_user_form.email.data,check_user_form.password.data,))
-        account = cursor.fetchone()
-        if account:
-            if account['staff_id'] != None:     # Only allow access if staff_id field in the account has information in it (If An Account is a member, The Staff_id field would not be filled up)
-                return redirect(url_for('staffpage', staff_name=account['full_name']))
-        msg = "Incorrect Username/Password"
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['StaffUsers']
+        db.close()
 
-    return render_template('Staff_login.html', form=check_user_form, msg=msg, email=email)
+        for a in users_dict:
+           staff = users_dict.get(a)
+           if check_user_form.staff_id.data == staff.get_staff_id():
+               if staff.get_password() == check_user_form.password.data:
+                    staffid = staff.get_staff_id()
+                    state = "T"
+        if state == "T":
+            return redirect(url_for('staffpage', staffid=staffid))
+        else:
+            state = "F"
+            return redirect(url_for('checkstaff', state=state, email=email))
 
-@app.route('/Staffpage/<staff_name>')
-def staffpage(staff_name):
-    return render_template('Staff_Page.html', staff_name=staff_name)
+    return render_template('Staff_login.html', form=check_user_form, state=state, email=email)
+
+@app.route('/Staffpage/<staffid>')
+def staffpage(staffid):
+    return render_template('Staff_Page.html', staffid=staffid)
 
 
 #Reservation Form (Joel And Ernest)
-@app.route('/retrieveReservation/<staff_name>')
-def retrieve(staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM reservation')
-    users_list = cursor.fetchall()     # Retrieve All Reservatio
-    return render_template('Reservation_retrieveUser.html', count=len(users_list), users_list=users_list, staff_name=staff_name)
+@app.route('/retrieveReservation/<staffid>')
+def retrieve(staffid):
+    users_dict = {}
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['RUsers']
+    db.close()
 
+    users_list = []
+    for key in users_dict:
+        user = users_dict.get(key)
+        users_list.append(user)
 
-@app.route('/updateUser/<id>/<staff_name>/', methods=['GET', 'POST'])
-def update_user(id, staff_name):
+    return render_template('Reservation_retrieveUser.html', count=len(users_list), users_list=users_list, staffid=staffid)
+
+@app.route('/updateUser/<int:id>/<staffid>/', methods=['GET', 'POST'])
+def update_user(id, staffid):
     update_user_form = ReservationForm(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM reservation WHERE reservation_id = %s', [id])       # Get Entire Row That Contains The Reservation ID
-    account = cursor.fetchone()
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('UPDATE reservation SET full_name= %s, email = %s, phone_num= %s, reservation_date= %s, reservation_time= %s, card_name= %s, card_number= %s, expiry_date= %s, cvv= %s, additional_note= %s WHERE reservation_id = %s', (update_user_form.full_name.data, update_user_form.email.data, update_user_form.phone_number.data, update_user_form.date.data, update_user_form.time.data, update_user_form.card_name.data, update_user_form.cn.data,str(update_user_form.expire.data + '-01'), update_user_form.cvv.data, update_user_form.Additional_note.data, id))
-        mysql.connection.commit()
-        return redirect(url_for('retrieve', staff_name=staff_name))
-    else:   # Pre Fill Form
-        update_user_form.full_name.data = account['full_name']
-        update_user_form.email.data = account['email']
-        update_user_form.phone_number.data = account['phone_num']
-        update_user_form.date.data = account['reservation_date']
-        update_user_form.time.data = account['reservation_time']
-        update_user_form.card_name.data = account['card_name']
-        update_user_form.cn.data = account['card_number']
-        update_user_form.expire.data = str(account['expiry_date'])[0:7]     # Only Display Year and Month
-        update_user_form.cvv.data = account['cvv']
-        update_user_form.Additional_note.data = account['additional_note']
-    return render_template('Reservation_updateUser.html', form=update_user_form, staff_name=staff_name)
+
+        db = shelve.open('storage.db', 'w')
+        users_dict = db['RUsers']
+
+        user = users_dict.get(id)
+        user.set_first_name(update_user_form.first_name.data)
+        user.set_last_name(update_user_form.last_name.data)
+        user.set_salutation(update_user_form.salutation.data)
+        user.set_email(update_user_form.email.data)
+        user.set_additional_note(update_user_form.Additional_note.data)
+        user.set_phone_number(update_user_form.phone_number.data)
+        user.set_date(update_user_form.date.data)
+        user.set_time(update_user_form.time.data)
+        user.set_full_name(update_user_form.full_name.data)
+        user.set_cn(update_user_form.cn.data)
+        user.set_expire(update_user_form.expire.data)
+        user.set_cvv(update_user_form.cvv.data)
 
 
-@app.route('/deleteUser/<id>/<staff_name>/', methods=['POST'])
-def delete_user(id, staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('DELETE FROM reservation WHERE reservation_id = %s ', [id])
-    mysql.connection.commit()
-    return redirect(url_for('retrieve', staff_name=staff_name))
+        db['RUsers'] = users_dict
+        db.close()
+
+        return redirect(url_for('retrieve', staffid=staffid))
+    else:
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['RUsers']
+        db.close()
+
+        user = users_dict.get(id)
+        update_user_form.first_name.data = user.get_first_name()
+        update_user_form.last_name.data = user.get_last_name()
+        update_user_form.salutation.data = user.get_salutation()
+        update_user_form.email.data = user.get_email()
+        update_user_form.Additional_note.data = user.get_additional_note()
+        update_user_form.phone_number.data = user.get_phone_number()
+        update_user_form.date.data = user.get_date()
+        update_user_form.time.data = user.get_time()
+        update_user_form.full_name.data = user.get_full_name()
+        update_user_form.cn.data = user.get_cn()
+        update_user_form.expire.data = user.get_expire()
+        update_user_form.cvv.data = user.get_cvv()
+
+        return render_template('Reservation_updateUser.html', form=update_user_form, staffid=staffid)
+
+
+@app.route('/deleteUser/<int:id>/<staffid>/', methods=['POST'])
+def delete_user(id, staffid):
+    users_dict = {}
+    db = shelve.open('storage.db', 'w')
+    users_dict = db['RUsers']
+
+    users_dict.pop(id)
+
+    db['RUsers'] = users_dict
+    db.close()
+
+    return redirect(url_for('retrieve', staffid=staffid))
+
 
 
 #Menu Page (Ian)
 @app.route('/changetable/<state>')
 def changetable(state):
-    if state == "T":    # Increase Table Number By 1
-        session['tablenum'] = session['tablenum'] + 1
-    elif state == "F":  # Decrease Table Number By 1
-        if session['tablenum'] > 1:
-            session['tablenum'] = session['tablenum'] - 1
+    table_dict = []
+    db = shelve.open('storage.db', 'w')
+    table_dict = db['Tablenum']
+
+    currenttable = table_dict.get("1") # Since Tablenumgenrate is stored in dict with key 1
+    if state == "T":
+        newtablenum = currenttable.get_tablenum() + 1
+    elif state == "F":
+        if currenttable.get_tablenum() > 1:
+            newtablenum = currenttable.get_tablenum() - 1
+        else:
+            newtablenum = currenttable.get_tablenum()
+    currenttable.set_tablenum(newtablenum)
+    table_dict["1"] = currenttable
+    db['Tablenum'] = table_dict
+
+    db.close()
     return redirect(url_for('orderpage1', email=' '))
 
 
-@app.route('/orderpage_staff/<staff_name>')
-def orderpagestaff(staff_name):
-    # To Get Orders
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    # Get All Menu Information
-    cursor.execute('SELECT * FROM menu')
-    iteminfo = cursor.fetchall()
-    # Retrieve Carts From All Table
-    cursor.execute('SELECT * FROM cart ORDER BY table_num')
-    allorders = cursor.fetchall()
-    # Count The Number Of Tables That Exist In Database
-    cursor.execute('SELECT DISTINCT table_num FROM cart')
-    counttable = cursor.fetchall()
-    return render_template('Menu_Stafforderpage.html', allorders=allorders, counttable=counttable, iteminfo=iteminfo, staff_name=staff_name)
+@app.route('/orderpage_staff/<staffid>')
+def orderpagestaff(staffid):
+    get_order_dict = {}
+    db = shelve.open('storage.db', 'r')
+    get_order_dict = db['Order']
+    table_dict = db['Tablenum']
+    db.close()
 
+    order_listdict = [] #Order From All Tables
+    currenttable = table_dict.get("1").get_tablenum()
 
-# Change State To Served
-@app.route('/stateorderpage_staff/<ordernum>/<staff_name>')
-def stateorderpagestaff(ordernum, staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    # Retrieve Carts From All Table
-    cursor.execute('UPDATE cart SET status= %s WHERE order_num= %s', ['Served', ordernum])
-    mysql.connection.commit()
-    return redirect(url_for('orderpagestaff', staff_name=staff_name))
+    for tables in get_order_dict:
+        order = get_order_dict.get(tables)
+        check = 0
+        for a in order.get_order():
+            if order.get_order().get(a) > 0:
+                check = 1
+                break
+            else:
+                continue
+        if check == 1:
+            order_listdict.append(order)   #Order From All The Tables
 
+    return render_template('Menu_Stafforderpage.html', order_listdict=order_listdict, currenttable=currenttable, staffid=staffid)
 
-# Delete Order Items
-@app.route('/delorderpage_staff/<ordernum>/<staff_name>')
-def delorderpagestaff(ordernum, staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    # Retrieve Carts From All Table
-    cursor.execute('DELETE FROM cart WHERE order_num = %s', [ordernum])
-    mysql.connection.commit()
-    return redirect(url_for('orderpagestaff', staff_name=staff_name))
+# Ian Table
+@app.route('/staffdeleteitem/<deleteitem>/<tablenum>/<staffid>')
+def staffdeleteitem(deleteitem, tablenum, staffid):
+    del_order_dict = {}
+    db = shelve.open('storage.db', 'w')
+    del_order_dict = db['Order']
 
+    gettablenum = del_order_dict.get(tablenum) #Get Order (As A Whole Class) from tablenum provided
+    gettablenum.delete_order(deleteitem)
+    del_order_dict[tablenum] = gettablenum
+    db['Order'] = del_order_dict
+    db.close()
 
-# Add Item To Menu:
-@app.route('/staffadditem/<staff_name>', methods=['GET', 'POST'])
-def staffadditem(staff_name):
-    msg = ''
-    add_item_form = addmenu(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM menu')
-    allmenu = cursor.fetchall()
-    if request.method == 'POST' and add_item_form.validate():
-        add_item_form.itemcode.data = add_item_form.itemcode.data.upper()
-        cursor.execute('SELECT * FROM menu WHERE item_code = %s', [add_item_form.itemcode.data])
-        item = cursor.fetchone()
-        print(add_item_form.itemcode.data)
-        if add_item_form.itemcode.data[0] not in ['S', 'M', 'D', 'E', 'W']:
-            msg = 'Invalid Item Code'
-        elif item:
-            msg = 'This Item Code Exist In The Database'
-        else:
-            cursor.execute('INSERT INTO menu VALUES (%s, %s, %s, %s)', (add_item_form.itemcode.data, add_item_form.itemname.data, add_item_form.itemdesc.data, add_item_form.itemprice.data ))
-            mysql.connection.commit()
-            return redirect(url_for('staffadditem', staff_name=staff_name))
-    return render_template('Menu_Additem.html', form=add_item_form, staff_name=staff_name, msg=msg, allmenu=allmenu)
-
-
-# Edit Item On Menu:
-@app.route('/staffedititem/<itemcode>/<staff_name>', methods=['GET', 'POST'])
-def staffedititem(itemcode, staff_name):
-    edit_item_form = addmenu(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    msg = ''
-    if request.method == 'POST' and edit_item_form.validate():
-            edit_item_form.itemcode.data = edit_item_form.itemcode.data.upper()
-            cursor.execute('SELECT * FROM menu WHERE item_code = %s', (edit_item_form.itemcode.data,))
-            checkitem = cursor.fetchone()
-            try:
-                if checkitem['item_code'] != itemcode:
-                    msg = 'This Item Code Exist In The Database'
-            except:
-                if edit_item_form.itemcode.data[0] not in ['S', 'M','D', 'E', 'W']:
-                    msg = 'Invalid Item Code'
-                else:
-                    cursor.execute('UPDATE menu SET item_code= %s, item_name = %s, item_desc= %s, item_price= %s WHERE item_code = %s', (edit_item_form.itemcode.data, edit_item_form.itemname.data, edit_item_form.itemdesc.data, edit_item_form.itemprice.data, itemcode,))
-                    mysql.connection.commit()
-                    return redirect(url_for('staffadditem', staff_name=staff_name))
-    else:
-        cursor.execute('SELECT * FROM menu WHERE item_code = %s', (itemcode,))  # Get Item Info based on the item code choosen
-        item = cursor.fetchone()
-        edit_item_form.itemcode.data = item['item_code']
-        edit_item_form.itemname.data = item['item_name']
-        edit_item_form.itemdesc.data = item['item_desc']
-        edit_item_form.itemprice.data = item['item_price']
-
-    return render_template('Menu_Edititem.html', form=edit_item_form, staff_name=staff_name, msg=msg)
-
-
-# Remove Menu Item
-@app.route('/staffdelitem/<itemcode>/<staff_name>', methods=['GET', 'POST'])
-def staffdelitem(itemcode, staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('DELETE FROM menu WHERE item_code = %s ', [itemcode])
-    mysql.connection.commit()
-    return redirect(url_for('staffadditem', staff_name=staff_name))
+    return redirect(url_for('orderpagestaff', staffid=staffid))
 
 
 #Akif
 # Retrieve Member
-@app.route('/retrieveMembers/<staff_name>')
-def retrieve_Members(staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM account where member_level is not null ')     # Get Only Members (Staff has no member Level (AKA NULL value), Therefore, it won't be displayed'
-    users_list = cursor.fetchall()
-    return render_template('Member_retrieveUsers.html', count=len(users_list), users_list=users_list , staff_name=staff_name)
+@app.route('/retrieveMembers/<staffid>')
+def retrieve_Members(staffid):
+    users_dict = {}
+    db = shelve.open('storage.db', 'r')
+    try:
+        users_dict = db['Member']
+    except:
+        print("Storage not found")
+    db.close()
+
+    users_list = []
+    for key in users_dict:
+        user = users_dict.get(key)
+        users_list.append(user)
+
+    return render_template('Member_retrieveUsers.html', count=len(users_list), users_list=users_list , staffid=staffid)
 
 
 # Update Member for Staff
-@app.route('/updateMemberstaff/<email>/<staff_name>', methods=['GET', 'POST'])
-def update_memberstaff(email, staff_name):
-    update_user_form = UpdatememberdetailstaffForm(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    msg = ''
+@app.route('/updateMemberstaff/<email>/<staffid>', methods=['GET', 'POST'])
+def update_memberstaff(email, staffid):
+    update_user_form = CreateUserForm(request.form)
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
-        account = cursor.fetchone()
-        if email != account['email']:   # Do Not Allow Change Of Email if The Email Address Entered Is Found In The Database
-            msg = "This Email Has Been Used"
-        else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, sign_up_date = %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.signup_date.data, email,))
-            mysql.connection.commit()
-            return redirect(url_for('retrieve_Members', staff_name=staff_name))
-    else:   # Pre Fill Form
-        cursor.execute('SELECT * FROM account WHERE email = %s', (email,))
-        account = cursor.fetchone()
-        update_user_form.full_name.data = account['full_name']
-        update_user_form.email.data = account['email']
-        update_user_form.phone_number.data = account['phone_num']
-        update_user_form.signup_date.data = account['sign_up_date']
+        db = shelve.open('storage.db', 'w')
+        users_dict = db['Member']
 
-    return render_template('Member_updateUser.html', form=update_user_form, staff_name=staff_name, msg=msg)
+        temp = users_dict.get(email)
+        users_dict.pop(email)
+
+        replace = User.Member(update_user_form.full_name.data, update_user_form.email.data, update_user_form.password.data, update_user_form.sign_up_date.data, temp.get_level(), temp.get_completion())
+        users_dict[replace.get_email()] = replace
+        db['Member'] = users_dict
+        db.close()
+
+        return redirect(url_for('retrieve_Members', staffid=staffid))
+    else:
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['Member']
+        db.close()
+
+        user = users_dict.get(email)
+        update_user_form.full_name.data = user.get_full_name()
+        update_user_form.email.data = user.get_email()
+        update_user_form.password.data = user.get_password()
+        update_user_form.sign_up_date.data = user.get_sign_up_date()
+
+        return render_template('Member_updateUser.html', form=update_user_form, staffid=staffid)
 
 
 # Delete Member
-@app.route('/deleteMember/<mememail>/<staff_name>', methods=['POST'])
-def delete_Member(mememail, staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('DELETE FROM account WHERE email = %s ', [mememail])
-    mysql.connection.commit()
-    return redirect(url_for('retrieve_Members', staff_name=staff_name))
+@app.route('/deleteMember/<email>/<staffid>', methods=['POST'])
+def delete_Member(email, staffid):
+    users_dict = {}
+    db = shelve.open('storage.db', 'w')
+    users_dict = db['Member']
 
+    users_dict.pop(email)
+
+    db['Member'] = users_dict
+    db.close()
+
+    return redirect(url_for('retrieve_Members', staffid=staffid))
 
 #Referal Codes
-@app.route('/Referalcodes/<staff_name>', methods=['GET','POST'])
-def referal_codes(staff_name):
-    msg = ''
+@app.route('/Referalcodes/<staffid>', methods=['GET','POST'])
+def referal_codes(staffid):
     createcode = CreateCode(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM rewards ')
-    code_list = cursor.fetchall()
+    code_dict = {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        code_dict = db['ClaimCode']
+    except:
+        print("Storage not found")
+
+    code_list = []
+    for key in code_dict:
+        code = code_dict.get(key)
+        code_list.append(code)
+
     if request.method == 'POST' and createcode.validate():
-        cursor.execute('SELECT * FROM rewards WHERE reward_code = %s', (createcode.code.data,))
-        code = cursor.fetchone()
-        if code:    # Do Not Allow Duplicated Codes (By Checking if code number exist in the database)
-            msg = 'This Code Exist In Database'
-        else:
-            cursor.execute('INSERT INTO rewards VALUES (%s, %s)', (createcode.code.data, 'Unclaimed'))
-            mysql.connection.commit()
-            return redirect(url_for('referal_codes', staff_name=staff_name))
+        code_dict = {}
+        db = shelve.open('storage.db', 'c')
+        try:
+            code_dict = db['ClaimCode']
+        except:
+            print("Storage not found")
 
-    return render_template('Member_StaffReferalCodes.html', form=createcode, count=len(code_list), code_list=code_list, staff_name=staff_name, msg=msg)
+        code = referalcode.ReferalCode(createcode.code.data, "Unclaimed")
+        code_dict[code.get_codenum()] = code
+        db['ClaimCode'] = code_dict
+        db.close()
 
-#Delete Referal Codes
-@app.route('/deleteReferal/<codenum>/<staff_name>', methods=['GET', 'POST'])
-def delete_code(codenum,staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('DELETE FROM rewards WHERE reward_code = %s ', [codenum])
-    mysql.connection.commit()
-    return redirect(url_for('referal_codes', staff_name=staff_name))
+        return redirect(url_for('referal_codes', staffid=staffid))
+
+    return render_template('Member_StaffReferalCodes.html', form=createcode, count=len(code_list), code_list=code_list, staffid=staffid)
+
+#Update Referal Codes
+@app.route('/deleteReferal/<codenum>/<staffid>', methods=['GET', 'POST'])
+def delete_code(codenum,staffid):
+    code_dict = {}
+    db = shelve.open('storage.db', 'w')
+    code_dict = db['ClaimCode']
+
+    code_dict.pop(codenum)
+
+    db['ClaimCode'] = code_dict
+    db.close()
+
+    return redirect(url_for('referal_codes', staffid=staffid))
 
 
 #Create Staff User
-@app.route('/CreateStaff/<staff_name>', methods=['GET','POST'])
-def create_staff(staff_name):
-    msg = ''
-    create_user_form = CreateStaff(request.form)
+@app.route('/CreateStaff/<staffid>', methods=['GET','POST'])
+def create_staff(staffid):
+    create_user_form = stafflogin(request.form)
     if request.method == 'POST' and create_user_form.validate():
-        hire_date = date.today()    # Get Today's Date
-        newdate = hire_date.strftime("%Y-%m-%d")    # To Format Date Into SQL Readable Format (YYYY-MM-DD)
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        # Check If Email Exist In Database
-        cursor.execute('SELECT * FROM account WHERE email = %s', (create_user_form.email.data,))
-        account = cursor.fetchone()
-        # Check If Staff ID Exist In Database
-        cursor.execute('SELECT * FROM account WHERE staff_id = %s', (create_user_form.staff_id.data,))
-        staffid = cursor.fetchone()
-        if account:
-            msg = 'This Email Has Been Taken'
-        else:
-            if staffid:
-                msg = 'This Staff ID Has Been Taken'
-            else:
-                cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, NULL, NULL, NULL, %s, %s, %s)', (create_user_form.email.data, create_user_form.full_name.data, create_user_form.password.data, 'Member',  create_user_form.phone_number.data , create_user_form.staff_id.data , newdate, create_user_form.job_title.data))
-                mysql.connection.commit()
-                return redirect(url_for('confirmstaff', staff_name=staff_name, newuser=create_user_form.email.data))
-    return render_template('Staff_Create.html', form=create_user_form, staff_name=staff_name, msg=msg)
+        users_dict = {}
+        db = shelve.open('storage.db', 'c')
 
+        try:
+            users_dict = db['StaffUsers']
+        except:
+            print("Error in retrieving Users from storage.db.")
 
-@app.route('/confirmstaff/<staff_name>/<newuser>')
-def confirmstaff(staff_name, newuser):
-    return render_template('Staff_Confirm.html', staff_name=staff_name, newuser=newuser)
+        user = User.stafflogin(create_user_form.staff_id.data, create_user_form.password.data)
+        newuser = user.get_staff_id()
+        users_dict[newuser] = user
+        db['StaffUsers'] = users_dict
+        db.close()
 
+        return redirect(url_for('confirmstaff', newuser=newuser,  staffid=staffid))
 
-@app.route('/staffRetrieve/<staff_name>')
-def staffretrieve(staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM account where staff_id is not null ')     # Get Staff (Members will not be included as their staff_id is a null value)
-    users_list = cursor.fetchall()
-    return render_template('Staff_Userslist.html', count=len(users_list), users_list=users_list, staff_name=staff_name)
+    return render_template('Staff_Create.html', form=create_user_form, staffid=staffid)
 
+@app.route('/confirmstaff/<staffid>/<newuser>')
+def confirmstaff(staffid, newuser):
+    return render_template('Staff_Confirm.html', staffid=staffid, newuser=newuser)
 
-@app.route('/updateStaff/<toupdate>/<staff_name>/', methods=['GET', 'POST'])
-def update_staff(toupdate, staff_name):     # toupdate Variable Is Used in a case where 1 staff Member is editing another Staff Member's Information). toupdate is the staff memeber's name
-    update_user_form = UpdateStaff(request.form)
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (toupdate,))  # Get Staff Email based on the staff name entered
-    staff = cursor.fetchone()
-    msg = ''
+@app.route('/staffRetrieve/<staffid>')
+def staffretrieve(staffid):
+    users_dict = {}
+    db = shelve.open('storage.db', 'r')
+    users_dict = db['StaffUsers']
+    db.close()
+
+    users_list = []
+    for key in users_dict:
+        user = users_dict.get(key)
+        users_list.append(user)
+
+    return render_template('Staff_Userslist.html', count=len(users_list), users_list=users_list, staffid=staffid)
+
+@app.route('/updateStaff/<ustaffid>/<staffid>/', methods=['GET', 'POST'])
+def update_staff(ustaffid, staffid):
+    update_user_form = stafflogin(request.form)
     if request.method == 'POST' and update_user_form.validate():
-        cursor.execute('SELECT * FROM account WHERE email = %s', (update_user_form.email.data,))
-        account = cursor.fetchone()
-        if staff['email'] != account['email']:
-            msg = "This Email Has Been Used"
-        else:
-            cursor.execute('UPDATE account SET email= %s, full_name = %s, phone_num= %s, staff_id= %s, hire_date= %s, job_title= %s WHERE email = %s', (update_user_form.email.data, update_user_form.full_name.data, update_user_form.phone_number.data, update_user_form.staff_id.data, update_user_form.hire_date.data, update_user_form.job_title.data, staff['email'],))
-            mysql.connection.commit()
-            if staff_name == toupdate:
-                return redirect(url_for('staffretrieve', staff_name=update_user_form.full_name.data))
-            else:
-                return redirect(url_for('staffretrieve', staff_name=staff_name))
+
+        db = shelve.open('storage.db', 'w')
+        users_dict = db['StaffUsers']
+
+        users_dict.pop(ustaffid)
+        user = User.stafflogin(update_user_form.staff_id.data, update_user_form.password.data)
+        users_dict[user.get_staff_id()] = user
+        db['StaffUsers'] = users_dict
+        db.close()
+
+        return redirect(url_for('staffretrieve', staffid=staffid))
     else:
-        cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))     # Get Account Information
-        account = cursor.fetchone()
-        update_user_form.full_name.data = account['full_name']
-        update_user_form.email.data = account['email']
-        update_user_form.phone_number.data = account['phone_num']
-        update_user_form.staff_id.data = account['staff_id']
-        update_user_form.hire_date.data = account['hire_date']
-        update_user_form.job_title.data = account['job_title']
+        users_dict = {}
+        db = shelve.open('storage.db', 'r')
+        users_dict = db['StaffUsers']
+        db.close()
 
-    return render_template('Staff_updateuser.html', form=update_user_form, staff_name=staff_name)
+        user = users_dict.get(staffid)
+        update_user_form.staff_id.data = user.get_staff_id()
+        update_user_form.password.data = user.get_password()
 
-
-@app.route('/deleteStaff/<delstaffemail>/<staff_name>', methods=['POST'])
-def delete_staff(delstaffemail, staff_name):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('DELETE FROM account WHERE email = %s ', [delstaffemail])
-    mysql.connection.commit()
-    return redirect(url_for('staffretrieve', staff_name=staff_name))
+        return render_template('Staff_updateuser.html', form=update_user_form, staffid=staffid)
 
 
-@app.route('/updatestaffpass/<staff_name>/', methods=['GET', 'POST'])
-def Changepass_staff(staff_name):
-     update_user_form = ChangePasswordForm(request.form)
-     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-     cursor.execute('SELECT * FROM account WHERE full_name = %s and staff_id is not NULL', (staff_name,))
-     staff = cursor.fetchone()
-     msg = ''
-     if request.method == 'POST' and update_user_form.validate():
-         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-         cursor.execute('SELECT * FROM account WHERE email = %s', (staff['email'],))
-         account = cursor.fetchone()
-         if update_user_form.oldpassword.data == account['password']:   # Ensure Old Password Matches The Password That The User Entered
-             cursor.execute('UPDATE account SET password = %s WHERE email = %s', (update_user_form.newpassword.data, staff['email'],))
-             mysql.connection.commit()
-             return redirect(url_for('member_updatesuccess', email=' '))
-         else:
-             msg = 'Incorrect Password'
-     return render_template('Staff_updateselfpass.html', form=update_user_form, staff_name=staff_name, msg=msg)
+@app.route('/deleteStaff/<delstaffid>/<staffid>', methods=['POST'])
+def delete_staff(delstaffid, staffid):
+    users_dict = {}
+    db = shelve.open('storage.db', 'w')
+    users_dict = db['StaffUsers']
+
+    users_dict.pop(delstaffid)
+
+    db['StaffUsers'] = users_dict
+    db.close()
+
+    return redirect(url_for('staffretrieve', staffid=staffid))
 
 
 if __name__ == '__main__':

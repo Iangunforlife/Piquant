@@ -8,7 +8,7 @@
 <br/>
 <form action="" method="post">
   <div class="form-group">
-    {{ render_field(form.email, class="form-control") }}
+    {{ render_field(form.staff_id, class="form-control") }}
   </div>
   <div class="form-group">
     {{ render_field(form.password, class="form-control") }}
@@ -17,7 +17,7 @@
 </form>
 <br>
 <a href="/"> <button class="btn btn-danger"> Back </button>  </a>
-<br>
-{{msg}}
-<br>
+{%if state == "F"%}
+  <p> Invalid Username/Password </p>
+{% endif %}
 {% endblock %}

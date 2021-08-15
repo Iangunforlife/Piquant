@@ -22,7 +22,7 @@
       <tr>
         <th>Full Name</th>
         <th>Email</th>
-        <th>Phone Number</th>
+        <th>Password</th>
         <th>Sign Up Date</th>
         <th>Current Membership Level</th>
         <th>Current Membership Completion</th>
@@ -33,22 +33,23 @@
     <tbody>
     {% for user in users_list %}
       <tr>
-        <td>{{ user['full_name'] }}</td>
-        <td>{{ user['email']  }}</td>
-        <td>{{ user['phone_num'] }}</td>
-        <td>{{ user['sign_up_date'] }}</td>
-        <td>{{ user['member_level'] }}</td>
-        <td>{{ user['member_completion'] }}</td>
-        <td><a href="/updateMemberstaff/{{user['email']}}/{{staff_name}}" class="btn btn-warning">Update</a></td>
+        <td>{{ user.get_full_name() }}</td>
+        <td>{{ user.get_email() }}</td>
+        <td>{{ user.get_password() }}</td>
+        <td>{{ user.get_sign_up_date() }}</td>
+        <td>{{ user.get_level() }}</td>
+        <td>{{ user.get_completion() }}</td>
+
+        <td><a href="/updateMemberstaff/{{user.get_email()}}/{{staffid}}" class="btn btn-warning">Update</a></td>
         <td>
-          <form action="{{url_for('delete_Member', mememail=user['email'], staff_name=staff_name)}}" method="POST">
-            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user['full_name']}}?');">
+          <form action="{{url_for('delete_Member', email=user.get_email(), staffid=staffid)}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user.get_full_name()}}?');">
           </form>
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-    <a href="{{url_for('staffpage', staff_name=staff_name)}}"> <button class="btn btn-danger"> Back </button></a>
+    <a href="{{url_for('staffpage', staffid=staffid)}}"> <button class="btn btn-danger"> Back </button></a>
 </div>
 {% endblock %}
