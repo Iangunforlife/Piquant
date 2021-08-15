@@ -181,6 +181,58 @@
    float:right;
  }
 
+
+/* For Login Page */
+.button_googlelogin {
+  display: flex;
+  height: 50px;
+  padding: 0;
+  background: #2279d6;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  overflow: hidden;
+  font-family: "Quicksand", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.button_googlelogin:hover {
+  background: #008168;
+}
+
+.button_googlelogin:active {
+  background: #006e58;
+}
+
+.button__text_googlelogin,
+.button__icon_googlelogin {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 24px;
+  color: #fff;
+  height: 100%;
+}
+
+.button__icon_googlelogin {
+  font-size: 1.5em;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/*
+a {
+    color: #0060B6;
+    text-decoration: none;
+}
+*/
+
+a:hover {
+    color:#00A0C6;
+    text-decoration:none;
+    cursor:pointer;
+}
+
 /* For Error 404 Page */
 
 #notfound {

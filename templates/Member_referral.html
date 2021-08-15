@@ -128,11 +128,11 @@
     </div>
     <br>
     <br>
-    {% if state == "claim" %}
+    {% if referral_state == "claim" %}
     <p class="memrewardcode_center"> Successfully Claimed </p>
-    {% elif state == "unclaimed" %}
+    {% elif referral_state == "unclaimed" %}
     <p class="memrewardcode_error"> Wrong Code </p>
-    {% elif state == "used" %}
+    {% elif referral_state == "used" %}
     <p class="memrewardcode_error"> Code Has Been Used </p>
     {% endif %}
   </div>

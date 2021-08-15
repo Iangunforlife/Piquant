@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Pic Upload{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<br>
+<h1 class="display-4">Your Security Question & Answers</h1>
+    <br>
+    <h5> <a href="{{ url_for('acctsecfavpic') }}"> To change your pictures/questions/answers, please click here </a> </h5>
+    <br>
+    <h5> Question: </h5>
+    <p> {{ account['Security_Question'] }} </p>
+    <h5> Pic 1: <br>
+        <img src="{{url_for('static', filename='accountsecpic/' + filename + '1.jpg')}}"  style="width:20%;">
+    </h5>
+    <h5> Pic 2: <br>
+        <img src="{{url_for('static', filename='accountsecpic/' + filename + '2.jpg')}}"  style="width:20%;">
+    </h5>
+    <h5> Pic 3: <br>
+        <img src="{{url_for('static', filename='accountsecpic/' + filename + '3.jpg')}}"  style="width:20%;">
+    </h5>
+    <h5> Pic 4: <br>
+        <img src="{{url_for('static', filename='accountsecpic/' + filename + '4.jpg')}}"  style="width:20%;">
+    </h5>
+    <h5> Option Chosen: </h5>
+    <p> Pic: {{ account['answer'] }} </p>
+  <br>
+{% if 'stafflogged' in session %}
+<a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
+{% else %}
+<a href="{{url_for('referral', referral_state=' ')}}"> <button class="btn btn-danger"> Back </button></a>
+{% endif %}
+{% endblock %}

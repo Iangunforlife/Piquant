@@ -27,7 +27,8 @@
       <div class="dropdown-menu">
         <a class="dropdown-item" href="{{url_for('update_staff', toupdate=session['stafflogged'])}}">Change Info</a>
         <a class="dropdown-item" href="{{url_for('Changepass_staff')}}">Change Password</a>
-        <a class="dropdown-item" href="{{url_for('acctsecfavpic')}}">Account Recovery</a>
+        <a class="dropdown-item" href="{{url_for('showacctsecfavpic')}}">Account Recovery</a>
+        <a class="dropdown-item" href="{{url_for('account_2fa')}}">2FA Option </a>
         <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
       </div>
 

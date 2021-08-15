@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Piquant - Forgot Account {% endblock %}
+{% block title %}Piquant - Verify Account {% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
@@ -14,7 +14,7 @@
 </form>
 <br>
 {% if 'enterotpblktime' not in session %}
-<a href="{{ url_for('acctresentsms_otp')}}"> Resend OTP </a>
+<a href="{{ url_for('authenticatephone_resent_otp')}}"> Resend OTP </a>
 {% endif %}
 <br>
 <p> {{msg}} </p>

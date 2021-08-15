@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Piquant - 2FA Options {% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+
+<h1 class="display-4">Choose 2FA Option</h1>
+
+<form method="POST" action="">
+   {% for subfield in form %}
+
+    {{ subfield(style="list-style:none") }}
+    {% endfor %}
+  <input type="submit" value="Change" class="btn btn-success"/>
+</form>
+<br>
+{% if 'stafflogged' in session %}
+<a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
+{% else %}
+<a href="{{url_for('referral', referral_state=' ')}}"> <button class="btn btn-danger"> Back </button></a>
+{% endif %}
+<br>
+{{ msg }}
+<br>
+{% endblock %}

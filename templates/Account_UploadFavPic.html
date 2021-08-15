@@ -6,7 +6,7 @@
 <br>
 <h1 class="display-4">Security Question</h1>
 
-<h4> Upload Your Favourite Pic Here: (Only Jpg Files Are Allowed, Max 4 MB) </h4>
+<h4> Upload Your Favourite Pic Here: (Only Jpg Files Are Allowed, Max 16 MB) </h4>
 
 <form method="POST" action="" enctype="multipart/form-data" >
     <div class="form-group">
@@ -39,4 +39,9 @@
 <br>
 {{msg}}
 <br>
+{% if 'stafflogged' in session %}
+<a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
+{% else %}
+<a href="{{url_for('referral', referral_state=' ')}}"> <button class="btn btn-danger"> Back </button></a>
+{% endif %}
 {% endblock %}

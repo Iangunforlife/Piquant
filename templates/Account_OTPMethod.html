@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Piquant - OTP Method {% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+
+<h1 class="display-4">Choose 2FA Method</h1>
+
+<form method="POST" action="">
+   {% for subfield in form %}
+
+    {{ subfield(style="list-style:none") }}
+    {% endfor %}
+  <input type="submit" value="Submit" class="btn btn-success"/>
+</form>
+<br>
+{{ msg }}
+<br>
+{% endblock %}

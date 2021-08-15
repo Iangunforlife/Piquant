@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Update Info {% endblock %}
+
+{% block content %}
+<h1> Update Sucessful </h1>
+<p> Click Back to go back </p>
+<br>
+{% if 'stafflogged' in session %}
+<a href = "{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button> </a>
+{% else %}
+<a href = "{{url_for('referral', referral_state=' ')}}"> <button class="btn btn-danger"> Back </button> </a>
+{% endif %}
+{% endblock %}

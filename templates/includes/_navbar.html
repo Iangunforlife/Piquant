@@ -18,9 +18,9 @@
       </a>
       <div class="dropdown-menu">
         {% if 'loggedin' in session %}
-        <a class="dropdown-item" href="{{url_for('referral', state=' ')}}">Rewards</a>
+        <a class="dropdown-item" href="{{url_for('referral', referral_state=' ')}}">Rewards</a>
         {% else %}
-        <a class="dropdown-item" href="{{url_for('member_login', state=' ')}}">Rewards</a>
+        <a class="dropdown-item" href="{{url_for('member_login')}}">Rewards</a>
         {% endif %}
         <a class="dropdown-item" href="{{url_for('create_Member')}}">Sign Up</a>
       </div>
@@ -54,13 +54,14 @@
         <a class="dropdown-item" href="/referral/''">Rewards</a>
         <a class="dropdown-item" href="{{url_for('update_member')}}">Change Info</a>
         <a class="dropdown-item" href="{{url_for('update_memberpass')}}">Change Password</a>
-        <a class="dropdown-item" href="{{url_for('acctsecfavpic')}}">Account Recovery</a>
+        <a class="dropdown-item" href="{{url_for('showacctsecfavpic')}}">Account Recovery</a>
+        <a class="dropdown-item" href="{{url_for('account_2fa')}}">2FA Option </a>
         <a class="dropdown-item" href="/logout">Logout</a>
       </div>
     </li>
     {% else %}
     <li class="nav-item">
-      <a class="nav-link navbaritem" href="{{url_for('member_login', state=' ')}}"> Login </a>
+      <a class="nav-link navbaritem" href="{{url_for('member_login')}}"> Login </a>
     </li>
     {% endif %}
   </ul>

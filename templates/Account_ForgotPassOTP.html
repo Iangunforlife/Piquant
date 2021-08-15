@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Piquant - Forgot Password Member{% endblock %}
+{% block title %}Piquant - Forgot Password{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
@@ -13,7 +13,9 @@
   <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
 <br>
+{% if 'enterotpblktime' not in session %}
 <a href="{{ url_for('acctresentemail_otp', email=email)}}"> Resend OTP </a>
+{% endif %}
 <br>
 <p> {{msg}} </p>
 <br>
