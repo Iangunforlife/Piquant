@@ -252,7 +252,6 @@ def create_user():
         rphone = create_user_form.phone_number.data
         newemail = create_user_form.email.data.lower()
         password = create_user_form.phone_number.data + newemail    # Password for Zip (Phone + Email)
-        print(password)
 
         # PDF
         DATA = [
@@ -931,7 +930,7 @@ def manpage():
 
 # Reservation Form
 @app.route('/retrieveReservation')
-def retrieve():
+def retrieve_reserve():
     # Check If All Staff (includes managers) Is Logged In (This Is To Prevent User From Using The Back Button)
     try:
         session['stafflogged']
@@ -953,7 +952,7 @@ def update_user(id):
         session['stafflogged']
     except:
         return redirect(url_for('checkstaff'))
-    update_user_form = ReservationForm(request.form)
+    update_user_form = RetriveReservationForm(request.form)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM reservation WHERE reservation_id = %s', [id])       # Get Entire Row That Contains The Reservation ID
     account = cursor.fetchone()
@@ -992,7 +991,28 @@ def update_user(id):
         update_user_form.expire.data = str(account['expiry_date'])[0:7]     # Only Display Year and Month
         update_user_form.cvv.data = decryptcvv
         update_user_form.Additional_note.data = account['additional_note']
-    return render_template('Reservation_updateUser.html', form=update_user_form)
+    filename = account['email'].replace('@', '')
+
+    # Virus Scanner
+    endpoint = "https://api.virusscannerapi.com/virusscan"
+    picfilename = 'static/accountsecpic/' + filename + "_mempic" + '1' + ".jpg"
+    headers2 = {
+        'X-ApplicationID': 'e725e24f-6c29-4c01-93a9-6f4b0c1ed03d',
+        'X-SecretKey': 'b50a1340-ad8e-4af9-93e4-38f78341e5ea'
+    }
+    file2 = open(picfilename, "rb")
+    data2 = {
+        'async': 'false',
+    }
+    files2 = {
+        'inputFile': (picfilename, file2.read())
+    }
+    r = requests.post(url=endpoint, data=data2, headers=headers2, files=files2)
+    response = r.text
+    splitresponse = response.split(sep=",") # Convert To List, For All Parts
+    getstatus = splitresponse[5].split(sep=':')    # Convert To List, Only For The Status Part
+    virusresult = getstatus[1].replace('"', '')  # Get Only Status of file
+    return render_template('Reservation_updateUser.html', form=update_user_form, filename=filename, virusresult=virusresult)
 
 
 @app.route('/deleteUser/<id>', methods=['POST'])
@@ -1791,7 +1811,6 @@ def acctsecfavpic():
             return redirect(url_for('referral', referral_state=" "))
     return render_template('Account_UploadFavPic.html', form=upload_form, msg=msg)
 
-
 # Exception Handling For Uploading Files
 @app.errorhandler(413)
 @app.errorhandler(RequestEntityTooLarge)
@@ -1821,7 +1840,6 @@ def generate_otp(method, numemail, reason):     # numemail can be a phone number
              to = numemail
          )
     return otp
-
 
 # Verify Account (Choose OTP Method):
 @app.route('/AuthenticateAcct', methods=['GET', 'POST'])

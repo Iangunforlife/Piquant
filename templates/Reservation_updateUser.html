@@ -14,17 +14,14 @@
 <h1 class="display-4">Update User</h1>
 
 <form method="post" action="">
-  <div class="form-group">
-    {{ render_field(form.salutation, class="form-control") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.first_name, class="form-control") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.last_name, class="form-control") }}
+  <div>
+    {{ render_field(form.full_name, class="form-control") }}
   </div>
   <div>
     {{ render_field(form.phone_number, class="form-control") }}
+  </div>
+   <div>
+    {{ render_field(form.email, class="form-control") }}
   </div>
   <div>
     {{ render_field(form.date, class="form-control") }}
@@ -33,10 +30,7 @@
     {{ render_field(form.time, class="form-control") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.email, class="form-control") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.full_name, class="form-control") }}
+    {{ render_field(form.card_name, class="form-control") }}
   </div>
   <div>
     {{ render_field(form.cn, class="form-control") }}
@@ -47,7 +41,19 @@
   <div>
     {{ render_field(form.cvv, class="form-control") }}
   </div>
+  <div>
+    {{ render_field(form.Additional_note, class="form-control") }}
+  </div>
+  <br>
+  <h5> Pic Uploaded by user: <br>
+        <img src="{{url_for('static', filename='accountsecpic/' + filename + '_mempic1.jpg')}}"  style="width:20%;">
+    </h5>
+  <br>
+    <p> Status: {{ virusresult }} </p>
   <br>
   <input type="submit" value="Submit" class="btn btn-success"/>
 </form>
+<br>
+<a href="{{url_for('retrieve_reserve')}}"> <button class="btn btn-danger"> Back </button></a>
 {% endblock %}
+
