@@ -440,11 +440,12 @@ def create_Member():
         pwd_expiry = expiry_date.strftime("%Y-%m-%d")   # To Create New Date According To SQL Format
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         useremail = create_user_form.email.data.lower()
-        cursor.execute('SELECT * FROM account WHERE email = %s', (useremail,))
+        cursor.execute('SELECT * FROM account WHERE email = %s or phone_num = %s', (useremail, create_user_form.phone_number.data))
         account = cursor.fetchone()
         if account:     # Ensure That there will be no duplicates (As Email is A Primary Key In The Database)
-            msg = 'This Email Has Been Taken'
+            msg = 'This Email/Phone Number Has Been Taken'
         else:
+
             # Password Hashing
             # Create a random number (Salt)
             salt = bcrypt.gensalt(rounds=16)
