@@ -513,3 +513,12 @@
 2021-08-15 18:39:44,278:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
 2021-08-15 18:39:51,736:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:<class 'wtforms.validators.Email'> updated self profile
 2021-08-15 18:39:54,795:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
+2021-08-16 17:11:50,978:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
+2021-08-16 17:12:03,114:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
+2021-08-16 17:12:04,624:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
+2021-08-16 17:12:07,405:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
+2021-08-16 17:13:43,580:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
+2021-08-16 17:13:56,012:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
+2021-08-16 17:13:57,932:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
+2021-08-16 17:13:58,620:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
+2021-08-16 17:14:00,911:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation

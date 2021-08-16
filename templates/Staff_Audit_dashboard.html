@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Piquant - Staff Audit{% endblock %}
+{% block content %}
+<br>
+{% block staffnavbar %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
+<br>
+<div class="container-fluid">
+<div class="row">
+    <div class="col-4">
+          <div class="wrapper">
+            <!-- Sidebar -->
+            <nav id="sidebar">
+                <div class="sidebar-header">
+                    <h3>Piquant</h3>
+                </div>
+                    <div class="side">
+                        <a href="{{url_for('manager_audit')}}" class="text">Audit table</a>
+                        </div>
+                        <br>
+                        <div class="side">
+                        <a href="{{url_for('staff_audit_dashboard')}}" class="text">Dashboard</a>
+                        </div>
+
+            </nav>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="dashboard">
+            <iframe width="900" height="800" frameborder="0" scrolling="no" src="//plotly.com/dashboard/Meatyhippo:21/embed"></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

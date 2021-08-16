@@ -322,6 +322,7 @@ a:hover {
     }
 }
 
+
 /* For Ernest Page */
 #myVideo {
   display: block;
@@ -330,43 +331,48 @@ a:hover {
   height:100%;
 }
 
-.content {
-  position:absolute;
-  font-family: 'Text Me One', sans-serif;
-  text-align: center;
-  color: #f1f1f1;
-  width: 100%;
-  top: 60%;
+/* Ernest Audit Page*/
+/* sidebar */
+#sidebar {
+    max-width: 100%;
+    height:80vh;
+    background: #808080;
+    color: #fff;
 }
 
-.audit{
- text-align: center;
- background-color: lightblue;
- padding-top: 100px;
- padding-bottom: 150px;
- font-size:20px;
+#sidebar.active {
+    margin-left: -250px;
 }
 
-#myInput {
-  background-position: 10px 10px;
-  background-repeat: no-repeat;
-  width: 100%;
-  font-size: 16px;
-  padding: 12px 20px 12px 40px;
-  border: 1px solid #ddd;
-  margin-bottom: 12px;
+
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
 }
 
-#myTable {
-  border-collapse: collapse;
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #D3D3D3;
+    font-size:20px;
+}
+
+.text{
+  padding:20px;
+  font-size: 20px;
+}
+
+/* for dashboard */
+.dashboard{
+  position:relative;
   width: 100%;
-  border: 1px solid #ddd;
-  font-size: 18px;
+  height:80vh;
 }
 
 #myTable th, #myTable td {
   text-align: left;
-  padding: 12px;
 }
 
 #myTable tr {
@@ -375,5 +381,19 @@ a:hover {
 
 #myTable tr.header, #myTable tr:hover {
   background-color: #f1f1f1;
+}
+
+.audit{
+  width: 100.5%;
+  height:80vh;
+}
+
+#myInput {
+  position:relative;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
 }
 

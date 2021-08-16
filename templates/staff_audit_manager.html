@@ -1,74 +1,99 @@
-{% extends "manager_base.html" %}
+{% extends "base.html" %}
 {% block title %}Piquant - Staff Audit{% endblock %}
 {% block content %}
 
 {% block javascript %}
-    <script src="{{ url_for('static',filename='java.js') }}"></script>
+    <script src="{{ url_for('static',filename='Javascript/audit_java.js') }}"></script>
 {% endblock %}
+<br>
+{% block staffnavbar %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
+<br>
+<div class="container-fluid">
+<div class="row">
+    <div class="col-4">
+        <div class="wrapper">
+            <!-- Sidebar -->
+            <nav id="sidebar">
+                <div class="sidebar-header">
+                    <h3>Piquant</h3>
+                </div>
 
- <div class="audit">
-   <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
-     <h1 class="display-4">Staff Audit</h1>
-   <br>
-  <table id="myTable">
-    <tr class="header">
-      <th>Staff Name</th>
-      <th>Login Time</th>
-      <th>Logout Time</th>
-      <th>Password</th>
-      <th>Password expiry</th>
-      <th>Password status</th>
-        <th>Action</th>
-    </tr>
-      {% for user in audit %}
-      {% if user['staff_id'] != None %}
-      <tr>
-        <td>{{user['staff_id']}}</td>
+                    <div>
+                        <a href="{{url_for('manager_audit')}}" class="text">Audit table</a>
+                        </div>
+                        <br>
+                        <div>
+                        <a href="{{url_for('staff_audit_dashboard')}}" class="text">Dashboard</a>
+                        </div>
 
-        {% if user['login_time'] != None %}
-        <td>{{user['login_time']}}</td>
-        {% else %}
-        <td>--</td>
-        {% endif %}
+            </nav>
+        </div>
+    </div>
+     <div class="col-8">
+        <!-- <div class="audit container-fluid"> -->
+           <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+             <h1 class="display-4" style="text-align:center;">Staff Audit</h1>
+                  <table id="myTable" class="table table-striped">
+                    <tr class="header">
+                       <th>Staff Name</th>
+                       <th>Login Time</th>
+                       <th>Logout Time</th>
+                       <th>Action</th>
+                      <th>Failed login attempts</th>
+                        <th>Role</th>
+                    </tr>
+                    {% for user in audit %}
+                      {% if user['staff_id'] != None %}
+                         <tr>
+                           <td>{{user['full_name']}}</td>
 
-        {% if user['logout_time'] != None %}
-        <td>{{user['logout_time']}}</td>
-        {% else %}
-        <td>--</td>
-        {% endif %}
+                           {% if user['login_time'] != None %}
+                             <td>{{user['login_time']}}</td>
+                           {% else %}
+                             <td>--</td>
+                           {% endif %}
 
-        {% if user['password'] != None %}
-        <td>{{user['password']}}</td>
-        {% else %}
-        <td>--</td>
-        {% endif %}
+                           {% if user['logout_time'] != None %}
+                            <td>{{user['logout_time']}}</td>
+                           {% else %}
+                            <td>--</td>
+                           {% endif %}
 
-        {% if user['pwd_expiry'] != None %}
-        <td>{{user['pwd_expiry']}}</td>
-        {% else %}
-        <td>--</td>
-        {% endif %}
+                           {% if user['action'] != None %}
+                               <td>{{user['action']}}</td>
+                           {% else %}
+                               <td>--</td>
+                           {% endif %}
 
-        {% if user['password_status'] != None %}
-        <td>{{user['password_status'] }}</td>
-        {% else %}
-        <td>--</td>
-        {% endif %}
+                             {% if user['failed_login'] != None %}
+                               <td>{{user['failed_login']}}</td>
+                           {% else %}
+                               <td>--</td>
+                           {% endif %}
 
-        {% if user['action'] != None %}
-          <td>{{user['action']}}</td>
-        {% else %}
-        <td>--</td>
-        {% endif %}
-      </tr>
-      {% endif %}
-     {% endfor %}
-   </table>
- </div>
+                           {% if user['role'] != None %}
+                               <td>{{user['role']}}</td>
+                           {% else %}
+                               <td>--</td>
+                           {% endif %}
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                  </table>
+        </div>
+     </div>
+</div>
 
 <br>
 <div>
-  <a href="{{url_for('manpage', staff_name=staff_name, manager_id=manager_id)}}"> <button class="btn btn-danger"> Back </button></a>
+  <a href="{{url_for('staffpage')}}"> <button class="btn btn-danger"> Back </button></a>
 </div>
+
 
 {% endblock %}

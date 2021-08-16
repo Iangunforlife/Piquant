@@ -4,14 +4,10 @@ import Member_Completion, GenerateOrderNum, random, logging
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import datetime
-from handler import error
-from functools import wraps # don't need to pip install
-import splunklib.client as client # pip install splunk-sdk
-import socket
+# import socket
 from flask_mail import Mail, Message    # To Send Email
 import os
 from twilio.rest import Client  # To Send SMS
-from werkzeug.exceptions import RequestEntityTooLarge   # To Verify Image Size Does Not Exceed 16MB
 import bcrypt   # For Hashing
 
 import os.path
@@ -22,6 +18,12 @@ import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
+
+# Ernest Audit
+import csv
+from handler import error   # pip install handler
+# from functools import wraps # don't need to pip install
+# import splunklib.client as client # pip install splunk-sdk
 
 # Joel File Encryption
 # import rsa (SQL cnnt store rsa format)
@@ -35,26 +37,6 @@ from zipfile import ZipFile
 import requests
 import io
 
-
-# Zhi Yang's Email OTP
-'''
-import bcrypt
-from tkinter import *
-from tkinter import messagebox
-import tkinter
-'''
-'''
-# Zhi Yang Watchdog
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-import sys
-import time
-import smtplib
-import subprocess
-from watchdog.events import FileSystemEventHandler, PatternMatchingEventHandler
-from watchdog.observers import Observer
-from email.mime.text import MIMEText
-'''
 
 # Akif's Google Login
 def get_user_email(access_token):
@@ -104,6 +86,7 @@ app.config['UPLOAD_FOLDER'] = 'static/accountsecpic'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 4MB max-limit.
 
 # Ernest Loggers
+app.register_blueprint(error)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s:%(pathname)s:%(name)s:%(message)s')
@@ -111,6 +94,15 @@ file_handler = logging.FileHandler('piquant.log')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+'''
+#for splunk
+service = client.connect(
+    host='localhost',
+    port=,
+    username='admin',
+    password=''
+)
+'''
 
 # Akif Google Login
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -132,16 +124,6 @@ def login_is_required(function):
             return function()
 
     return wrapper
-
-'''
-#for splunk
-service = client.connect(
-    host='localhost',
-    port=8089,
-    username='admin',
-    password=''
-)
-'''
 
 # Role-Based Access Control
 # only manager can update and delete user
@@ -198,7 +180,7 @@ def mem(member):
     return wrap
 '''
 
-# Email To Be Passed into codes to check wether users are login or not
+#Email To Be Passed into codes to check wether users are login or not
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -575,6 +557,8 @@ def member_login():
                     app.permanent_session_lifetime = datetime.timedelta(minutes=1)
                     return redirect(url_for('referral', referral_state=" "))
             else:
+                # Write to audit SQL Table
+                cursor.execute('UPDATE audit SET failed_login = %s WHERE email = %s', (session['loginattempt'], useremail,))
                 msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
         else:
             msg = "Incorrect Username/Password"     # Return Incorrect Username/Password as a message
@@ -692,12 +676,12 @@ def referral(referral_state):
 
     return render_template('Member_referral.html', form=claim_form, user=account, referral_state=referral_state)
 
-# Updating Details Only
+# Updating Details Success Only
 @app.route('/acctupdateinfosuccess')
 def acct_updateinfosuccess():
     return render_template('Account_Selfupdateinfosuccess.html')
 
-# Update Password
+# Update Password Success
 @app.route('/acctupdatesuccess')
 def acct_updatesuccess():
     logout()
@@ -708,13 +692,10 @@ def logout():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     logouttime = str(datetime.datetime.now().replace(microsecond=0))
     # For Audit
-    if 'email' in session:
+    if 'email' in session:  # To record if member is logout
         logger.info("{} is logged out".format(session['email']))
         cursor.execute('UPDATE audit SET action = %s, logout_time = %s WHERE email = %s ', ('Logged out', logouttime, session['email'],))
-    if 'manager_id' in session:
-        logger.info("{} is logged out".format(session['manager_id']))
-        cursor.execute('UPDATE audit SET action = %s, logout_time = %s WHERE staff_id = %s ', ('Logged out', logouttime, session['manager_id'],))
-    if 'staff_id' in session:
+    if 'staff_id' in session:   # To record if staff Logout
         logger.info("{} is logged out".format(session['staff_id']))
         cursor.execute('UPDATE audit SET action = %s, logout_time = %s WHERE staff_id = %s ', ('Logged out', logouttime, session['staff_id'],))
     mysql.connection.commit()
@@ -870,8 +851,10 @@ def checkstaff():
         if account:
             if account['account_status'] == "Blocked":
                 msg = 'This Account Has Been Locked, Please Reset Your Password To Unlock Your Account'
-            elif bcrypt.checkpw(check_user_form.password.data.encode(), account['password'].encode()):
-                if account['staff_id'] != None:     # Only allow access if staff_id field in the account has information in it (If An Account is a member, The Staff_id field would not be filled up)
+            elif account['staff_id'] == None:     # Only allow access if staff_id field in the account has information in it (If An Account is a member, The Staff_id field would not be filled up)
+                msg = "Incorrect Username/Password"
+            else:
+                if bcrypt.checkpw(check_user_form.password.data.encode(), account['password'].encode()):
                     session.pop('loginattempt', None)   # Remove Login Attempt
                     # To Force User To Change Password
                     if account['pwd_expiry'] <= datetime.datetime.today().date():       # Compare Password Expiry Date To Current Date
@@ -889,7 +872,7 @@ def checkstaff():
                         session['stafflogged'] = account['full_name']  # Set Staff Login To True In Session
                         session['staff_id'] = account['staff_id']   # Put Staff Id in Session
                         logger.info("{} is logged in".format(account['staff_id']))
-                        cursor.execute('UPDATE audit SET action = %s, login_time = %s WHERE email = %s ', ('Logged in', logintime, account['email'],))
+                        cursor.execute('UPDATE audit SET action = %s, login_time=%s, failed_login = %s WHERE email = %s', (['Logged in', logintime, 0, account['email'],]))
                         mysql.connection.commit()
                        # Timeout (Auto Logout, in non-incognito)
                         session.permanent = True
@@ -898,9 +881,12 @@ def checkstaff():
                             session['manager_id'] = account['manager_id']   # Put Manager Id in Session
                         return redirect(url_for('staffpage'))
                 else:
+                    # Write to audit
+                    faillogincount = session['loginattempt'] + 1
+                    cursor.execute('UPDATE audit SET failed_login = %s WHERE email = %s', ([faillogincount, useremail]))
+                    mysql.connection.commit()
+                    print(faillogincount)
                     msg = "Incorrect Username/Password"
-            else:
-                msg = "Incorrect Username/Password"
         else:
             msg = "Incorrect Username/Password"
         session['loginattempt'] = session['loginattempt'] + 1   # Increase Login Attempt By One
@@ -1301,9 +1287,10 @@ def create_staff():
                 pwd_expiry = expiry_date.strftime("%Y-%m-%d")   # To Create New Date According To SQL Format
                 if len(create_user_form.manager_id.data) == 0:  # For Normal Staff
                     cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %s, NULL, NULL, NULL, %s, NULL, %s, %s, NULL, NULL)', ([useremail, create_user_form.full_name.data, hash_password, pwd_expiry, 'Staff',  create_user_form.phone_number.data , create_user_form.staff_id.data, newdate, create_user_form.job_title.data]))
+                    cursor.execute('INSERT INTO audit VALUES (%s, %s, %s, NULL, NULL, NULL, NULL, NULL, %s, %s)', (useremail, create_user_form.full_name.data, create_user_form.staff_id.data, 'Staff', 0))
                 else:   # For Those With Manager ID
                     cursor.execute('INSERT INTO account VALUES (%s, %s, %s, %s, %s, %s, NULL, NULL, NULL, %s, %s, %s, %s, NULL)', ([useremail, create_user_form.full_name.data, hash_password, pwd_expiry, 'Staff',  create_user_form.phone_number.data , create_user_form.staff_id.data, create_user_form.manager_id.data, newdate, create_user_form.job_title.data]))
-                cursor.execute('INSERT INTO audit VALUES (%s, %s, %s, NULL, NULL, NULL, NULL, NULL, NULL, NULL)', (useremail, create_user_form.full_name.data, create_user_form.staff_id.data))
+                    cursor.execute('INSERT INTO audit VALUES (%s, %s, %s, NULL, NULL, NULL, NULL, NULL, %s, %s)', (useremail, create_user_form.full_name.data, create_user_form.staff_id.data, 'Manager', 0))
                 cursor.execute('UPDATE audit SET action = %s WHERE staff_id = %s',('Created new staff', session['staff_id'],))
                 # Store in Password History
                 cursor.execute('INSERT INTO password_hist VALUES (NULL, %s, %s)', (useremail, hash_password))
@@ -1392,7 +1379,7 @@ def delete_staff(delstaffemail):
 
 @app.route('/updatestaffpass', methods=['GET', 'POST'])
 def Changepass_staff():
-        # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
     try:
         session['stafflogged']
     except:
@@ -1761,7 +1748,6 @@ def showacctsecfavpic():
     return render_template('Account_ExistUploadFavPic.html', account=gotaccount, filename=filename)
 
 
-
 # Upload Their Fav Pic
 @app.route('/Acctsecfavpic', methods=['GET', 'POST'])
 def acctsecfavpic():
@@ -1810,12 +1796,6 @@ def acctsecfavpic():
             mysql.connection.commit()
             return redirect(url_for('referral', referral_state=" "))
     return render_template('Account_UploadFavPic.html', form=upload_form, msg=msg)
-
-# Exception Handling For Uploading Files
-@app.errorhandler(413)
-@app.errorhandler(RequestEntityTooLarge)
-def app_handle_413(e):
-    return redirect(url_for('acctsecfavpic'))
 
 
 def generate_otp(method, numemail, reason):     # numemail can be a phone number of email address, depending on the method passed in
@@ -2054,6 +2034,73 @@ def account_2fa():
     fa2methodform.process() # Set Defaults to the form
     return render_template('Account_2FAOption.html', form=fa2methodform, msg=msg)
 
+
+# Ernest Audit Page
+@app.route('/manaud', methods=['GET','POST'])
+# @man
+def manager_audit():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    # Check if its manager login
+    try:
+        session['manager_id']
+    except:
+        cursor.execute('SELECT * FROM audit WHERE staff_id = %s', ([session['staff_id']]))
+        staffinfo = cursor.fetchone()
+        newsusnum = staffinfo['suspicious'] + 1
+        cursor.execute('UPDATE audit SET suspicious = %s WHERE staff_id = %s', ([newsusnum, session['staff_id']]))
+        mysql.connection.commit()
+        return redirect(url_for('error'))
+
+
+    cursor.execute('SELECT * FROM audit WHERE staff_id is not null')
+    audit = cursor.fetchall()
+    cursor.execute('UPDATE audit SET action = %s WHERE staff_id = %s',('Viewed audit', session['staff_id']))
+    logger.info("{} viewed audit".format(session['staff_id']))
+    mysql.connection.commit()
+    with open('audit.csv', 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=['manager_id','staff_id','usage','email','full_name','login_time','logout_time', 'action', 'failed_login', 'role', 'suspicious'])
+        writer.writeheader()
+        for i in audit:
+            writer.writerow(i)
+    f.close()
+    return render_template('Staff_audit_manager.html', audit=audit)
+
+
+@app.route('/staffauditdashboard')
+# @man
+def staff_audit_dashboard():
+    # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    # Check if its manager login
+    try:
+        session['manager_id']
+    except:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM audit WHERE staff_id = %s', ([session['staff_id']]))
+        staffinfo = cursor.fetchone()
+        newsusnum = staffinfo['suspicious'] + 1
+        cursor.execute('UPDATE audit SET suspicious = %s WHERE staff_id = %s', ([newsusnum, session['staff_id']]))
+        mysql.connection.commit()
+        return redirect(url_for('error'))
+
+    return render_template('Staff_Audit_dashboard.html')
+
+# Error Handling ?
+@app.route('/error')
+def error():
+    return render_template('error.html')
+
+
 # Extra, Shutdown Server
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
@@ -2063,6 +2110,7 @@ def shutdown():
 def shutdown_server():
     check = request.environ.get('werkzeug.server.shutdown')
     check()
+
 
 
 if __name__ == '__main__':
