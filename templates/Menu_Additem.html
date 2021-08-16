@@ -5,8 +5,13 @@
 {% from "includes/_formHelper.html" import render_field %}
 <br>
 {% block staffnavbar %}
-  {% include 'includes/Staff_navbar.html' %}
-{% endblock %}
+    {% if 'manager_id' in session %}
+        {% include 'Includes/Manager_navbar.html' %}
+     {% else %}
+        {% include 'Includes/Staff_navbar.html' %}
+     {% endif %}
+    {% endblock %}
+<br>
 
 <h1 class="display-4">Menu</h1>
 <br>

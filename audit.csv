@@ -1,3 +1,3 @@
 manager_id,staff_id,usage,email,full_name,login_time,logout_time,action,failed_login,role,suspicious
-,Ian,,iansimwx@gmail.com,Ian Sim,2021-08-16 17:11:50,2021-08-16 14:54:25,Viewed audit,0,Manager,0
-,JeffT,,jefftan@gmail.com,Jeff Tan,2021-08-16 14:54:37,,Logged in,0,Staff,1
+,Ian Sim,,ianwxsim@gmail.com,Ian Sim,2021-08-16 23:08:27,2021-08-16 22:52:01,Logged in,0,Manager,0
+,JeffT,,jefftan@gmail.com,Jeff Tan,2021-08-16 22:21:55,,Updated self profile,0,Staff,0

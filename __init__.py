@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, send_file, Response
 from forms import *
 import Member_Completion, GenerateOrderNum, random, logging
 from flask_mysqldb import MySQL
@@ -35,6 +35,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 import PyPDF2
 from zipfile import ZipFile
 import requests
+import pyminizip
 import io
 
 
@@ -44,6 +45,14 @@ def get_user_email(access_token):
             'https://www.googleapis.com/oauth2/v3/userinfo',
             params={'access_token': access_token})
     return r.json()
+
+# Zhi Yang Watchdog/Backup
+import time
+from watchdog.observers import Observer
+import file_monitoring as wd
+import backup_and_restore as br
+import pickle
+from googleapiclient.errors import HttpError
 
 
 app = Flask(__name__)
@@ -98,9 +107,9 @@ logger.addHandler(file_handler)
 #for splunk
 service = client.connect(
     host='localhost',
-    port=,
+    port=8089,
     username='admin',
-    password=''
+    password='Iaminmumbai21!'
 )
 '''
 
@@ -192,7 +201,7 @@ def about():
 # Joel New
 @app.route('/download_reciept')
 def download_reciept():
-    path = "Receipt.zip"
+    path = "ProtectedReceipt.zip"
     return send_file(path, as_attachment=True)
 def upload_form():
     return render_template('download.html')
@@ -233,7 +242,7 @@ def create_user():
         rtime = create_user_form.time.data
         rphone = create_user_form.phone_number.data
         newemail = create_user_form.email.data.lower()
-        password = create_user_form.phone_number.data + newemail    # Password for Zip (Phone + Email)
+        password = rphone + newemail    # Password for Zip (Phone + Email)
 
         # PDF
         DATA = [
@@ -271,10 +280,20 @@ def create_user():
             with open("PReceiptProtected.pdf", "wb") as outputStream:
                 output.write(outputStream)
 
-        # For Zipping
-        zipObj = ZipFile('Receipt.zip', 'w')    # Create new Zip file
-        zipObj.write('PreceiptProtected.pdf')   # Put PDF in the Zip
-        zipObj.close()
+        # Zip File with Password
+        inpt = "PReceiptProtected.pdf"
+
+        # output zip file path
+        oupt = "ProtectedReceipt.zip"
+
+        # compress level
+        com_lvl = 5
+
+        # Password for Zip
+        zippassword = rphone + str(rdate)
+
+        # compressing file
+        pyminizip.compress(inpt, None, oupt,zippassword, com_lvl)
 
         # Scan Photo Uploaded for Virus
         endpoint = "https://api.virusscannerapi.com/virusscan"
@@ -294,14 +313,10 @@ def create_user():
         response = r.text
         print(response)
 
-        #######
-
-        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, useremail, create_user_form.phone_number.data, create_user_form.date.data,create_user_form.time.data,create_user_form.card_name.data, encryptcreditcard, str(create_user_form.expire.data + '-01'), encryptcvv, create_user_form.Additional_note.data, symmetrickey))
+        cursor.execute('INSERT INTO reservation VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (create_user_form.full_name.data, useremail, create_user_form.phone_number.data, create_user_form.date.data, str(create_user_form.time.data + ':00'), create_user_form.card_name.data, encryptcreditcard, str(create_user_form.expire.data + '-01'), encryptcvv, create_user_form.Additional_note.data, symmetrickey))
         mysql.connection.commit()   #Update SQL Database
         logger.info('{} has made a reservation'.format(create_user_form.full_name.data))
-
         return redirect(url_for('retrieve_users'))
-
 
     if account != None:     # Pre Fill Form if user is logged in
         create_user_form.full_name.data = account['full_name']
@@ -450,9 +465,9 @@ def create_Member():
                     session.pop('creategoogleemail', None)
             except:
                 pass
-            session['authemail'] = useremail
-            session['authphone'] = create_user_form.phone_number.data
-            session['authreason'] = 'register'
+            session['authemail'] = useremail     # For Authentication, Put User Email In Session
+            session['authphone'] = create_user_form.phone_number.data   # For Authentication, Put Phone Number In Session
+            session['authreason'] = 'registering'   # For Authentication, Set Reason to Registering
             return redirect(url_for('authenticate_account'))
     else:
         try:
@@ -554,7 +569,7 @@ def member_login():
                     logger.info('{} is logged in'.format(session['email']))
                     # Timeout (Auto Logout, in non-incognito)
                     session.permanent = True
-                    app.permanent_session_lifetime = datetime.timedelta(minutes=1)
+                    app.permanent_session_lifetime = datetime.timedelta(minutes=2)
                     return redirect(url_for('referral', referral_state=" "))
             else:
                 # Write to audit SQL Table
@@ -615,7 +630,7 @@ def googlelogin_callback():
         else:
             # Timeout (Auto Logout, in non-incognito)
             session.permanent = True
-            app.permanent_session_lifetime = datetime.timedelta(minutes=1)
+            app.permanent_session_lifetime = datetime.timedelta(minutes=2)
             session["loggedin"] = True
             session['email'] = id_info.get("email")
             # For Audit
@@ -876,7 +891,7 @@ def checkstaff():
                         mysql.connection.commit()
                        # Timeout (Auto Logout, in non-incognito)
                         session.permanent = True
-                        app.permanent_session_lifetime = datetime.timedelta(minutes=1)
+                        app.permanent_session_lifetime = datetime.timedelta(minutes=2)
                         if account['manager_id'] != None:
                             session['manager_id'] = account['manager_id']   # Put Manager Id in Session
                         return redirect(url_for('staffpage'))
@@ -1091,6 +1106,7 @@ def staffadditem():
         elif item:
             msg = 'This Item Code Exist In The Database'
         else:
+            print(add_item_form.itemprice.data)
             cursor.execute('INSERT INTO menu VALUES (%s, %s, %s, %s)', (add_item_form.itemcode.data, add_item_form.itemname.data, add_item_form.itemdesc.data, add_item_form.itemprice.data ))
             mysql.connection.commit()
             return redirect(url_for('staffadditem'))
@@ -1481,6 +1497,9 @@ def acct_forgotpass():
         if account:
             session['OTP'] = generate_otp('email', account['email'], 'forgot')
             session['acctrecoveremail'] = account['email']
+            curtime = datetime.datetime.now()
+            validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+            session['otpvalidtime'] = validtill       # Block Attempts Till This Time
             session.pop('acctrecoveryattempt', None)
             return redirect(url_for('acctenter_otp'))
         else:
@@ -1529,6 +1548,9 @@ def acct_forgotacct():
             checkgotpic = cursor.fetchone()
             if checkgotpic is None:
                 session['OTP'] = generate_otp('phone', str('+65' + session['acctrecoverphone'], 'forgot'))
+                curtime = datetime.datetime.now()
+                validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+                session['otpvalidtime'] = validtill       # Block Attempts Till This Time
                 session.pop('acctrecoveryattempt', None)
                 return redirect(url_for('forgotacctenter_otp'))
             else:
@@ -1570,19 +1592,36 @@ def acctenter_otp():
                 msg = 'Looks like you are trying too much, try again in ' + timeremain
     except:     # Create A New Session called enterotpattempt
         session['enterotpattempt'] = 0
+
+    session['otpvalidtime'] = session['otpvalidtime'].replace(tzinfo=None)
+    timeremain = str(session['otpvalidtime'] - datetime.datetime.now())       # Calculate Time Remaining
+    timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+    if timeremain == ' day,':       # If Block Time Is Up
+        session['OTP'] = 'Invalid'  # Set OTP to invalid
+
     if request.method == 'POST' and check_user_form.validate() and session['enterotpattempt'] < 3:
-        if int(check_user_form.OTP.data) == int(session['OTP']):
+        if session['OTP'] == 'Invalid':
+            msg = 'OTP Timeout, Please request for a new otp'
+        elif int(check_user_form.OTP.data) == int(session['OTP']):
             session.pop('OTP', None)
+            session.pop('enterotpattempt', None)
+            session.pop('otpvalidtime', None)  # Remove otpvalidtime From Session
             return redirect(url_for('Change_Acct_Password'))
         else:
             msg = "Incorrect OTP"
     return render_template('Account_ForgotPassOTP.html', form=check_user_form, msg=msg)
+
 
 # Resent Email OTP (For Forgot Password)
 @app.route('/acctresentemailotp', methods=['GET', 'POST'])
 def acctresentemail_otp():
     session.pop('OTP', None)
     session['OTP'] = generate_otp('email', session['EmailOTP'], 'forgot')
+
+    curtime = datetime.datetime.now()
+    validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+    session['otpvalidtime'] = validtill       # Block Attempts Till This Time
+
     return redirect(url_for('mementer_otp'))
 
 
@@ -1607,18 +1646,26 @@ def forgotacctenter_otp():
                 session.pop('enterotpblktime', None)
                 msg = ''
                 session['enterotpattempt'] = 0   # To Unblock User
-
             else:
                 msg = 'Looks like you are trying too much, try again in ' + timeremain
     except:     # Create A New Session called enterotpattempt
         session['enterotpattempt'] = 0
 
+    session['otpvalidtime'] = session['otpvalidtime'].replace(tzinfo=None)
+    timeremain = str(session['otpvalidtime'] - datetime.datetime.now())       # Calculate Time Remaining
+    timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+    if timeremain == ' day,':       # If Block Time Is Up
+        session['OTP'] = 'Invalid'  # Set OTP to invalid
+
     check_user_form = EnterOTP(request.form)
     msg = ''
     if request.method == 'POST' and check_user_form.validate() and session['enterotpattempt'] < 3:
-        if int(check_user_form.OTP.data) == int(session['OTP']):
+        if session['OTP'] == 'Invalid':
+            msg = 'OTP Timeout, Please request for a new otp'
+        elif int(check_user_form.OTP.data) == int(session['OTP']):
             session.pop('OTP', None)
             session.pop('enterotpattempt', None)
+            session.pop('otpvalidtime', None)  # Remove otpvalidtime From Session
             return redirect(url_for('forgotacctshow'))
         else:
             session['enterotpattempt'] += session['enterotpattempt'] + 1
@@ -1631,6 +1678,10 @@ def forgotacctenter_otp():
 def acctresentsms_otp():
     session.pop('OTP', None)
     session['OTP'] = generate_otp('phone', str('+65' + session['acctrecoverphone']), 'forgot')
+
+    curtime = datetime.datetime.now()
+    validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+    session['otpvalidtime'] = validtill       # Block Attempts Till This Time
     return redirect(url_for('forgotacctenter_otp'))
 
 
@@ -1716,6 +1767,9 @@ def acctsecqn():
     answer = mememail.replace('@', '') + "_memsecpic" + acctsecinfo['answer']
     if session['choosesecpicattempt'] >= 2: # Change Over to SMS OTP
         session['OTP'] = generate_otp('phone', str('+65' + session['acctrecoverphone']), 'forgot')
+        curtime = datetime.datetime.now()
+        validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+        session['otpvalidtime'] = validtill       # Block Attempts Till This Time
         return redirect(url_for('forgotacctenter_otp'))
     if request.method == 'POST' and check_user_form.validate():
         if check_user_form.secpic.data == answer:       # If Option That User Has Choosen Matches The One In The Account Recovery
@@ -1802,20 +1856,20 @@ def generate_otp(method, numemail, reason):     # numemail can be a phone number
     otp = random.randint(100000, 999999)
     if method == 'email' and reason == 'login':
         msg = Message('Piquant: Trying to login?', sender='piquant.nyp@gmail.com', recipients=[numemail])
-        msg.body = str('Enter This OTP: {}, to login' .format(otp))
+        msg.body = str('Enter This OTP: {}, to login. OTP is valid for 1 minutes' .format(otp))
         mail.send(msg)
     if method == 'email' and reason == 'forgot':
         msg = Message('Piquant: Forgot Your Password?', sender='piquant.nyp@gmail.com', recipients=[numemail])
-        msg.body = str('Enter This OTP: {}, to reset your password' .format(otp))
+        msg.body = str('Enter This OTP: {}, to reset your password. OTP is valid for 1 minutes' .format(otp))
         mail.send(msg)
     if method == 'email' and reason == 'registering':
         msg = Message('Piquant: Registering Your Account?', sender='piquant.nyp@gmail.com', recipients=[numemail])
-        msg.body = str('Enter This OTP: {}, to register your account' .format(otp))
+        msg.body = str('Enter This OTP: {}, to register your account. OTP is valid for 1 minutes' .format(otp))
         mail.send(msg)
     elif method == 'phone':
         message = twilioclient.messages \
         .create(
-             body= str('This Is Your OTP {}' .format(otp)),
+             body= str('This Is Your OTP {}. OTP is valid for 1 minutes' .format(otp)),
              from_='',
              to = numemail
          )
@@ -1830,10 +1884,20 @@ def authenticate_account():
     if request.method == 'POST' and authenticate_option.validate():
         if authenticate_option.chooseOTP.data == 'Email':
             emailotp = generate_otp('email', session['authemail'], session['authreason'])  # To Generate Email OTP
+
+            curtime = datetime.datetime.now()
+            validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+            session['otpvalidtime'] = validtill       # Put OTP Valid Time in Session
+
             session['authotp'] = emailotp
             return redirect(url_for('authenticate_accountemail'))
         else:
              smsotp = generate_otp('phone', str('+65' + session['authphone']), session['authreason'])  # To Generate SMS OTP
+
+             curtime = datetime.datetime.now()
+             validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+             session['otpvalidtime'] = validtill       # Put OTP Valid Time in Session
+
              session['authotp'] = smsotp
              return redirect(url_for('authenticate_accountphone'))
     return render_template('Account_OTPMethod.html', form=authenticate_option)
@@ -1866,8 +1930,16 @@ def authenticate_accountemail():
     except:     # Create A New Session called enterotpattempt
         session['enterotpattempt'] = 0
 
+    session['otpvalidtime'] = session['otpvalidtime'].replace(tzinfo=None)
+    timeremain = str(session['otpvalidtime'] - datetime.datetime.now())       # Calculate Time Remaining
+    timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+    if timeremain == ' day,':       # If Block Time Is Up
+        session['authotp'] = 'Invalid'  # Set OTP to invalid
+
     if request.method == 'POST' and otpform.validate() and session['enterotpattempt'] < 3:
-        if int(otpform.OTP.data) == int(session['authotp']):    # Check if user entered OTP matches the one that is generated
+        if session['authotp'] == 'Invalid':
+            msg = 'OTP Timeout, Please request for a new otp'
+        elif int(otpform.OTP.data) == int(session['authotp']):    # Check if user entered OTP matches the one that is generated
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             # Retrive User Details (This is for Staff Part especially, since staff page uses staff name instead of email)
             cursor.execute('SELECT * FROM account WHERE email = %s', ([session['authemail']]))
@@ -1877,12 +1949,12 @@ def authenticate_accountemail():
             cursor.execute('UPDATE audit SET login_time = %s, action= %s WHERE email=%s', (now,'Logged in', session['authemail']))
             logger.info('{} is logged in'.format(session['authemail']))
             mysql.connection.commit()
-
             if account['staff_id'] == None: # For Memeber
                 session['email'] = session['authemail'] # Put email in session
                 session.pop('authphone', None)  # Remove Authentication Phone From Session
                 session.pop('authotp', None)    # Remove Authentication OTP From Session
                 session.pop('authemail', None)  # Remove Authentication Email From Session
+                session.pop('otpvalidtime', None)  # Remove otpvalidtime From Session
                 if session['authreason'] != 'login':    # If Authentication was used to verify account
                     # To Set Account Status To Verfied (NULL)
                     cursor.execute('UPDATE account SET account_status = NULL WHERE email=%s', ([session['email']]))
@@ -1895,6 +1967,7 @@ def authenticate_accountemail():
                 session.pop('authotp', None)    # Remove Authentication OTP From Session
                 session.pop('authemail', None)  # Remove Authentication Email From Session
                 session.pop('authereason', None)   # Remove Authentication reason
+                session.pop('otpvalidtime', None)  # Remove otpvalidtime From Session
                 session['stafflogged'] = account['full_name']   # Put staff name In Session
                 session['staff_id'] = account['staff_id']   # Put Staff Id in Session
                 if account['manager_id'] != None:   # If The Account Used is a manager
@@ -1909,7 +1982,13 @@ def authenticate_accountemail():
 @app.route('/authenticateemailresentotp', methods=['GET', 'POST'])
 def authenticatemail_resent_otp():
     emailotp = generate_otp('email', session['authemail'], session['authreason'])
+
+    curtime = datetime.datetime.now()
+    validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+    session['otpvalidtime'] = validtill       # Put OTP Valid Time in Session
+
     session['authotp'] = emailotp
+
     return redirect(url_for('authenticate_accountemail'))
 
 
@@ -1939,8 +2018,17 @@ def authenticate_accountphone():
                 msg = 'Looks like you are trying too much, try again in ' + timeremain
     except:     # Create A New Session called enterotpattempt
         session['enterotpattempt'] = 0
+
+    session['otpvalidtime'] = session['otpvalidtime'].replace(tzinfo=None)
+    timeremain = str(session['otpvalidtime'] - datetime.datetime.now())       # Calculate Time Remaining
+    timeremain = timeremain[2:7]    # Only Retrieve Minute and seconds
+    if timeremain == ' day,':       # If Block Time Is Up
+        session['authotp'] = 'Invalid'  # Set OTP to invalid
+
     if request.method == 'POST' and otpform.validate() and session['enterotpattempt'] < 3:
-        if int(otpform.OTP.data) == int(session['authotp']):
+        if session['authotp'] == 'Invalid':
+            msg = 'OTP Timeout, Please request for a new otp'
+        elif int(otpform.OTP.data) == int(session['authotp']):
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             # Retrive User Details (This is for Staff Part especially, since staff page uses staff name instead of email)
             cursor.execute('SELECT * FROM account WHERE email = %s', ([session['authemail']]))
@@ -1956,6 +2044,7 @@ def authenticate_accountphone():
                 session.pop('authphone', None)  # Remove Authentication Phone From Session
                 session.pop('authotp', None)    # Remove Authentication OTP From Session
                 session.pop('authemail', None)  # Remove Authentication Email From Session
+                session.pop('otpvalidtime', None)  # Remove otpvalidtime From Session
                 if session['authreason'] != 'login':    # If Authentication was used to verify account
                     # To Set Account Status To Verfied (NULL)
                     cursor.execute('UPDATE account SET account_status = NULL WHERE email=%s', ([session['email']]))
@@ -1968,6 +2057,7 @@ def authenticate_accountphone():
                 session.pop('authotp', None)    # Remove Authentication OTP From Session
                 session.pop('authemail', None)  # Remove Authentication Email From Session
                 session.pop('authereason', None)   # Remove Authentication reason
+                session.pop('otpvalidtime', None)  # Remove otpvalidtime From Session
                 session['stafflogged'] = account['full_name']   # Put Staff Name In Session
                 session['stafflogged'] = account['staff_id']   # Put Staff Id In Session
                 if account['manager_id'] != None:   # If The Account Used is a manager
@@ -1981,6 +2071,10 @@ def authenticate_accountphone():
 @app.route('/authenticatephoneresentotp')
 def authenticatephone_resent_otp():
     smsotp = generate_otp('phone', str('+65' + session['authphone']), session['authreason'])
+    curtime = datetime.datetime.now()
+    validtill = curtime + datetime.timedelta(minutes=1)    # Remove OTP after 3 minutes
+    session['otpvalidtime'] = validtill       # Put OTP Valid Time in Session
+
     session['authotp'] = smsotp
     return redirect(url_for('authenticate_accountphone'))
 
@@ -2095,7 +2189,7 @@ def staff_audit_dashboard():
 
     return render_template('Staff_Audit_dashboard.html')
 
-# Error Handling ?
+# Error Handling
 @app.route('/error')
 def error():
     return render_template('error.html')
@@ -2113,5 +2207,210 @@ def shutdown_server():
 
 
 
+# Zhi Yang Watchdog/Backup
+@app.route("/watchdog", methods=["GET"])
+def watchdog():
+     # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    # Check if its manager login
+    try:
+        session['manager_id']
+    except:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM audit WHERE staff_id = %s', ([session['staff_id']]))
+        staffinfo = cursor.fetchone()
+        newsusnum = staffinfo['suspicious'] + 1
+        cursor.execute('UPDATE audit SET suspicious = %s WHERE staff_id = %s', ([newsusnum, session['staff_id']]))
+        mysql.connection.commit()
+        return redirect(url_for('error'))
+
+    br.MyDrive().items()
+    a_file = open("data.pkl", "rb")
+    file_ids = pickle.load(a_file)
+    values_list = []
+    for i in file_ids:
+        values_list.append(i.values())
+    return render_template("watchdoglog.html", values_list=values_list)
+
+def flask_logger():
+    with open("watch_dog_logs.log") as log_info:
+        while True:
+            data = log_info.read()
+            yield data.encode()
+            time.sleep(1)
+        # Create empty job.log, old logging will be deleted
+        #open("watch_dog_logs.log", 'w').close()
+
+
+# Clear Log File
+@app.route("/clearwatchdog_log", methods=["GET"])
+def clearwatchdog_log():
+    with open('watch_dog_logs.log', 'w'):
+        pass
+    msg = 'Log File Cleared'
+    return redirect(url_for('watchdog'))
+
+
+@app.route("/log_stream", methods=["GET"])
+def stream():
+    return Response(flask_logger(), mimetype="text/plain", content_type="text/event-stream")
+
+
+@app.route("/backup", methods=['GET', 'POST'])
+def backup_file():
+     # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    # Check if its manager login
+    try:
+        session['manager_id']
+    except:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM audit WHERE staff_id = %s', ([session['staff_id']]))
+        staffinfo = cursor.fetchone()
+        newsusnum = staffinfo['suspicious'] + 1
+        cursor.execute('UPDATE audit SET suspicious = %s WHERE staff_id = %s', ([newsusnum, session['staff_id']]))
+        mysql.connection.commit()
+        return redirect(url_for('error'))
+
+    br.upload()
+    msg = "Upload done on " + time.asctime(time.localtime(time.time()))
+    print("Upload done on " + time.asctime(time.localtime(time.time())))
+    print("\n")
+    br.MyDrive().items()
+    a_file = open("data.pkl", "rb")
+    file_ids = pickle.load(a_file)
+    values_list = []
+    for i in file_ids:
+        values_list.append(i.values())
+
+    return render_template("watchdoglog.html", msg=msg, values_list=values_list)
+
+
+@app.route("/retrive", methods=['GET', 'POST'])
+def retrive_file():
+     # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    # Check if its manager login
+    try:
+        session['manager_id']
+    except:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM audit WHERE staff_id = %s', ([session['staff_id']]))
+        staffinfo = cursor.fetchone()
+        newsusnum = staffinfo['suspicious'] + 1
+        cursor.execute('UPDATE audit SET suspicious = %s WHERE staff_id = %s', ([newsusnum, session['staff_id']]))
+        mysql.connection.commit()
+        return redirect(url_for('error'))
+
+    try:
+        file_id = request.form['file_id']
+        start = br.MyDrive()
+        br.Restore(file_id)
+        br.unzip()
+        msg = "Restoration done on " + time.asctime(time.localtime(time.time()))
+        print("Restoration done on " + time.asctime(time.localtime(time.time())))
+        print("\n")
+        br.MyDrive().items()
+        a_file = open("data.pkl", "rb")
+        file_ids = pickle.load(a_file)
+        values_list = []
+        for i in file_ids:
+            values_list.append(i.values())
+    except HttpError:
+        msg = "please try again"
+
+    return render_template("watchdoglog.html", msg=msg, values_list=values_list)
+
+
+@app.route("/start", methods=["get"])
+def watchdogstart():
+     # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    # Check if its manager login
+    try:
+        session['manager_id']
+    except:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM audit WHERE staff_id = %s', ([session['staff_id']]))
+        staffinfo = cursor.fetchone()
+        newsusnum = staffinfo['suspicious'] + 1
+        cursor.execute('UPDATE audit SET suspicious = %s WHERE staff_id = %s', ([newsusnum, session['staff_id']]))
+        mysql.connection.commit()
+        return redirect(url_for('error'))
+
+    PATH = "../Piquant Integrated"
+    message = "Watchdog system active"
+    global observer
+    observer = Observer()
+    event_handler = wd.FileEventHandler(ignore_patterns=['.swp', '.swx', '*.swpx'])
+    observer.schedule(event_handler, PATH, recursive=True)
+    observer.start()
+    br.MyDrive().items()
+    a_file = open("data.pkl", "rb")
+    file_ids = pickle.load(a_file)
+    values_list = []
+    for i in file_ids:
+        values_list.append(i.values())
+    return render_template("watchdoglog.html", message=message, values_list=values_list)
+
+
+@app.route("/stop", methods=["get"])
+def watchdog_stop():
+     # Check If Staff Is Logged In (This Is To Prevent User From Using The Back Button)
+    try:
+        session['stafflogged']
+    except:
+        return redirect(url_for('checkstaff'))
+
+    # Check if its manager login
+    try:
+        session['manager_id']
+    except:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM audit WHERE staff_id = %s', ([session['staff_id']]))
+        staffinfo = cursor.fetchone()
+        newsusnum = staffinfo['suspicious'] + 1
+        cursor.execute('UPDATE audit SET suspicious = %s WHERE staff_id = %s', ([newsusnum, session['staff_id']]))
+        mysql.connection.commit()
+        return redirect(url_for('error'))
+
+    try:
+        message = "Watchdog system deactivated"
+        observer.stop()
+        observer.on_thread_stop()
+        observer.join()
+        br.MyDrive().items()
+        a_file = open("data.pkl", "rb")
+        file_ids = pickle.load(a_file)
+        values_list = []
+        for i in file_ids:
+            values_list.append(i.values())
+    except NameError:
+        message = "Please click the start button first"
+        br.MyDrive().items()
+        a_file = open("data.pkl", "rb")
+        file_ids = pickle.load(a_file)
+        values_list = []
+        for i in file_ids:
+            values_list.append(i.values())
+    return render_template("watchdoglog.html", message=message, values_list=values_list)
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

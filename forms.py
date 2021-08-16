@@ -8,11 +8,11 @@ class ReservationForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=20), validators.DataRequired()])
     email = StringField('Email', [validators.DataRequired(), validators.Email()])
     phone_number = StringField('Phone Number', [validators.Length(min=8, max=8), validators.DataRequired()])
-    date = DateField('Date(YYYY-MM-DD)', [validators.DataRequired()], format='%Y-%m-%d')
-    time = StringField('Time(00:00:00)', [validators.Length(min=1, max=8), validators.DataRequired()])
+    date = DateField('Date(YYYY-MM-DD)', [validators.DataRequired(), validators.Regexp("^[-0-9]+$", message="Date Must Only Contain - and 0-9")], format='%Y-%m-%d')
+    time = StringField('Time(HH:MM) 24 Hrs Format', [validators.Length(min=1, max=8), validators.DataRequired(), validators.Regexp("^[:0-9]+$", message="Time Must Only Contain : and 0-9")])
     card_name = StringField('Card Holder name', [validators.Length(min=1, max=50), validators.DataRequired()])
     cn =StringField('Card Number', [validators.Length(min=16, max=16), validators.DataRequired()])
-    expire = StringField('Expiry date of card YYYY-MM', [validators.Length(min=7, max=7), validators.DataRequired()])
+    expire = StringField('Expiry date of card YYYY-MM', [validators.Length(min=7, max=7), validators.DataRequired(), validators.Regexp("^[-0-9]+$", message="Date Must Only Contain - and 0-9")])
     cvv =StringField('CVV', [validators.Length(min=1, max=3), validators.DataRequired()])
     Additional_note = TextAreaField('Additional note', [validators.Optional()])
     selfie = FileField('For Recognition Purposes, Please Upload A Selfie:', validators=[FileRequired(), FileAllowed(['jpg'], "Jpg Files Only")])
@@ -28,7 +28,6 @@ class RetriveReservationForm(Form):
     expire = StringField('Expiry date of card YYYY-MM', [validators.Length(min=7, max=7), validators.DataRequired()])
     cvv =StringField('CVV', [validators.Length(min=1, max=3), validators.DataRequired()])
     Additional_note = TextAreaField('Additional note', [validators.Optional()])
-
 
 
 # Member Account Creation
