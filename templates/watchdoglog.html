@@ -44,8 +44,8 @@ body {font-family: Arial, Helvetica, sans-serif;}
   border: none;
   cursor: pointer;
   opacity: 0.8;
-  position: fixed;
-  bottom: 23px;
+
+  bottom: 0px;
   right: 28px;
   width: 280px;
 }
@@ -57,8 +57,8 @@ background-color: #555;
   border: none;
   cursor: pointer;
   opacity: 0.8;
-  position: fixed;
-  bottom: 23px;
+
+  bottom: 0px;
   right: 350px;
   width: 150px;
 }
@@ -66,7 +66,7 @@ background-color: #555;
 /* The popup form - hidden by default */
 .form-popup {
   display: none;
-  position: fixed;
+  position: relative;
   bottom: 0;
   right: 15px;
   border: 3px solid #f1f1f1;
@@ -137,7 +137,22 @@ background-color: #555;
 </div>
 
   <br>
+  <a href="/backup"> <button  class="backup-button"> Backup App </button> </a>
+<button class="open-button" onclick="openForm()">App Recovery</button>
 
+<div class="form-popup" id="myForm">
+  <form action="{{ url_for('retrive_file') }}" method="post" autocomplete="off" class="form-container">
+    <h1>App Recovery</h1>
+
+    <label><b>File id</b></label>
+    <input type="text" placeholder="Enter your file id" name="file_id" id="file_id">
+
+    <button type="submit" class="btn">Retrive</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </form>
+</div>
+  <br>
+<br>
   <table style="border: 1px solid black;" class="center">
       <tr>
           <th style="border: 1px solid black;">ID</th>
@@ -156,23 +171,7 @@ background-color: #555;
 </table>
 
   <br>
-
-
-<a href="/backup"> <button  class="backup-button"> Backup App </button> </a>
-<button class="open-button" onclick="openForm()">App Recovery</button>
-
-<div class="form-popup" id="myForm">
-  <form action="{{ url_for('retrive_file') }}" method="post" autocomplete="off" class="form-container">
-    <h1>App Recovery</h1>
-
-    <label><b>File id</b></label>
-    <input type="text" placeholder="Enter your file id" name="file_id" id="file_id">
-
-    <button type="submit" class="btn">Retrive</button>
-    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-  </form>
-</div>
-
+  <br>
 <script>
 function openForm() {
   document.getElementById("myForm").style.display = "block";

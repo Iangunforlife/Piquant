@@ -53,10 +53,9 @@ class CreateUserForm(Form):
 
 # Member Login Page
 class LoginForm(Form):
-    email = StringField('Email', [email(), validators.DataRequired()],
-                        render_kw={"placeholder": "Email"})
-    password = PasswordField('Password', [validators.DataRequired()], render_kw={"placeholder": "Password"})
-    # validators.regexp("^(?=.[a-z])(?=.[A-Z])(?=.[0-9])(?=.[@$!%#?&])[a-zA-Z0-9@$!%*#?&]{7,100}", message="Invalid Characters")
+    email = StringField('Email', [email(), validators.DataRequired(), validators.regexp("^[a-zA-Z0-9]+@[a-zA-Z0-9.-]+.com$", message="Invalid Characters")],
+                 render_kw={"placeholder": "Email"})
+    password = PasswordField('Password', [validators.DataRequired(), validators.regexp("[^\s?\*=+~`><-][a-zA-Z0-9]{2,25}", message="Invalid Characters")], render_kw={"placeholder": "Password"})
 
 # Referal Code
 class ClaimCode(Form):

@@ -21,7 +21,7 @@ logger.addHandler(file_handler)
 
 
 
-PATH = "../restoration piquant"
+PATH = "../Piquant Integrated"
 
 adminemail = ''
 

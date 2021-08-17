@@ -226,12 +226,10 @@ def create_user():
 
         cns = str(create_user_form.cn.data)
         cvvs = str(create_user_form.cvv.data)
-        # eds = str(create_user_form.expire.data)
 
         encryptcreditcard = f.encrypt(cns.encode())
         encryptcvv = f.encrypt(cvvs.encode())
 
-        # TBC
         useremail = create_user_form.email.data.lower()
         selfie = request.files[create_user_form.selfie.name].read()  # Get Image 1 In Pure Data Format
         filename = str(useremail).replace('@', '') + "_mempic" + '1' + ".jpg"
@@ -570,7 +568,7 @@ def member_login():
                     logger.info('{} is logged in'.format(session['email']))
                     # Timeout (Auto Logout, in non-incognito)
                     session.permanent = True
-                    app.permanent_session_lifetime = datetime.timedelta(minutes=2)
+                    app.permanent_session_lifetime = datetime.timedelta(minutes=1)
                     return redirect(url_for('referral', referral_state=" "))
             else:
                 # Write to audit SQL Table
@@ -631,7 +629,7 @@ def googlelogin_callback():
         else:
             # Timeout (Auto Logout, in non-incognito)
             session.permanent = True
-            app.permanent_session_lifetime = datetime.timedelta(minutes=2)
+            app.permanent_session_lifetime = datetime.timedelta(minutes=1)
             session["loggedin"] = True
             session['email'] = id_info.get("email")
             # For Audit
@@ -892,7 +890,7 @@ def checkstaff():
                         mysql.connection.commit()
                        # Timeout (Auto Logout, in non-incognito)
                         session.permanent = True
-                        app.permanent_session_lifetime = datetime.timedelta(minutes=2)
+                        app.permanent_session_lifetime = datetime.timedelta(minutes=1)
                         if account['manager_id'] != None:
                             session['manager_id'] = account['manager_id']   # Put Manager Id in Session
                         return redirect(url_for('staffpage'))

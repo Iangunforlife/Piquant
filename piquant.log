@@ -1,583 +1,3 @@
-2021-08-01 15:32:38,340:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-01 15:35:38,283:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian is logged in
-2021-08-01 15:35:59,056:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian viewed audit
-2021-08-01 15:37:33,236:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian viewed audit
-2021-08-01 15:37:36,333:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian viewed audit
-2021-08-01 15:38:04,749:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:44:53,001:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:44:58,278:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:45:15,295:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:45:57,159:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:46:37,401:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:46:42,448:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:46:45,727:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:46:51,870:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:47:44,917:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian is logged in
-2021-08-01 15:47:48,121:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:47:49,763:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian updated self profile
-2021-08-01 15:47:52,408:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:47:56,307:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:47:59,855:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:48:01,408:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian viewed audit
-2021-08-01 15:51:44,151:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:51:47,299:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian updated self profile
-2021-08-01 15:51:51,744:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:51:57,032:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian updated self profile
-2021-08-01 15:51:58,723:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:53:07,473:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian viewed audit
-2021-08-01 15:53:09,179:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:53:10,856:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest updated self profile
-2021-08-01 15:56:49,197:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest updated self profile
-2021-08-01 15:56:50,573:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:56:50,857:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian viewed audit
-2021-08-01 15:56:52,877:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ian retrieved staff
-2021-08-01 15:56:56,815:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest updated self profile
-2021-08-01 15:57:14,153:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest updated self profile
-2021-08-01 15:57:35,653:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest updated self profile
-2021-08-01 16:00:37,652:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest updated self profile
-2021-08-01 16:00:39,548:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest updated self profile
-2021-08-01 16:02:32,009:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-01 16:04:18,794:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-01 16:08:58,625:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-01 16:10:45,220:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-01 16:21:43,129:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Akif is logged in
-2021-08-01 16:22:23,987:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:ZY is logged in
-2021-08-01 16:25:02,299:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-01 16:25:14,664:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-01 17:28:15,124:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:13458769ey@gmail.com is logged in
-2021-08-01 17:33:35,392:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:13458769ey@gmail.com is logged out
-2021-08-03 10:12:54,622:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:12:58,896:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:13:09,963:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest retrieved staff
-2021-08-03 10:17:19,734:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest retrieved staff
-2021-08-03 10:17:28,113:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:17:30,185:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:18:44,988:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:18:46,246:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:18:46,360:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:19:16,704:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:19:19,535:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest retrieved staff
-2021-08-03 10:20:01,121:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:20:54,544:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:22:04,633:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest Yan is logged in
-2021-08-03 10:22:59,283:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest Yan is logged out
-2021-08-03 10:23:05,606:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:23:05,606:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:23:08,462:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:23:20,904:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:28:44,362:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:28:53,966:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:28:56,702:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:31:19,176:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:31:21,009:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:32:03,382:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:32:11,013:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:32:12,632:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:38:12,017:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:38:19,218:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:38:21,392:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:39:53,479:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:40:00,787:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:40:02,302:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:41:10,404:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:41:17,854:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:41:19,202:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:42:40,101:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:42:46,787:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest is logged in
-2021-08-03 10:42:48,356:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Ernest viewed audit
-2021-08-03 10:49:30,005:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:51:05,673:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:51:57,076:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:52:53,203:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:53:29,118:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 10:56:29,253:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 11:00:56,189:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged in
-2021-08-03 11:00:58,544:C:\Users\anyone\PycharmProjects\security\__init__.py:__main__:Joel is logged out
-2021-08-12 21:02:48,982:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-12 21:03:05,596:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-12 21:15:41,776:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-12 21:16:21,140:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-12 21:17:25,476:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-12 21:17:38,215:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-12 21:22:57,529:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:33:23,954:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:35:50,955:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:37:44,764:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:39:15,887:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-12 21:40:46,429:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:45:47,011:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:46:14,132:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:46:30,650:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:47:23,770:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:47:51,661:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:<class 'wtforms.validators.Email'> updated self profile
-2021-08-12 21:47:56,519:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:52:17,006:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:54:48,861:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com viewed cart items
-2021-08-12 21:54:52,653:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com viewed cart items
-2021-08-12 21:55:41,359:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:<class 'wtforms.validators.Email'> updated password
-2021-08-12 21:55:49,640:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 21:57:51,479:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-12 22:04:58,585:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:04:59,857:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:05:00,937:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:05:03,900:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:05:39,741:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:10:05,270:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-12 22:10:11,280:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:10:12,420:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:10:14,814:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:10:16,593:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:10:53,812:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:10:58,732:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:11:00,100:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:14:25,258:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:14:25,980:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:14:26,329:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:14:27,434:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:14:28,017:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:15:12,416:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:15:13,225:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:15:19,429:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:15:21,421:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:15:24,349:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:15:27,266:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:15:31,800:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:15:40,718:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:15:43,805:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:15:45,773:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:15:46,935:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:16:13,698:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:16:15,087:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:16:16,171:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:17:49,037:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:06,369:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:07,128:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:07,483:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:07,706:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:07,915:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:08,155:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:11,017:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:11,523:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:19:49,283:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 22:19:50,174:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:20:04,676:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 22:20:06,094:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:20:47,185:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:36:58,281:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:37:52,350:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:39:21,638:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-12 22:39:30,976:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:40:17,167:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 22:40:20,069:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:<class 'wtforms.validators.Email'> updated self profile
-2021-08-12 22:42:25,608:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-12 22:42:27,233:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:42:30,187:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated member
-2021-08-12 22:42:30,192:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:42:53,932:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated member
-2021-08-12 22:42:53,937:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 22:46:43,854:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 22:50:10,611:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated self profile
-2021-08-12 22:50:10,618:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:06:31,558:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:23,756:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:24,571:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:24,835:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:25,013:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:25,162:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:25,305:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:25,441:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:25,620:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:07:25,769:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:08:25,385:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:08:34,978:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:08:35,877:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:08:36,158:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:08:36,346:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:08:36,532:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:09:20,494:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:09:21,052:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:09:21,419:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:09:43,890:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:09:49,250:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 23:09:54,088:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 23:11:48,888:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 23:14:08,719:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 23:14:22,041:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 23:15:25,963:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 23:15:26,872:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 23:15:27,391:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 23:15:42,476:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 23:15:57,737:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:16:20,203:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 23:16:21,313:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 23:16:21,793:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 23:16:24,299:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:16:27,105:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated self profile
-2021-08-12 23:16:27,111:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:17:19,953:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-12 23:21:05,757:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim has made a reservation
-2021-08-12 23:21:13,920:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com added S001 to cart
-2021-08-12 23:21:15,498:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com viewed cart items
-2021-08-12 23:21:19,144:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com viewed cart items
-2021-08-12 23:21:31,080:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-12 23:21:32,179:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 23:24:22,872:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian deleted reservation
-2021-08-12 23:24:22,882:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-12 23:24:25,680:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-12 23:25:01,732:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-12 23:36:46,170:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-12 23:36:59,156:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-12 23:52:57,607:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 13:50:43,564:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-13 13:53:18,750:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com viewed cart items
-2021-08-13 13:53:36,601:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 13:53:38,576:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 13:53:40,350:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 13:53:41,439:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 13:53:43,839:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 13:53:45,804:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian served order item
-2021-08-13 13:53:45,812:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 13:53:46,585:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian served order item
-2021-08-13 13:53:46,591:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 13:53:47,863:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 13:53:48,672:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 13:53:49,307:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 13:53:49,995:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 13:53:50,804:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 13:53:54,881:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated member
-2021-08-13 13:53:54,889:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 13:53:56,029:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 13:53:58,044:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated reservation
-2021-08-13 13:53:58,056:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 13:54:00,519:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 13:54:05,074:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 13:54:37,295:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 13:55:33,771:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated self profile
-2021-08-13 13:55:33,782:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 13:56:20,004:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 18:06:31,880:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 18:06:33,923:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 18:06:59,091:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 18:25:12,118:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 18:25:31,994:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT is logged in
-2021-08-13 18:26:20,875:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-13 18:26:22,398:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-13 18:26:23,808:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-13 18:26:25,959:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Jeff Tan retrieved members
-2021-08-13 18:26:37,279:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Jeff Tan retrieved members
-2021-08-13 18:28:30,603:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Jeff Tan retrieved members
-2021-08-13 18:36:42,733:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT updated self profile
-2021-08-13 18:36:42,748:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved staff
-2021-08-13 18:37:42,803:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT updated self profile
-2021-08-13 18:37:52,797:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 18:37:55,176:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 18:38:58,967:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 18:39:03,920:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 18:39:24,870:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT is logged in
-2021-08-13 18:39:30,881:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT updated self profile
-2021-08-13 18:43:15,490:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-13 21:23:54,982:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 21:24:19,429:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 21:24:41,011:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT is logged in
-2021-08-13 21:25:48,540:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-13 21:25:49,505:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-13 21:25:51,330:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Jeff Tan retrieved members
-2021-08-13 21:27:00,273:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-13 21:27:01,143:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-13 21:27:15,276:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 21:27:20,163:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 21:27:27,109:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 21:27:28,000:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 21:27:30,675:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 21:27:46,119:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 21:27:51,905:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 21:27:58,547:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 21:28:17,220:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 21:36:03,800:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 21:36:06,154:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-13 21:36:58,841:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-13 21:36:58,841:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-13 21:37:57,179:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 21:38:00,265:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-13 21:38:00,270:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-13 23:06:33,109:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-13 23:06:50,297:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-13 23:07:16,630:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 23:07:51,834:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 23:07:54,860:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 23:08:12,584:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 23:08:24,958:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-13 23:12:43,022:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-13 23:12:43,023:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-13 23:15:19,218:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-13 23:15:23,094:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:<class 'wtforms.validators.Email'> updated self profile
-2021-08-13 23:15:23,101:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-13 23:15:31,157:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-13 23:15:57,259:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-13 23:16:05,207:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-13 23:16:06,738:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 23:16:11,040:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated reservation
-2021-08-13 23:16:11,055:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-13 23:16:12,539:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 23:16:14,845:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian served order item
-2021-08-13 23:16:14,853:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 23:16:19,422:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian deleted order item
-2021-08-13 23:16:19,432:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 23:16:22,071:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 23:16:27,990:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-13 23:16:31,987:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com added S001 to cart
-2021-08-13 23:16:33,110:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com viewed cart items
-2021-08-13 23:16:38,473:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 23:16:41,102:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian served order item
-2021-08-13 23:16:41,111:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-13 23:16:44,506:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 23:16:47,764:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-13 23:16:59,549:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian created referral code
-2021-08-14 14:22:12,199:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-14 14:29:31,054:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 15:46:34,655:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-14 15:47:12,441:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-14 15:47:50,541:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 15:50:01,800:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 15:58:42,815:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-14 16:31:48,962:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 16:32:43,898:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 16:32:45,394:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-14 16:32:48,783:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-14 16:32:50,962:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-14 16:32:52,698:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-14 16:33:04,332:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 16:33:04,333:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 16:33:04,334:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 16:33:11,345:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-14 16:33:29,319:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged out
-2021-08-14 16:33:42,732:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-14 16:33:52,141:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 16:34:19,968:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 16:48:55,409:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Zhi Yang signed up as member
-2021-08-14 16:50:31,296:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Zhi Yang signed up as member
-2021-08-14 17:29:24,669:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Zhi Yang signed up as member
-2021-08-14 17:41:02,596:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Zhi Yang signed up as member
-2021-08-14 17:42:33,744:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Zhi Yang signed up as member
-2021-08-14 17:43:38,578:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Zhi Yang signed up as member
-2021-08-14 17:43:52,471:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:qwhzjop@gmail.com is logged out
-2021-08-14 18:21:21,407:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-14 18:30:05,694:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-14 18:32:41,702:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 18:46:21,545:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 18:46:26,381:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 18:49:46,380:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-14 18:49:49,827:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 18:49:49,833:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 18:49:54,055:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 18:53:12,030:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 18:54:25,709:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 18:54:25,715:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 18:56:22,053:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim signed up as member
-2021-08-14 18:58:19,780:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim signed up as member
-2021-08-14 19:03:26,689:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim signed up as member
-2021-08-14 19:04:03,100:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 19:04:21,426:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 19:05:26,009:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 19:27:09,943:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 19:31:56,765:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 19:33:37,874:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 19:34:02,716:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 22:02:32,823:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 22:17:11,846:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 22:17:11,848:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 22:17:11,849:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 22:19:29,769:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 22:23:55,352:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 22:26:38,615:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 22:53:33,470:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-14 22:53:37,816:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 23:05:43,008:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 23:05:43,014:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 23:05:43,015:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 23:05:48,188:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 23:07:29,406:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-14 23:09:13,884:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 23:09:13,890:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-14 23:09:21,044:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-14 23:12:51,444:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-15 01:00:46,189:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 01:00:48,172:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:00:48,176:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:08:11,496:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 01:08:24,194:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated self password
-2021-08-15 01:08:24,204:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:08:24,205:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:08:48,646:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 01:10:22,125:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:10:22,131:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:11:06,761:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:<class 'wtforms.validators.Email'> updated password
-2021-08-15 01:11:06,764:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-15 01:14:03,961:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-15 01:15:32,078:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 01:18:20,072:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:18:20,076:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 01:18:46,207:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-15 01:19:01,330:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-15 01:19:43,789:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-15 15:31:43,915:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-15 15:32:25,316:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 15:37:56,589:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 15:38:13,468:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-15 15:38:14,594:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-15 15:38:15,218:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-15 15:40:58,300:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 15:42:14,177:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 15:59:23,734:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 15:59:41,752:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-15 16:02:40,779:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 16:31:15,257:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 16:31:21,245:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 16:31:21,251:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 16:31:24,795:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 17:31:54,444:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-15 17:33:09,520:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-15 17:33:39,884:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-15 17:35:39,290:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-15 17:42:06,269:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-15 17:42:37,122:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved reservation
-2021-08-15 17:42:40,125:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim updated reservation
-2021-08-15 17:42:40,132:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved reservation
-2021-08-15 17:42:41,336:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim viewed order
-2021-08-15 17:42:43,292:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim served order item
-2021-08-15 17:42:43,299:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim viewed order
-2021-08-15 17:42:45,721:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim deleted order item
-2021-08-15 17:42:45,733:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim viewed order
-2021-08-15 17:42:49,214:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-15 17:42:50,038:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim viewed order
-2021-08-15 17:42:50,792:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim viewed order
-2021-08-15 17:42:51,325:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim viewed order
-2021-08-15 17:42:52,026:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-15 17:42:54,325:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-15 17:42:56,296:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim updated member
-2021-08-15 17:42:56,303:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved members
-2021-08-15 17:43:09,565:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim retrieved staff
-2021-08-15 17:43:14,285:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 17:43:14,290:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim is logged out
-2021-08-15 17:43:45,238:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-15 17:43:53,146:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 17:43:53,152:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian Sim is logged out
-2021-08-15 17:47:23,243:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 17:47:27,925:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-15 17:47:28,565:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-15 17:47:50,713:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-15 17:47:51,425:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-15 17:47:52,478:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-15 17:47:53,047:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved members
-2021-08-15 17:51:32,126:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 17:51:34,485:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-15 17:52:36,041:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-15 17:52:43,541:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-15 17:52:47,462:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-15 17:55:27,653:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-15 17:55:40,431:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 17:55:40,436:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 17:55:49,167:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT is logged in
-2021-08-15 17:55:50,950:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-15 17:55:52,232:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-15 18:01:37,554:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT is logged in
-2021-08-15 18:01:38,939:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-15 18:01:42,100:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT updated reservation
-2021-08-15 18:01:42,111:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-15 18:01:43,605:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-15 18:01:44,863:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-15 18:01:45,379:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-15 18:01:49,443:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved members
-2021-08-15 18:02:23,540:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved members
-2021-08-15 18:02:24,755:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT viewed order
-2021-08-15 18:02:25,269:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:JeffT retrieved reservation
-2021-08-15 18:13:35,971:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 18:15:01,595:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 18:16:54,816:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 18:21:53,182:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 18:23:14,632:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com updated password
-2021-08-15 18:23:14,635:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:23:14,636:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:24:07,541:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 18:24:35,816:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com updated password
-2021-08-15 18:24:35,819:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:24:35,820:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:36:32,652:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 18:37:20,083:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:iansimwx@gmail.com updated password
-2021-08-15 18:37:20,086:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:37:20,087:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:37:56,649:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-15 18:38:04,412:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian updated self profile
-2021-08-15 18:38:07,952:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:38:07,957:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged out
-2021-08-15 18:39:44,278:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-15 18:39:51,736:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:<class 'wtforms.validators.Email'> updated self profile
-2021-08-15 18:39:54,795:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-16 17:11:50,978:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-16 17:12:03,114:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-16 17:12:04,624:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
-2021-08-16 17:12:07,405:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
-2021-08-16 17:13:43,580:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
-2021-08-16 17:13:56,012:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
-2021-08-16 17:13:57,932:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed audit
-2021-08-16 17:13:58,620:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-16 17:14:00,911:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-16 18:07:29,868:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-16 18:22:36,184:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-16 18:24:53,381:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-16 18:25:08,213:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-16 18:37:10,532:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-16 18:37:12,960:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-16 18:37:14,300:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian viewed order
-2021-08-16 18:37:15,684:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved members
-2021-08-16 18:37:20,258:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved staff
-2021-08-16 18:50:00,037:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian is logged in
-2021-08-16 18:50:01,226:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-16 18:50:14,805:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:Ian retrieved reservation
-2021-08-16 19:00:02,058:F:\Year 2\IT2656 Security Project\Piquant Integrated\__init__.py:__main__:ianwxsim@gmail.com is logged in
-2021-08-16 19:03:23,924:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian Sim has made a reservation
-2021-08-16 19:07:24,263:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:ianwxsim@gmail.com is logged out
-2021-08-16 20:30:51,548:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 20:31:15,249:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
-2021-08-16 20:45:58,270:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged in
-2021-08-16 20:47:08,181:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian Sim has made a reservation
-2021-08-16 20:47:54,513:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged out
-2021-08-16 20:48:02,899:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 20:48:03,937:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
-2021-08-16 20:55:03,302:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:04:21,961:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:04:36,965:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
-2021-08-16 21:05:28,687:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged out
-2021-08-16 21:06:50,558:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
-2021-08-16 21:09:02,180:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
-2021-08-16 21:12:36,955:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
-2021-08-16 21:16:07,067:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
-2021-08-16 21:18:35,127:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
-2021-08-16 21:22:51,911:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
-2021-08-16 21:23:29,577:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged in
-2021-08-16 21:23:50,057:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged out
-2021-08-16 21:24:13,110:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:25:10,397:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
-2021-08-16 21:25:14,356:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved members
-2021-08-16 21:25:18,337:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved members
-2021-08-16 21:33:38,408:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:36:29,594:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:39:04,889:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:41:03,116:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:41:11,866:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged out
-2021-08-16 21:50:53,885:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
-2021-08-16 21:51:08,509:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
-2021-08-16 21:51:09,338:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed order
-2021-08-16 21:51:10,520:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved members
-2021-08-16 21:51:45,677:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved members
-2021-08-16 22:00:51,520:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed order
-2021-08-16 22:01:44,166:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
-2021-08-16 22:01:56,050:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
-2021-08-16 22:15:13,762:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed order
-2021-08-16 22:15:14,870:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
-2021-08-16 22:15:50,182:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian Sim signed up as member
-2021-08-16 22:16:26,906:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
-2021-08-16 22:16:35,401:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com viewed cart items
 2021-08-16 22:17:01,001:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged out
 2021-08-16 22:17:59,923:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
 2021-08-16 22:18:01,303:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
@@ -657,3 +77,80 @@
 2021-08-17 00:31:39,697:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian Sim signed up as member
 2021-08-17 00:32:00,163:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged in
 2021-08-17 00:32:03,434:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged out
+2021-08-17 09:52:54,419:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 09:53:13,485:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:01:43,891:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:02:53,285:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved staff
+2021-08-17 10:08:27,437:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged out
+2021-08-17 10:08:46,407:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 10:09:43,963:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Jeff has made a reservation
+2021-08-17 10:11:03,063:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged out
+2021-08-17 10:11:12,149:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 10:11:14,485:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
+2021-08-17 10:11:23,919:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
+2021-08-17 10:11:38,739:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:11:42,716:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:11:43,253:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved staff
+2021-08-17 10:11:44,525:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:11:46,864:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved staff
+2021-08-17 10:11:57,308:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:11:59,784:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved staff
+2021-08-17 10:12:02,386:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:12:05,249:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
+2021-08-17 10:12:17,764:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:12:53,359:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:13:17,152:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:13:59,723:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged out
+2021-08-17 10:15:13,997:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
+2021-08-17 10:17:13,861:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged in
+2021-08-17 10:17:16,258:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged out
+2021-08-17 10:18:41,096:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 10:18:44,315:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 10:19:19,184:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged out
+2021-08-17 10:20:32,744:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 10:20:54,504:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged out
+2021-08-17 10:21:21,097:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian Sim signed up as member
+2021-08-17 10:21:36,897:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged in
+2021-08-17 10:21:49,498:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged out
+2021-08-17 10:35:05,756:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Zhi Yang signed up as member
+2021-08-17 10:38:32,082:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged in
+2021-08-17 10:38:46,915:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged out
+2021-08-17 10:38:58,384:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 10:49:17,989:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged out
+2021-08-17 10:49:50,239:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged in
+2021-08-17 10:49:55,258:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:qwhzjop@gmail.com is logged out
+2021-08-17 10:52:34,217:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 10:52:37,767:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 10:53:11,760:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged out
+2021-08-17 10:54:47,536:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian Sim signed up as member
+2021-08-17 10:55:04,735:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged in
+2021-08-17 10:56:27,166:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged out
+2021-08-17 10:57:02,314:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged in
+2021-08-17 10:59:17,294:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged in
+2021-08-17 11:01:30,657:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:simwx.ian@gmail.com is logged out
+2021-08-17 11:01:44,845:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 11:02:31,613:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com updated password
+2021-08-17 11:02:31,616:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged out
+2021-08-17 11:02:43,889:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 11:05:32,423:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged out
+2021-08-17 11:09:31,528:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 11:10:13,626:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian Sim has made a reservation
+2021-08-17 11:13:05,798:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 11:13:07,521:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved reservation
+2021-08-17 11:18:01,141:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 11:18:06,622:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 11:19:18,113:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 11:19:32,392:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged out
+2021-08-17 11:19:45,584:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:JeffT is logged in
+2021-08-17 11:20:25,466:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:JeffT is logged out
+2021-08-17 11:20:36,471:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 11:22:16,459:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 11:24:23,347:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 11:32:31,125:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 11:33:32,085:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 11:54:01,799:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian is logged in
+2021-08-17 11:56:09,144:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 11:58:41,823:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian retrieved staff
+2021-08-17 11:58:42,515:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:Ian viewed audit
+2021-08-17 12:14:28,063:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
+2021-08-17 12:15:48,073:F:/Year 2/IT2656 Security Project/Piquant Integrated/__init__.py:__main__:iansimwx@gmail.com is logged in
