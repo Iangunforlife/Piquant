@@ -1,4 +1,5 @@
 # Piquant
+For Educational Purposes Only
 
 To Open Github:
 Pycharm Main Menu -->
